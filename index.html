@@ -8,10 +8,6 @@
 <meta name="theme-color" content="#111111">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Content Hub</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
   :root {
     --black: #111111;
@@ -30,27 +26,10 @@
   body {
     background: var(--black);
     color: var(--white);
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     font-size: 14px;
     line-height: 1.6;
     min-height: 100vh;
-  }
-
-  /* ── FONTS ── */
-  #panel-tiktok {
-    font-family: 'Space Grotesk', 'Pretendard', sans-serif;
-  }
-  #panel-tiktok .hero h1 {
-    font-family: 'Playfair Display', serif;
-  }
-  #tabs-tiktok .tab {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 12px;
-    letter-spacing: 0;
-  }
-  #panel-youtube {
-    font-family: 'Pretendard', -apple-system, sans-serif;
   }
 
   /* ── TOP NAV ── */
@@ -123,7 +102,6 @@
     color: var(--mid); cursor: pointer; white-space: nowrap;
     border-bottom: 2px solid transparent; transition: all .2s;
     background: none; border-top: none; border-left: none; border-right: none;
-    font-family: inherit;
   }
   .tab:hover { color: var(--white); }
   .tab.active-tiktok { color: var(--tiktok); border-bottom-color: var(--tiktok); }
@@ -136,56 +114,6 @@
     font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
     color: var(--mid); margin-bottom: 16px;
   }
-
-  /* ── TODAY ── */
-  .today-date-header {
-    font-size: 26px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 2px;
-  }
-  .today-day-sub { font-size: 13px; color: var(--mid); margin-bottom: 24px; }
-  .today-block { margin-bottom: 24px; }
-  .today-block-title {
-    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--mid); margin-bottom: 8px;
-  }
-  .today-empty { font-size: 13px; color: #383838; padding: 10px 0; }
-  .today-row {
-    background: var(--card); border-radius: 8px; padding: 12px 14px;
-    margin-bottom: 6px; display: flex; align-items: center; gap: 12px;
-  }
-  .today-row-info { flex: 1; min-width: 0; }
-  .today-row-title { font-size: 13px; font-weight: 600; }
-  .today-row-sub { font-size: 11px; color: var(--mid); margin-top: 2px; }
-
-  /* ── WEEKLY PLAN ── */
-  .weekly-scroll { overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
-  .weekly-scroll::-webkit-scrollbar { display: none; }
-  .weekly-grid {
-    display: grid; grid-template-columns: repeat(7, minmax(108px, 1fr));
-    gap: 8px; min-width: 756px;
-  }
-  .weekly-col { display: flex; flex-direction: column; }
-  .weekly-day-header {
-    text-align: center; padding-bottom: 10px;
-    border-bottom: 1px solid var(--border); margin-bottom: 8px;
-  }
-  .weekly-day-name {
-    font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--mid);
-  }
-  .weekly-day-num {
-    font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin-top: 2px;
-  }
-  .weekly-day-num.is-today-tk { color: var(--tiktok); }
-  .weekly-day-num.is-today-yt { color: var(--sage); }
-  .weekly-item {
-    background: var(--card); border-radius: 6px; padding: 7px 9px;
-    margin-bottom: 4px; border-left: 2px solid transparent;
-  }
-  .weekly-item.type-script-tk { border-left-color: var(--tiktok); }
-  .weekly-item.type-script-yt { border-left-color: var(--sage); }
-  .weekly-item.type-event { border-left-color: #4d9fff; }
-  .weekly-item-title { font-size: 11px; font-weight: 500; line-height: 1.4; }
-  .weekly-item-sub { font-size: 10px; color: var(--mid); margin-top: 2px; }
-  .weekly-col-empty { font-size: 11px; color: #2a2a2a; padding: 4px 0; }
 
   /* ── SCRIPTS ── */
   .script-card {
@@ -217,6 +145,7 @@
     white-space: pre-wrap; word-break: break-word;
     background: #0f0f0f; border-radius: 8px;
     padding: 14px; margin-bottom: 12px;
+    font-family: 'SF Mono', monospace;
   }
   .prod-section { margin-top: 12px; }
   .prod-title {
@@ -225,110 +154,32 @@
   }
   .prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .prod-item {
-    background: #0f0f0f; border-radius: 6px; padding: 8px 10px; font-size: 11px;
+    background: #0f0f0f; border-radius: 6px; padding: 8px 10px;
+    font-size: 11px;
   }
   .prod-item strong { display: block; color: var(--mid); font-size: 10px; margin-bottom: 2px; letter-spacing:.04em; }
-
-  /* ── CHECKLIST (IMPROVED) ── */
   .checklist { list-style: none; }
   .checklist li {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 7px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px;
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 6px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px;
   }
   .checklist li:last-child { border-bottom: none; }
   .check-box {
-    width: 20px; height: 20px; border-radius: 5px;
-    border: 1.5px solid #333; cursor: pointer;
-    flex-shrink: 0; margin-top: 1px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background .15s, border-color .15s, transform .1s;
-    background: transparent;
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 1px solid var(--border); cursor: pointer;
+    flex-shrink: 0; margin-top: 2px; display: flex;
+    align-items: center; justify-content: center;
+    font-size: 10px; transition: all .15s;
   }
-  .check-box:active { transform: scale(.85); }
-  .check-box.done { background: var(--blush); border-color: var(--blush); }
-  .check-box.done-yt { background: var(--sage); border-color: var(--sage); }
-  .check-box svg { opacity: 0; transition: opacity .15s; pointer-events: none; }
-  .check-box.done svg, .check-box.done-yt svg { opacity: 1; }
+  .check-box.done { background: var(--blush); border-color: var(--blush); color: var(--black); }
+  .check-box.done-yt { background: var(--sage); border-color: var(--sage); color: var(--black); }
 
-  /* ── REFERENCE LINKS ── */
-  .ref-link {
-    display: block; font-size: 12px; color: var(--blush);
-    text-decoration: none; overflow: hidden; text-overflow: ellipsis;
-    white-space: nowrap; padding: 4px 0; transition: opacity .15s;
-  }
-  .ref-link:hover { opacity: .7; }
-  .ref-link.yt { color: var(--sage); }
-
-  /* ── PHOTO GRID ── */
-  .photo-grid { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
-  .photo-thumb {
-    width: 72px; height: 72px; object-fit: cover;
-    border-radius: 8px; cursor: pointer; transition: opacity .15s;
-    flex-shrink: 0;
-  }
-  .photo-thumb:hover { opacity: .8; }
-
-  /* ── MODAL REF INPUTS ── */
-  .ref-input-row {
-    display: flex; gap: 6px; margin-bottom: 6px;
-  }
-  .ref-input-row .modal-input { margin-bottom: 0; flex: 1; }
-  .ref-del-btn {
-    background: none; border: 1px solid var(--border); border-radius: 6px;
-    color: var(--mid); font-size: 16px; padding: 0 10px; cursor: pointer; flex-shrink: 0;
-  }
-  .ref-del-btn:hover { border-color: #ff6b6b; color: #ff6b6b; }
-  .dashed-btn {
-    width: 100%; padding: 8px; border-radius: 6px;
-    border: 1px dashed var(--border); background: none;
-    color: var(--mid); font-size: 12px; cursor: pointer; margin-bottom: 10px;
-    transition: all .2s; text-align: center; display: block;
-  }
-  .dashed-btn:hover { border-color: var(--blush); color: var(--blush); }
-
-  /* ── MODAL PHOTO PREVIEWS ── */
-  .modal-photo-grid {
-    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
-  }
-  .modal-photo-wrap { position: relative; }
-  .modal-photo-wrap img {
-    width: 60px; height: 60px; object-fit: cover; border-radius: 6px; display: block;
-  }
-  .modal-photo-del {
-    position: absolute; top: -5px; right: -5px;
-    background: #333; border: none; border-radius: 50%;
-    width: 18px; height: 18px; color: var(--white); font-size: 11px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    line-height: 1;
-  }
-
-  /* ── PHOTO VIEWER ── */
-  .photo-viewer {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.92); z-index: 500;
-    align-items: center; justify-content: center; cursor: pointer;
-  }
-  .photo-viewer.open { display: flex; }
-  .photo-viewer img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
-
-  /* ── SCRIPT CARD ACTION BTNS ── */
-  .card-actions {
-    display: flex; gap: 8px; margin-top: 12px;
-  }
-  .card-btn {
-    background: none; border: 1px solid #2a2a2a; border-radius: 6px;
-    color: #666; font-size: 11px; padding: 5px 10px; cursor: pointer;
-    font-family: inherit; transition: all .15s;
-  }
-  .card-btn:hover { border-color: #444; color: var(--white); }
-  .card-btn.danger:hover { border-color: #ff6b6b; color: #ff6b6b; }
-
-  /* ── ADD BTN ── */
+  /* ── NEW SCRIPT BTN ── */
   .add-btn {
     width: 100%; padding: 12px; border-radius: 10px;
     border: 1px dashed var(--border); background: none;
     color: var(--mid); font-size: 13px; cursor: pointer;
-    transition: all .2s; margin-top: 4px; font-family: inherit;
+    transition: all .2s; margin-top: 4px;
   }
   .add-btn:hover { border-color: var(--blush); color: var(--blush); }
   .add-btn.yt:hover { border-color: var(--sage); color: var(--sage); }
@@ -491,7 +342,8 @@
   /* ── MODAL ── */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,.85);
-    z-index: 200; display: none; align-items: flex-end; justify-content: center;
+    z-index: 200; display: none; align-items: flex-end;
+    justify-content: center;
   }
   .modal-overlay.open { display: flex; }
   .modal {
@@ -503,7 +355,8 @@
   .modal-input {
     width: 100%; background: var(--card); border: 1px solid var(--border);
     border-radius: 8px; padding: 10px 12px; color: var(--white);
-    font-size: 13px; font-family: inherit; margin-bottom: 10px; resize: vertical;
+    font-size: 13px; font-family: inherit; margin-bottom: 10px;
+    resize: vertical;
   }
   .modal-input:focus { outline: none; border-color: var(--blush); }
   .modal-input.yt:focus { border-color: var(--sage); }
@@ -522,47 +375,73 @@
   }
   .modal-save.yt { background: var(--sage); }
 
-  /* ── EMPTY ── */
+  /* ── EMPTY STATE ── */
   .empty { text-align: center; padding: 40px 20px; color: var(--mid); font-size: 13px; }
 
   /* ── MOBILE ── */
   @media (max-width: 480px) {
+    /* Nav */
     nav { padding: 0 14px; }
     .nav-logo { font-size: 12px; }
     .ch-btn { padding: 5px 10px; font-size: 11px; }
+
+    /* Hero */
     .hero { padding: 48px 16px 28px; }
     .hero h1 { font-size: 32px; }
     .hero-sub { font-size: 13px; }
+
+    /* Tabs — 가로 스크롤 */
     .tab { padding: 10px 12px; font-size: 11px; }
-    #tabs-tiktok .tab { font-size: 11px; }
+
+    /* Section */
     .section { padding: 16px 14px; }
+
+    /* Script card */
     .script-header { padding: 12px 12px; gap: 8px; }
     .script-title { font-size: 13px; }
     .script-status { font-size: 10px; padding: 2px 6px; }
     .script-content { font-size: 12px; padding: 10px; }
+
+    /* Performance — 3칸 → 숫자 작게 */
     .perf-summary { gap: 6px; }
     .perf-stat { padding: 10px 6px; }
     .perf-stat-num { font-size: 18px; }
     .perf-stat-label { font-size: 9px; }
     .perf-item { flex-wrap: wrap; gap: 6px; }
     .perf-item-stats { gap: 8px; }
+
+    /* Production grid — 2열 → 1열 */
     .prod-grid { grid-template-columns: 1fr; }
+
+    /* Form rows — 세로 정렬 */
     .form-row { flex-direction: column; }
     .modal-row { flex-direction: column; }
     .add-event-row { flex-wrap: wrap; }
     .add-event-input { min-width: 0; }
+
+    /* Settings */
     .settings-block { padding: 12px; }
     .settings-row-val { font-size: 12px; max-width: 55%; }
+
+    /* Modal — 풀 바텀시트 */
     .modal { padding: 16px 16px 32px; }
+
+    /* Asset row */
     .asset-add-row { flex-wrap: wrap; }
     .asset-input { min-width: 0; }
+
+    /* Calendar */
     .cal-day { font-size: 11px; border-radius: 4px; }
+
+    /* Memo */
     .memo-tags { gap: 4px; }
     .memo-tag { padding: 3px 8px; font-size: 10px; }
+
+    /* Add event row */
     #tiktok-event-date, #youtube-event-date { max-width: 100% !important; }
-    .today-date-header { font-size: 20px; }
   }
 
+  /* iPhone safe area (홈바) */
   @supports (padding-bottom: env(safe-area-inset-bottom)) {
     .workspace { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
     .modal { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
@@ -582,26 +461,56 @@
   .lock-screen {
     position: fixed; inset: 0; background: var(--black);
     z-index: 999; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; padding: 40px 24px;
+    align-items: center; justify-content: center;
+    padding: 40px 24px;
   }
   .lock-screen.hidden { display: none; }
   .lock-logo { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--mid); margin-bottom: 40px; }
   .lock-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px; text-align: center; }
   .lock-sub { font-size: 13px; color: var(--mid); margin-bottom: 32px; text-align: center; }
   .lock-input {
-    width: 100%; max-width: 280px; background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 16px; color: var(--white);
-    font-size: 15px; text-align: center; letter-spacing: .12em; outline: none;
-    transition: border-color .2s; margin-bottom: 12px; font-family: inherit;
+    width: 100%; max-width: 280px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+    color: var(--white); font-size: 15px; text-align: center;
+    letter-spacing: .12em; outline: none;
+    transition: border-color .2s; margin-bottom: 12px;
+    font-family: inherit;
   }
   .lock-input:focus { border-color: var(--blush); }
   .lock-btn {
-    width: 100%; max-width: 280px; padding: 13px; border-radius: 10px; border: none;
+    width: 100%; max-width: 280px; padding: 13px;
+    border-radius: 10px; border: none;
     background: var(--blush); color: var(--black);
-    font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: .04em;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    letter-spacing: .04em;
   }
   .lock-error { font-size: 12px; color: #ff6b6b; margin-top: 10px; min-height: 18px; text-align: center; }
 </style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjneUcloIKFYLwlnqvIxhd0-4ThrMBBAM",
+    authDomain: "somarchive-hub.firebaseapp.com",
+    projectId: "somarchive-hub",
+    storageBucket: "somarchive-hub.firebasestorage.app",
+    messagingSenderId: "979256237133",
+    appId: "1:979256237133:web:24b7c5443e491d60775004"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 전역에서 쓸 수 있게 window에 등록
+  window.__firebaseDb = db;
+  window.__firebaseDoc = doc;
+  window.__firebaseGetDoc = getDoc;
+  window.__firebaseSetDoc = setDoc;
+  window.__firebaseReady = true;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
 </head>
 <body>
 
@@ -626,6 +535,8 @@
 
 <!-- ══════════════ TIKTOK PANEL ══════════════ -->
 <div class="channel-panel active" id="panel-tiktok">
+
+  <!-- HERO -->
   <div class="hero">
     <div class="hero-tag">TikTok · @somarchive · 영어 · 글로벌</div>
     <h1>I live in Seoul.<br>You <em>don't.</em></h1>
@@ -638,33 +549,19 @@
     </div>
   </div>
 
+  <!-- WORKSPACE -->
   <div class="workspace">
     <div class="tabs" id="tabs-tiktok">
-      <button class="tab active-tiktok" data-tab="today" onclick="switchTab('tiktok','today')">Today</button>
-      <button class="tab" data-tab="weekly" onclick="switchTab('tiktok','weekly')">This Week</button>
-      <button class="tab" data-tab="scripts" onclick="switchTab('tiktok','scripts')">Scripts</button>
-      <button class="tab" data-tab="memo" onclick="switchTab('tiktok','memo')">Memo</button>
-      <button class="tab" data-tab="calendar" onclick="switchTab('tiktok','calendar')">Calendar</button>
-      <button class="tab" data-tab="performance" onclick="switchTab('tiktok','performance')">Performance</button>
-      <button class="tab" data-tab="assets" onclick="switchTab('tiktok','assets')">Assets</button>
-      <button class="tab" data-tab="settings" onclick="switchTab('tiktok','settings')">Settings</button>
-    </div>
-
-    <!-- TODAY -->
-    <div class="section active" id="tiktok-today">
-      <div id="tiktok-today-content"></div>
-    </div>
-
-    <!-- WEEKLY PLAN -->
-    <div class="section" id="tiktok-weekly">
-      <div class="section-title">이번 주 플랜</div>
-      <div class="weekly-scroll">
-        <div class="weekly-grid" id="tiktok-weekly-grid"></div>
-      </div>
+      <button class="tab active-tiktok" onclick="switchTab('tiktok','scripts')">🎬 Scripts</button>
+      <button class="tab" onclick="switchTab('tiktok','memo')">💡 Memo</button>
+      <button class="tab" onclick="switchTab('tiktok','calendar')">📅 Calendar</button>
+      <button class="tab" onclick="switchTab('tiktok','performance')">📊 Performance</button>
+      <button class="tab" onclick="switchTab('tiktok','assets')">🗂 Assets</button>
+      <button class="tab" onclick="switchTab('tiktok','settings')">⚙ Settings</button>
     </div>
 
     <!-- SCRIPTS -->
-    <div class="section" id="tiktok-scripts">
+    <div class="section active" id="tiktok-scripts">
       <div class="section-title">이번 주 대본</div>
       <div id="tiktok-script-list"></div>
       <button class="add-btn" onclick="openScriptModal('tiktok')">+ 새 대본 추가</button>
@@ -682,7 +579,7 @@
       </div>
       <textarea class="memo-input" id="tiktok-memo-input" placeholder="메모 입력..."></textarea>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
-        <select id="tiktok-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--white);font-size:12px;font-family:inherit;">
+        <select id="tiktok-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--white);font-size:12px;">
           <option value="idea">💡 Idea</option>
           <option value="ref">🔗 Reference</option>
           <option value="todo">✅ To do</option>
@@ -730,7 +627,9 @@
       </div>
       <div id="tiktok-perf-list"></div>
       <div class="add-perf-form">
-        <div class="form-row"><input class="form-input" id="tiktok-perf-title" placeholder="영상 제목"></div>
+        <div class="form-row">
+          <input class="form-input" id="tiktok-perf-title" placeholder="영상 제목">
+        </div>
         <div class="form-row">
           <input class="form-input" id="tiktok-perf-views" placeholder="조회수" type="number">
           <input class="form-input" id="tiktok-perf-likes" placeholder="좋아요" type="number">
@@ -818,11 +717,14 @@
         <div class="settings-row"><span class="settings-row-label">최적 포스팅</span><span class="settings-row-val">오전 9AM (서울)</span></div>
       </div>
     </div>
+
   </div>
 </div>
 
 <!-- ══════════════ YOUTUBE PANEL ══════════════ -->
 <div class="channel-panel" id="panel-youtube">
+
+  <!-- HERO -->
   <div class="hero hero-yt">
     <div class="hero-tag">YouTube Shorts · 솜솜 · 한국어 · 한국인 타겟</div>
     <h1>서울 사는<br>내가 쓰는 <em>진짜.</em></h1>
@@ -835,33 +737,19 @@
     </div>
   </div>
 
+  <!-- WORKSPACE -->
   <div class="workspace">
     <div class="tabs" id="tabs-youtube">
-      <button class="tab active-youtube" data-tab="today" onclick="switchTab('youtube','today')">Today</button>
-      <button class="tab" data-tab="weekly" onclick="switchTab('youtube','weekly')">이번 주</button>
-      <button class="tab" data-tab="scripts" onclick="switchTab('youtube','scripts')">대본</button>
-      <button class="tab" data-tab="memo" onclick="switchTab('youtube','memo')">메모</button>
-      <button class="tab" data-tab="calendar" onclick="switchTab('youtube','calendar')">캘린더</button>
-      <button class="tab" data-tab="performance" onclick="switchTab('youtube','performance')">통계</button>
-      <button class="tab" data-tab="assets" onclick="switchTab('youtube','assets')">에셋</button>
-      <button class="tab" data-tab="settings" onclick="switchTab('youtube','settings')">세팅</button>
-    </div>
-
-    <!-- TODAY -->
-    <div class="section active" id="youtube-today">
-      <div id="youtube-today-content"></div>
-    </div>
-
-    <!-- WEEKLY PLAN -->
-    <div class="section" id="youtube-weekly">
-      <div class="section-title">이번 주 플랜</div>
-      <div class="weekly-scroll">
-        <div class="weekly-grid" id="youtube-weekly-grid"></div>
-      </div>
+      <button class="tab active-youtube" onclick="switchTab('youtube','scripts')">🎬 Scripts</button>
+      <button class="tab" onclick="switchTab('youtube','memo')">💡 Memo</button>
+      <button class="tab" onclick="switchTab('youtube','calendar')">📅 Calendar</button>
+      <button class="tab" onclick="switchTab('youtube','performance')">📊 Performance</button>
+      <button class="tab" onclick="switchTab('youtube','assets')">🗂 Assets</button>
+      <button class="tab" onclick="switchTab('youtube','settings')">⚙ Settings</button>
     </div>
 
     <!-- SCRIPTS -->
-    <div class="section" id="youtube-scripts">
+    <div class="section active" id="youtube-scripts">
       <div class="section-title">이번 주 대본</div>
       <div id="youtube-script-list"></div>
       <button class="add-btn yt" onclick="openScriptModal('youtube')">+ 새 대본 추가</button>
@@ -879,7 +767,7 @@
       </div>
       <textarea class="memo-input yt" id="youtube-memo-input" placeholder="메모 입력..."></textarea>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
-        <select id="youtube-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--white);font-size:12px;font-family:inherit;">
+        <select id="youtube-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--white);font-size:12px;">
           <option value="idea">💡 Idea</option>
           <option value="ref">🔗 Reference</option>
           <option value="todo">✅ To do</option>
@@ -927,7 +815,9 @@
       </div>
       <div id="youtube-perf-list"></div>
       <div class="add-perf-form">
-        <div class="form-row"><input class="form-input yt" id="youtube-perf-title" placeholder="영상 제목"></div>
+        <div class="form-row">
+          <input class="form-input yt" id="youtube-perf-title" placeholder="영상 제목">
+        </div>
         <div class="form-row">
           <input class="form-input yt" id="youtube-perf-views" placeholder="조회수" type="number">
           <input class="form-input yt" id="youtube-perf-likes" placeholder="좋아요" type="number">
@@ -996,6 +886,7 @@
         <div class="settings-row"><span class="settings-row-label">커뮤니티 포스트</span><span class="settings-row-val">업로드 당일 함께</span></div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -1003,14 +894,12 @@
 <div class="modal-overlay" id="script-modal">
   <div class="modal">
     <div class="modal-title" id="modal-title">새 대본 추가</div>
-
     <div class="modal-label">제목</div>
     <input class="modal-input" id="modal-script-title" placeholder="영상 제목">
-
-    <div class="modal-label">포스팅 날짜 & 상태</div>
+    <div class="modal-label">포스팅 날짜</div>
     <div class="modal-row">
       <input class="modal-input" id="modal-script-date" type="date" style="margin-bottom:0;">
-      <select id="modal-script-status" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--white);font-size:13px;flex:1;font-family:inherit;">
+      <select id="modal-script-status" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--white);font-size:13px;flex:1;">
         <option value="not-filmed">Not filmed</option>
         <option value="filmed">Filmed</option>
         <option value="editing">Editing</option>
@@ -1018,34 +907,15 @@
         <option value="urgent">⚡ Urgent</option>
       </select>
     </div>
-
     <div class="modal-label">대본</div>
-    <textarea class="modal-input" id="modal-script-body" placeholder="대본 내용 입력..." style="height:160px;"></textarea>
-
+    <textarea class="modal-input" id="modal-script-body" placeholder="대본 내용 입력..." style="height:200px;"></textarea>
     <div class="modal-label">촬영 노트 (선택)</div>
-    <textarea class="modal-input" id="modal-script-notes" placeholder="Shot types, lighting, cuts 등..." style="height:80px;"></textarea>
-
-    <div class="modal-label">레퍼런스 링크</div>
-    <div id="modal-ref-list"></div>
-    <button class="dashed-btn" onclick="addRefInput()">+ 링크 추가</button>
-
-    <div class="modal-label">레퍼런스 사진</div>
-    <div class="modal-photo-grid" id="modal-photo-previews"></div>
-    <label class="dashed-btn" style="cursor:pointer;">
-      + 사진 추가
-      <input type="file" multiple accept="image/*" id="modal-photos" style="display:none;" onchange="handlePhotoUpload(event)">
-    </label>
-
+    <textarea class="modal-input" id="modal-script-notes" placeholder="Shot types, lighting, cuts 등..." style="height:100px;"></textarea>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeModal()">취소</button>
       <button class="modal-save" id="modal-save-btn" onclick="saveScript()">저장</button>
     </div>
   </div>
-</div>
-
-<!-- PHOTO VIEWER -->
-<div class="photo-viewer" id="photo-viewer" onclick="closePhotoViewer()">
-  <img id="photo-viewer-img" src="" alt="">
 </div>
 
 <!-- TOAST -->
@@ -1072,11 +942,10 @@ function checkPassword() {
     setTimeout(() => document.getElementById("lock-input").focus(), 100);
   }
 })();
-
 // ── STATE ──
 let state = {
   currentChannel: 'tiktok',
-  currentTab: { tiktok: 'today', youtube: 'today' },
+  currentTab: { tiktok: 'scripts', youtube: 'scripts' },
   scripts: { tiktok: [], youtube: [] },
   memos: { tiktok: [], youtube: [] },
   events: { tiktok: [], youtube: [] },
@@ -1085,17 +954,60 @@ let state = {
   modalChannel: 'tiktok',
 };
 
-try {
-  const saved = localStorage.getItem('content-hub-v2');
-  if (saved) Object.assign(state, JSON.parse(saved));
-} catch(e) {}
+let saveTimer = null;
+let isLoaded = false;
+
+// localStorage 백업 (오프라인/Firebase 실패 대비)
+function loadFromLocalStorage() {
+  try {
+    const saved = localStorage.getItem('content-hub-v2');
+    if (saved) Object.assign(state, JSON.parse(saved));
+  } catch(e) {}
+}
+
+function saveToLocalStorage() {
+  try { localStorage.setItem('content-hub-v2', JSON.stringify(state)); } catch(e) {}
+}
+
+async function loadFromFirestore() {
+  try {
+    const ref = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-v2');
+    const snap = await window.__firebaseGetDoc(ref);
+    if (snap.exists()) {
+      Object.assign(state, snap.data());
+      return true;
+    }
+  } catch(e) { console.error('Firestore load error:', e); }
+  return false;
+}
+
+async function saveToFirestore() {
+  try {
+    const ref = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-v2');
+    await window.__firebaseSetDoc(ref, state);
+  } catch(e) { console.error('Firestore save error:', e); }
+}
 
 function save() {
-  try {
-    localStorage.setItem('content-hub-v2', JSON.stringify(state));
-  } catch(e) {
-    if (e.name === 'QuotaExceededError') showToast('저장 공간 부족 — 사진을 줄여주세요');
-  }
+  saveToLocalStorage(); // 즉시 로컬 백업
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { saveToFirestore(); }, 500); // 디바운스 후 클라우드 저장
+}
+
+async function initData() {
+  loadFromLocalStorage(); // 일단 로컬 데이터로 즉시 렌더링 (빠른 표시)
+  renderAll();
+  const got = await loadFromFirestore(); // Firestore에서 최신 데이터 가져오기
+  if (got) renderAll(); // 최신 데이터로 다시 렌더링
+  isLoaded = true;
+}
+
+function renderAll() {
+  ['tiktok','youtube'].forEach(ch => {
+    if (typeof renderScripts === 'function') renderScripts(ch);
+    if (typeof renderMemos === 'function') renderMemos(ch);
+    if (typeof renderPerf === 'function') renderPerf(ch);
+  });
 }
 
 // ── TOAST ──
@@ -1116,158 +1028,36 @@ function switchChannel(ch) {
   state.currentChannel = ch;
   document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + ch).classList.add('active');
-  document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-tiktok','active-youtube'));
+  document.querySelectorAll('.ch-btn').forEach(b => {
+    b.classList.remove('active-tiktok','active-youtube');
+  });
   event.currentTarget.classList.add('active-' + ch);
   save();
 }
 
 // ── TAB SWITCH ──
-const ALL_TABS = ['today','weekly','scripts','memo','calendar','performance','assets','settings'];
-
 function switchTab(ch, tab) {
   state.currentTab[ch] = tab;
-  document.querySelectorAll('#tabs-' + ch + ' .tab').forEach(t => {
+  const tabs = document.querySelectorAll('#tabs-' + ch + ' .tab');
+  tabs.forEach((t,i) => {
     t.classList.remove('active-tiktok','active-youtube');
-    if (t.dataset.tab === tab) t.classList.add('active-' + ch);
   });
-  ALL_TABS.forEach(s => {
-    const el = document.getElementById(ch + '-' + s);
+  event.currentTarget.classList.add('active-' + ch);
+
+  const prefix = ch + '-';
+  ['scripts','memo','calendar','performance','assets','settings'].forEach(s => {
+    const el = document.getElementById(prefix + s);
     if (el) el.classList.toggle('active', s === tab);
   });
+
   if (tab === 'calendar') renderCalendar(ch);
   if (tab === 'performance') renderPerf(ch);
-  if (tab === 'today') renderToday(ch);
-  if (tab === 'weekly') renderWeeklyPlan(ch);
   save();
 }
 
-// ── TODAY ──
-function renderToday(ch) {
-  const el = document.getElementById(ch + '-today-content');
-  if (!el) return;
-  const now = new Date();
-  const todayStr = toDateStr(now);
-  const DAY = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const accentColor = ch === 'youtube' ? 'var(--sage)' : 'var(--blush)';
-  const todayScripts = state.scripts[ch].filter(s => s.date === todayStr);
-  const todayEvents  = state.events[ch].filter(e => e.date === todayStr);
-
-  el.innerHTML = `
-    <div class="today-date-header">${DAY[now.getDay()]}</div>
-    <div class="today-day-sub">${MON[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}</div>
-    <div class="today-block">
-      <div class="today-block-title">오늘 대본</div>
-      ${todayScripts.length ? todayScripts.map(s => `
-        <div class="today-row">
-          <div class="today-row-info">
-            <div class="today-row-title">${escHtml(s.title)}</div>
-            <div class="today-row-sub">${statusLabel(s)}</div>
-          </div>
-          <button onclick="goToScript('${ch}',${s.id})"
-            style="background:none;border:1px solid ${s.status==='urgent'?'#ff6b6b':accentColor};border-radius:6px;color:${s.status==='urgent'?'#ff6b6b':accentColor};font-size:11px;padding:5px 10px;cursor:pointer;white-space:nowrap;font-family:inherit;">
-            열기
-          </button>
-        </div>`).join('') : '<div class="today-empty">오늘 예정된 대본 없음</div>'}
-    </div>
-    <div class="today-block">
-      <div class="today-block-title">오늘 일정</div>
-      ${todayEvents.length ? todayEvents.map(e => `
-        <div class="today-row">
-          <div class="today-row-info">
-            <div class="today-row-title">${escHtml(e.title)}</div>
-            <div class="today-row-sub">Calendar event</div>
-          </div>
-        </div>`).join('') : '<div class="today-empty">오늘 예정된 일정 없음</div>'}
-    </div>`;
-}
-
-function goToScript(ch, id) {
-  switchTab(ch, 'scripts');
-  setTimeout(() => {
-    const body = document.getElementById('body-' + id);
-    const chev = document.getElementById('chev-' + id);
-    if (body) { body.classList.add('open'); if (chev) chev.classList.add('open'); }
-    const card = body && body.closest('.script-card');
-    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 80);
-}
-
-// ── WEEKLY PLAN ──
-function renderWeeklyPlan(ch) {
-  const grid = document.getElementById(ch + '-weekly-grid');
-  if (!grid) return;
-  const now = new Date();
-  const dow = now.getDay();
-  const mondayOffset = dow === 0 ? -6 : 1 - dow;
-  const DAY_NAMES = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
-  const todayStr = toDateStr(now);
-  const scriptTypeClass = ch === 'youtube' ? 'type-script-yt' : 'type-script-tk';
-  const todayNumClass   = ch === 'youtube' ? 'is-today-yt' : 'is-today-tk';
-  const STATUS_SHORT = { 'not-filmed':'○', filmed:'✓', editing:'✂', done:'✓✓', urgent:'⚡' };
-
-  let html = '';
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(now);
-    d.setDate(now.getDate() + mondayOffset + i);
-    const dateStr = toDateStr(d);
-    const isToday = dateStr === todayStr;
-    const scripts = state.scripts[ch].filter(s => s.date === dateStr);
-    const events  = state.events[ch].filter(e => e.date === dateStr);
-    const numCls  = isToday ? todayNumClass : '';
-
-    html += `<div class="weekly-col">
-      <div class="weekly-day-header">
-        <div class="weekly-day-name">${DAY_NAMES[i]}</div>
-        <div class="weekly-day-num ${numCls}">${d.getDate()}</div>
-      </div>
-      ${scripts.length === 0 && events.length === 0 ? '<div class="weekly-col-empty">—</div>' : ''}
-      ${scripts.map(s => `
-        <div class="weekly-item ${scriptTypeClass}">
-          <div class="weekly-item-title">${escHtml(s.title.length > 22 ? s.title.slice(0,22)+'…' : s.title)}</div>
-          <div class="weekly-item-sub">${STATUS_SHORT[s.status] || ''} ${statusLabel(s)}</div>
-        </div>`).join('')}
-      ${events.map(e => `
-        <div class="weekly-item type-event">
-          <div class="weekly-item-title">${escHtml(e.title.length > 22 ? e.title.slice(0,22)+'…' : e.title)}</div>
-          <div class="weekly-item-sub">📅 일정</div>
-        </div>`).join('')}
-    </div>`;
-  }
-  grid.innerHTML = html;
-}
-
 // ── SCRIPTS ──
-let editingScriptId = null;
-let pendingRefs    = [];
-let pendingPhotos  = [];
-
-const CHECK_SVG = `<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 3.5L4 6.5L10 1" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-const DEFAULT_CHECKS = [
-  { id:'c1',  label:'Script reviewed',                           done:false },
-  { id:'c2',  label:'Lighting: Godox S60 + Luxpad 63H x2',      done:false },
-  { id:'c3',  label:'DJI Mic Mini charged, gain -6dB',           done:false },
-  { id:'c4',  label:'iPhone: 4K 30fps, HDR off, H.264',          done:false },
-  { id:'c5',  label:'Lock AE/AF before every shot',              done:false },
-  { id:'c6',  label:'Footage transferred to CapCut',             done:false },
-  { id:'c7',  label:'Edit done (color grade + text)',             done:false },
-  { id:'c8',  label:'Caption written (no forced CTA)',           done:false },
-  { id:'c9',  label:'Posted',                                    done:false },
-  { id:'c10', label:'Pin a comment immediately after posting',   done:false },
-  { id:'c11', label:'Reply to every comment within 30 min',      done:false },
-  { id:'c12', label:'Engage 5-10 similar accounts after posting',done:false },
-];
-
-function statusLabel(s) {
-  return ({ 'not-filmed':'Not filmed', filmed:'Filmed ✓', editing:'Editing', done:'Done ✓', urgent:'⚡ Urgent' })[s.status] || s.status;
-}
-
 function openScriptModal(ch) {
   state.modalChannel = ch;
-  editingScriptId = null;
-  pendingRefs   = [];
-  pendingPhotos = [];
   document.getElementById('script-modal').classList.add('open');
   document.getElementById('modal-title').textContent = ch === 'tiktok' ? '새 TikTok 대본' : '새 YouTube 대본';
   document.getElementById('modal-save-btn').className = 'modal-save' + (ch === 'youtube' ? ' yt' : '');
@@ -1276,35 +1066,8 @@ function openScriptModal(ch) {
     el.value = '';
     el.className = 'modal-input' + (ch === 'youtube' ? ' yt' : '');
   });
-  document.getElementById('modal-script-date').className = 'modal-input' + (ch === 'youtube' ? ' yt' : '');
   document.getElementById('modal-script-date').value = '';
   document.getElementById('modal-script-status').value = 'not-filmed';
-  renderRefInputs();
-  renderModalPhotos();
-}
-
-function editScript(ch, id) {
-  const s = state.scripts[ch].find(x => x.id === id);
-  if (!s) return;
-  state.modalChannel = ch;
-  editingScriptId = id;
-  pendingRefs   = s.refs   ? [...s.refs]   : [];
-  pendingPhotos = s.photos ? [...s.photos] : [];
-  document.getElementById('script-modal').classList.add('open');
-  document.getElementById('modal-title').textContent = ch === 'tiktok' ? 'TikTok 대본 편집' : 'YouTube 대본 편집';
-  document.getElementById('modal-save-btn').className = 'modal-save' + (ch === 'youtube' ? ' yt' : '');
-  const ytCls = ch === 'youtube' ? ' yt' : '';
-  ['modal-script-title','modal-script-body','modal-script-notes'].forEach(elId => {
-    document.getElementById(elId).className = 'modal-input' + ytCls;
-  });
-  document.getElementById('modal-script-date').className = 'modal-input' + ytCls;
-  document.getElementById('modal-script-title').value  = s.title  || '';
-  document.getElementById('modal-script-date').value   = s.date   || '';
-  document.getElementById('modal-script-status').value = s.status || 'not-filmed';
-  document.getElementById('modal-script-body').value   = s.body   || '';
-  document.getElementById('modal-script-notes').value  = s.notes  || '';
-  renderRefInputs();
-  renderModalPhotos();
 }
 
 function closeModal() {
@@ -1312,98 +1075,40 @@ function closeModal() {
 }
 
 function saveScript() {
-  const ch    = state.modalChannel;
+  const ch = state.modalChannel;
   const title = document.getElementById('modal-script-title').value.trim();
   if (!title) { showToast('제목을 입력해주세요'); return; }
-  const refs   = pendingRefs.filter(r => r.trim());
-  const photos = [...pendingPhotos];
-  const isEdit = editingScriptId !== null;
-
-  if (isEdit) {
-    const s = state.scripts[ch].find(x => x.id === editingScriptId);
-    if (s) {
-      s.title  = title;
-      s.date   = document.getElementById('modal-script-date').value;
-      s.status = document.getElementById('modal-script-status').value;
-      s.body   = document.getElementById('modal-script-body').value;
-      s.notes  = document.getElementById('modal-script-notes').value;
-      s.refs   = refs;
-      s.photos = photos;
-    }
-  } else {
-    state.scripts[ch].unshift({
-      id: Date.now(), title,
-      date:   document.getElementById('modal-script-date').value,
-      status: document.getElementById('modal-script-status').value,
-      body:   document.getElementById('modal-script-body').value,
-      notes:  document.getElementById('modal-script-notes').value,
-      checks: [], refs, photos, memo: '',
-    });
-  }
-  editingScriptId = null;
+  const script = {
+    id: Date.now(),
+    title,
+    date: document.getElementById('modal-script-date').value,
+    status: document.getElementById('modal-script-status').value,
+    body: document.getElementById('modal-script-body').value,
+    notes: document.getElementById('modal-script-notes').value,
+    checks: [],
+  };
+  state.scripts[ch].unshift(script);
   save();
   renderScripts(ch);
   closeModal();
-  showToast(isEdit ? '수정됐어요 ✓' : '대본 저장됐어요 ✓');
+  showToast('대본 저장됐어요 ✓');
 }
 
-// ── REF INPUTS ──
-function addRefInput() {
-  pendingRefs.push('');
-  renderRefInputs();
-}
-function removeRef(i) {
-  pendingRefs.splice(i, 1);
-  renderRefInputs();
-}
-function renderRefInputs() {
-  const container = document.getElementById('modal-ref-list');
-  if (!container) return;
-  const ch = state.modalChannel;
-  const ytCls = ch === 'youtube' ? ' yt' : '';
-  container.innerHTML = pendingRefs.map((ref, i) => `
-    <div class="ref-input-row">
-      <input class="modal-input${ytCls}" value="${escHtml(ref)}" placeholder="https://..."
-        oninput="pendingRefs[${i}]=this.value">
-      <button class="ref-del-btn" onclick="removeRef(${i})">×</button>
-    </div>`).join('');
-}
+const DEFAULT_CHECKS = [
+  { id: 'c1', label: 'Script reviewed', done: false },
+  { id: 'c2', label: 'Lighting: Godox S60 + Luxpad 63H x2', done: false },
+  { id: 'c3', label: 'DJI Mic Mini charged, gain -6dB', done: false },
+  { id: 'c4', label: 'iPhone: 4K 30fps, HDR off, H.264', done: false },
+  { id: 'c5', label: 'Lock AE/AF before every shot', done: false },
+  { id: 'c6', label: 'Footage transferred to CapCut', done: false },
+  { id: 'c7', label: 'Edit done (color grade + text)', done: false },
+  { id: 'c8', label: 'Caption written (no forced CTA)', done: false },
+  { id: 'c9', label: 'Posted', done: false },
+  { id: 'c10', label: 'Pin a comment immediately after posting', done: false },
+  { id: 'c11', label: 'Reply to every comment within 30 min', done: false },
+  { id: 'c12', label: 'Engage 5-10 similar accounts after posting', done: false },
+];
 
-// ── PHOTO UPLOAD ──
-function handlePhotoUpload(event) {
-  const files = Array.from(event.target.files);
-  files.forEach(file => {
-    if (file.size > 3 * 1024 * 1024) { showToast('사진은 3MB 이하로 올려주세요'); return; }
-    const reader = new FileReader();
-    reader.onload = e => { pendingPhotos.push(e.target.result); renderModalPhotos(); };
-    reader.readAsDataURL(file);
-  });
-  event.target.value = '';
-}
-function removeModalPhoto(i) {
-  pendingPhotos.splice(i, 1);
-  renderModalPhotos();
-}
-function renderModalPhotos() {
-  const container = document.getElementById('modal-photo-previews');
-  if (!container) return;
-  container.innerHTML = pendingPhotos.map((src, i) => `
-    <div class="modal-photo-wrap">
-      <img src="${src}">
-      <button class="modal-photo-del" onclick="removeModalPhoto(${i})">×</button>
-    </div>`).join('');
-}
-
-// ── PHOTO VIEWER ──
-function openPhotoViewer(src) {
-  document.getElementById('photo-viewer-img').src = src;
-  document.getElementById('photo-viewer').classList.add('open');
-}
-function closePhotoViewer() {
-  document.getElementById('photo-viewer').classList.remove('open');
-}
-
-// ── RENDER SCRIPTS ──
 function renderScripts(ch) {
   const list = document.getElementById(ch + '-script-list');
   if (!list) return;
@@ -1411,66 +1116,50 @@ function renderScripts(ch) {
     list.innerHTML = '<div class="empty">대본이 없어요.<br>아래 버튼으로 추가해보세요.</div>';
     return;
   }
-  const isYt = ch === 'youtube';
-  list.innerHTML = state.scripts[ch].map((s, i) => {
+  list.innerHTML = state.scripts[ch].map((s,i) => {
+    const filmed = s.filmed || false;
+    const statusClass = s.status === 'urgent' ? 'urgent' : '';
+    const statusLabel = {
+      'not-filmed': 'Not filmed',
+      'filmed': 'Filmed ✓',
+      'editing': 'Editing',
+      'done': 'Done ✓',
+      'urgent': '⚡ Urgent',
+    }[s.status] || s.status;
     if (!s.checks || !s.checks.length) { s.checks = DEFAULT_CHECKS.map(c => ({...c})); save(); }
-    if (!s.refs)   s.refs   = [];
-    if (!s.photos) s.photos = [];
-    if (!s.memo)   s.memo   = '';
     const checks = s.checks;
-    const doneCnt = checks.filter(c => c.done).length;
-    const statusCls = s.status === 'urgent' ? 'urgent' : '';
-    const doneBoxCls = isYt ? 'done-yt' : 'done';
-    const refLinkCls = isYt ? ' yt' : '';
-
+    const checksDone = checks.filter(c => c.done).length;
+    const checksTotal = checks.length;
     const checklistHtml = checks.map(c => `
       <li>
-        <div class="check-box ${c.done ? doneBoxCls : ''}" onclick="toggleCheck('${ch}',${s.id},'${c.id}')">
-          ${c.done ? CHECK_SVG : ''}
-        </div>
+        <div class="check-box ${c.done ? (ch==='youtube'?'done-yt':'done') : ''}"
+          onclick="toggleCheck('${ch}',${s.id},'${c.id}')">${c.done ? '✓' : ''}</div>
         <span style="color:${c.done?'var(--mid)':'var(--white)'};text-decoration:${c.done?'line-through':'none'}">${c.label}</span>
       </li>`).join('');
-
-    const refsHtml = s.refs.length ? `
-      <div class="prod-section">
-        <div class="prod-title">🔗 레퍼런스 링크</div>
-        ${s.refs.map(ref => `<a href="${escHtml(safeUrl(ref))}" target="_blank" rel="noopener noreferrer" class="ref-link${refLinkCls}">${escHtml(ref)}</a>`).join('')}
-      </div>` : '';
-
-    const photosHtml = s.photos.length ? `
-      <div class="prod-section">
-        <div class="prod-title">📷 레퍼런스 사진</div>
-        <div class="photo-grid">
-          ${s.photos.map(src => `<img class="photo-thumb" src="${src}" onclick="openPhotoViewer('${src}')">`).join('')}
-        </div>
-      </div>` : '';
-
+    const memoVal = s.memo || '';
     return `
     <div class="script-card">
       <div class="script-header" onclick="toggleScript(${s.id},'${ch}')">
         <div class="script-meta">
           <div class="script-num">Video ${String(state.scripts[ch].length - i).padStart(2,'0')}</div>
-          <div class="script-title">${escHtml(s.title)}</div>
+          <div class="script-title">${s.title}</div>
           ${s.date ? `<div class="script-date">Posting: ${formatDate(s.date)}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
-          <span class="script-status ${statusCls}">${statusLabel(s)}</span>
-          <button onclick="toggleFilmed('${ch}',${s.id})"
-            style="padding:3px 8px;border-radius:4px;border:1px solid ${s.filmed?'var(--sage)':'var(--border)'};background:${s.filmed?'var(--sage)':'none'};color:${s.filmed?'var(--black)':'var(--mid)'};font-size:10px;cursor:pointer;white-space:nowrap;font-weight:600;font-family:inherit;">
-            ${s.filmed ? '🎬 촬영완료' : '○ 촬영미완료'}
+          <span class="script-status ${statusClass}">${statusLabel}</span>
+          <button onclick="toggleFilmed('${ch}',${s.id})" style="padding:3px 8px;border-radius:4px;border:1px solid ${filmed?'var(--sage)':'var(--border)'};background:${filmed?'var(--sage)':'none'};color:${filmed?'var(--black)':'var(--mid)'};font-size:10px;cursor:pointer;white-space:nowrap;font-weight:600;">
+            ${filmed ? '🎬 촬영완료' : '○ 촬영미완료'}
           </button>
         </div>
         <span class="script-chevron" id="chev-${s.id}">▾</span>
       </div>
       <div class="script-body" id="body-${s.id}">
         ${s.body ? `<div class="prod-title" style="margin-bottom:6px;">📝 SCRIPT</div><div class="script-content">${escHtml(s.body)}</div>` : ''}
-        ${s.notes ? `<div class="prod-section"><div class="prod-title">▶ Production Notes</div><div class="script-content" style="font-size:12px;">${escHtml(s.notes)}</div></div>` : ''}
-        ${refsHtml}
-        ${photosHtml}
+        ${s.notes ? `<div class="prod-section"><div class="prod-title">▶ Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
         <div class="prod-section">
           <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
             <span>✅ Checklist</span>
-            <span style="color:var(--mid);font-size:11px;">${doneCnt}/${checks.length}</span>
+            <span style="color:var(--mid);font-size:11px;">${checksDone}/${checksTotal}</span>
           </div>
           <ul class="checklist">${checklistHtml}</ul>
         </div>
@@ -1478,11 +1167,10 @@ function renderScripts(ch) {
           <div class="prod-title">💬 메모</div>
           <textarea id="smemo-${s.id}" onchange="saveScriptMemo('${ch}',${s.id},this.value)"
             style="width:100%;background:#0f0f0f;border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--white);font-size:12px;resize:vertical;min-height:72px;font-family:inherit;outline:none;line-height:1.6;"
-            placeholder="촬영 메모, 수정사항, 아이디어...">${escHtml(s.memo)}</textarea>
+            placeholder="촬영 메모, 수정사항, 아이디어...">${escHtml(memoVal)}</textarea>
         </div>
-        <div class="card-actions">
-          <button class="card-btn" onclick="editScript('${ch}',${s.id})">편집</button>
-          <button class="card-btn danger" onclick="deleteScript('${ch}',${s.id})">삭제</button>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onclick="deleteScript('${ch}',${s.id})" style="background:none;border:1px solid #333;border-radius:6px;color:#666;font-size:11px;padding:5px 10px;cursor:pointer;">삭제</button>
         </div>
       </div>
     </div>`;
@@ -1490,18 +1178,16 @@ function renderScripts(ch) {
 }
 
 function toggleScript(id, ch) {
-  document.getElementById('body-' + id).classList.toggle('open');
-  document.getElementById('chev-' + id).classList.toggle('open');
+  const body = document.getElementById('body-' + id);
+  const chev = document.getElementById('chev-' + id);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
 }
 
 function toggleFilmed(ch, id) {
   const s = state.scripts[ch].find(x => x.id === id);
-  if (!s) return;
-  s.filmed = !s.filmed; save(); renderScripts(ch);
-  setTimeout(() => {
-    document.getElementById('body-' + id)?.classList.add('open');
-    document.getElementById('chev-' + id)?.classList.add('open');
-  }, 10);
+  if (s) { s.filmed = !s.filmed; save(); renderScripts(ch);
+    setTimeout(() => { const b = document.getElementById('body-'+id); const c = document.getElementById('chev-'+id); if(b) b.classList.add('open'); if(c) c.classList.add('open'); }, 10); }
 }
 
 function toggleCheck(ch, scriptId, checkId) {
@@ -1509,12 +1195,8 @@ function toggleCheck(ch, scriptId, checkId) {
   if (!s) return;
   if (!s.checks || !s.checks.length) s.checks = DEFAULT_CHECKS.map(c => ({...c}));
   const c = s.checks.find(x => x.id === checkId);
-  if (!c) return;
-  c.done = !c.done; save(); renderScripts(ch);
-  setTimeout(() => {
-    document.getElementById('body-' + scriptId)?.classList.add('open');
-    document.getElementById('chev-' + scriptId)?.classList.add('open');
-  }, 10);
+  if (c) { c.done = !c.done; save(); renderScripts(ch);
+    setTimeout(() => { const b = document.getElementById('body-'+scriptId); const cv = document.getElementById('chev-'+scriptId); if(b) b.classList.add('open'); if(cv) cv.classList.add('open'); }, 10); }
 }
 
 function saveScriptMemo(ch, id, val) {
@@ -1525,6 +1207,16 @@ function saveScriptMemo(ch, id, val) {
 function deleteScript(ch, id) {
   state.scripts[ch] = state.scripts[ch].filter(s => s.id !== id);
   save(); renderScripts(ch);
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('ko-KR', { month:'short', day:'numeric', weekday:'short' });
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ── MEMO ──
@@ -1540,7 +1232,8 @@ function saveMemo(ch) {
 
 function filterMemo(ch, filter, el) {
   state.memoFilter[ch] = filter;
-  el.closest('.memo-tags').querySelectorAll('.memo-tag').forEach(t => t.classList.remove('active','active-yt'));
+  const tags = el.closest('.memo-tags').querySelectorAll('.memo-tag');
+  tags.forEach(t => t.classList.remove('active','active-yt'));
   el.classList.add(ch === 'youtube' ? 'active-yt' : 'active');
   renderMemos(ch);
 }
@@ -1551,11 +1244,11 @@ function renderMemos(ch) {
   const f = state.memoFilter[ch] || 'all';
   const items = f === 'all' ? state.memos[ch] : state.memos[ch].filter(m => m.type === f);
   if (!items.length) { list.innerHTML = '<div class="empty">메모 없음</div>'; return; }
-  const icons = { idea:'💡', ref:'🔗', todo:'✅', general:'📝' };
+  const labels = { idea:'💡', ref:'🔗', todo:'✅', general:'📝' };
   list.innerHTML = items.map(m => `
     <div class="memo-item">
       <div class="memo-item-text">${escHtml(m.text)}</div>
-      <span class="memo-item-tag">${icons[m.type] || '📝'}</span>
+      <span class="memo-item-tag">${labels[m.type] || '📝'}</span>
       <span class="memo-del" onclick="deleteMemo('${ch}',${m.id})">×</span>
     </div>`).join('');
 }
@@ -1575,18 +1268,23 @@ function renderCalendar(ch) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = now.getDate();
+
   const eventDates = new Set(state.events[ch].map(e => e.date));
   let html = '';
   for (let i = 0; i < firstDay; i++) html += '<div></div>';
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const cls = ['cal-day',
-      d === today ? (ch==='youtube'?'today-yt':'today') : '',
-      eventDates.has(dateStr) ? (ch==='youtube'?'has-post-yt':'has-post') : '',
+    const isToday = d === today;
+    const hasPost = eventDates.has(dateStr);
+    const cls = [
+      'cal-day',
+      isToday ? (ch==='youtube'?'today-yt':'today') : '',
+      hasPost ? (ch==='youtube'?'has-post-yt':'has-post') : '',
     ].filter(Boolean).join(' ');
     html += `<div class="${cls}">${d}</div>`;
   }
   grid.innerHTML = html;
+
   const sorted = [...state.events[ch]].sort((a,b) => a.date > b.date ? 1 : -1);
   evEl.innerHTML = sorted.length ? sorted.map(e => `
     <div class="cal-event">
@@ -1601,11 +1299,11 @@ function renderCalendar(ch) {
 
 function addEvent(ch) {
   const title = document.getElementById(ch + '-event-title').value.trim();
-  const date  = document.getElementById(ch + '-event-date').value;
+  const date = document.getElementById(ch + '-event-date').value;
   if (!title || !date) { showToast('제목과 날짜를 입력해주세요'); return; }
   state.events[ch].push({ id: Date.now(), title, date });
   document.getElementById(ch + '-event-title').value = '';
-  document.getElementById(ch + '-event-date').value  = '';
+  document.getElementById(ch + '-event-date').value = '';
   save(); renderCalendar(ch);
   showToast('일정 추가됐어요 ✓');
 }
@@ -1617,12 +1315,14 @@ function deleteEvent(ch, id) {
 
 // ── PERFORMANCE ──
 function renderPerf(ch) {
-  const list  = document.getElementById(ch + '-perf-list');
+  const list = document.getElementById(ch + '-perf-list');
   const posts = state.perfs[ch];
   document.getElementById(ch + '-total-posts').textContent = posts.length;
   if (posts.length) {
-    document.getElementById(ch + '-avg-views').textContent = fmtNum(Math.round(posts.reduce((s,p) => s + (p.views||0), 0) / posts.length));
-    document.getElementById(ch + '-avg-likes').textContent = fmtNum(Math.round(posts.reduce((s,p) => s + (p.likes||0), 0) / posts.length));
+    const avgV = Math.round(posts.reduce((s,p) => s + (p.views||0), 0) / posts.length);
+    const avgL = Math.round(posts.reduce((s,p) => s + (p.likes||0), 0) / posts.length);
+    document.getElementById(ch + '-avg-views').textContent = fmtNum(avgV);
+    document.getElementById(ch + '-avg-likes').textContent = fmtNum(avgL);
   }
   if (!list) return;
   list.innerHTML = posts.length ? posts.map(p => `
@@ -1654,13 +1354,19 @@ function deletePerf(ch, id) {
   save(); renderPerf(ch);
 }
 
+function fmtNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return String(n);
+}
+
 // ── ASSETS ──
 function addAsset(ch, type) {
   const input = document.getElementById(ch + '-' + type + '-input');
-  const text  = input.value.trim();
+  const text = input.value.trim();
   if (!text) return;
   const list = document.getElementById(ch + '-' + type + '-list');
-  const div  = document.createElement('div');
+  const div = document.createElement('div');
   div.className = 'asset-item';
   div.innerHTML = `<div class="asset-item-text">${escHtml(text)}</div>
     <button class="copy-btn${ch==='youtube'?' yt':''}" onclick="copyText(this.previousElementSibling.textContent)">copy</button>`;
@@ -1669,62 +1375,17 @@ function addAsset(ch, type) {
   showToast('추가됐어요 ✓');
 }
 
-// ── UTILS ──
-function toDateStr(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
-function formatDate(d) {
-  if (!d) return '';
-  return new Date(d + 'T00:00:00').toLocaleDateString('ko-KR', { month:'short', day:'numeric', weekday:'short' });
-}
-
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function safeUrl(ref) {
-  const t = ref.trim();
-  if (t.startsWith('http://') || t.startsWith('https://')) return t;
-  return 'https://' + t;
-}
-
-function fmtNum(n) {
-  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000)    return (n/1000).toFixed(1) + 'K';
-  return String(n);
-}
-
 // ── INIT ──
 function init() {
-  ['tiktok','youtube'].forEach(ch => {
-    renderScripts(ch);
-    renderMemos(ch);
-    renderPerf(ch);
-    renderToday(ch);
-  });
-
-  if (!state.scripts.tiktok.length) {
-    state.scripts.tiktok = [
-      { id:1, title:'Olive Young 택배깡 Haul', date:'2026-06-10', status:'not-filmed', filmed:false,
-        body:`VISUAL HOOK (0–2s) B-roll: 택배 박스 오픈. 두 손이 뜯는 장면.\n\nVERBAL HOOK (2–7s)\n"okay, so my olive young order just arrived. and honestly? i got way too much stuff. let me show you what i picked up."\n\nBODY (7–25s)\n[제품 1] "I already have one, but this shade got me."\n[제품 2] "Saw the swatches, immediately added to cart. Limited edition."\n[제품 3] "Rom&nd lip oil — obsessed ever since."\n[제품 4] "Fwee gloss. The shine is unreal."\n\nENDING (25–30s)\n"i'll be reviewing these one by one, so stay tuned."\n[Text: "full reviews coming 🧴"]`,
-        notes:'Flat lay: Luxpad x2 + Godox S60\nTH: Luxpad 45° key + fill\n제품당 1–1.5초 컷', checks:[], refs:[], photos:[], memo:'' },
-      { id:2, title:'Korean Skin Prep', date:'2026-06-12', status:'not-filmed', filmed:false,
-        body:`VISUAL HOOK (0–2s)\n뺨에 에센스 패팅하는 손 클로즈업.\n[Text: "why does korean makeup look like THAT."]\n\nTH (2–8s)\n"okay it's not the foundation. it's not even the primer. it's what happens before all of that."\n\nSTEPS (8–20s)\nStep 1: 토너 레이어링 "two, three layers"\nStep 2: 에센스 패팅 "pat it in. not rub."\nStep 3: 모이스처라이저 "seal it."\nStep 4: 선크림 "always last."\n\nENDING\n"same foundation. different canvas."`,
-        notes:'⚠ 링라이트 직접 금지\n패팅 소리와 영상 반드시 동기화', checks:[], refs:[], photos:[], memo:'' },
-      { id:3, title:'Nina Park Lip Technique', date:'2026-06-15', status:'not-filmed', filmed:false,
-        body:`HOOK (0–2s) 완성된 립 extreme close-up.\n[Text: "i've been staring at nina park's work for three days."]\n\nSTEPS (6–23s)\nStep 1: 매트 립스틱 all over\nStep 2: 더 어두운 라이너 → into the lip (not around)\nStep 3: 블러 아웃\nStep 4: 글로스 center only\n\nREVEAL\n"see how it looks fuller? but not overlined."\n\nENDING: "40 seconds once you know the order."`,
-        notes:'립 매크로: 링라이트 15인치 정면\nBefore/After 동일 앵글 고정', checks:[], refs:[], photos:[], memo:'' },
-      { id:4, title:'Jennie-Inspired Makeup', date:'2026-06-11', status:'urgent', filmed:false,
-        body:`HOOK (0–2s) Transition: 맨 얼굴 → 제니 inspired 풀 메이크업\n\nVERBAL HOOK (2–7s)\n"she was literally just here. and i've been staring at her makeup ever since."\n\nBODY\nSkin: "cream base + blush. she's just glowing."\nEye: "brown shadow, tight liner, no wing = more expensive"\nLip: "sheer tint. not matte, not glossy."\n\nENDING\n[Text: "full product list next 👁"]`,
-        notes:'Transition: 비트 드롭에 정확히 맞춰 hard cut\n⚡ 최근 이벤트 — 빨리 올릴 것', checks:[], refs:[], photos:[], memo:'' },
-      { id:5, title:'블랙핑크 미용실 브이로그', date:'2026-06-17', status:'not-filmed', filmed:false,
-        body:`HOOK (0–2s)\n완성된 머리카락 클로즈업. soft focus 살롱 배경.\n[Text: "i got my hair done at the salon blackpink goes to."]\n\nTH (2–6s)\n"okay so my roots were fully grown out — and i ended up booking the salon BLACKPINK goes to."\n\nPROCESS (10–22s)\n"they covered my ears with plastic so the dye wouldn't touch them."\n[Text: "the detail here is different."]\n\nREVEAL (22–28s)\nBefore → After 슬로우모션 0.7x\n"okay wait —— look at it when it moves."\n\nENDING\n[Text: "salon info 👇"]`,
-        notes:'귀 비닐 클로즈업 별도 촬영 (핵심)\nmacro zoom-in 1.3x\nBefore→After: Hard cut + whoosh', checks:[], refs:[], photos:[], memo:'' },
-    ];
-    save();
-    renderScripts('tiktok');
-    renderToday('tiktok');
+  // Firebase SDK 로드 대기 후 데이터 초기화
+  if (window.__firebaseReady) {
+    initData();
+  } else {
+    window.addEventListener('firebase-ready', initData, { once: true });
+    // 5초 안에 Firebase 준비 안 되면 로컬 데이터로만 진행 (네트워크 문제 대비)
+    setTimeout(() => {
+      if (!isLoaded) { loadFromLocalStorage(); renderAll(); }
+    }, 5000);
   }
 }
 
