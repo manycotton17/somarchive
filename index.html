@@ -9,81 +9,129 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Content Hub</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+KR:wght@400;500&display=swap');
   :root {
-    --black: #111111;
-    --white: #ffffff;
-    --cream: #F5F0EB;
-    --blush: #D4A5A5;
-    --sage: #A8B5A2;
+    /* Reference palette */
+    --ink: #383838;
+    --soft: #f9f6f3;
+    --soft-2: #f1ece7;
+    --blush: #f2cfc4;
+    --sage: #c8d8c0;
+    --lavender: #d4cfe8;
+    --butter: #f5e9c4;
     --mid: #888888;
-    --border: #222222;
-    --card: #181818;
-    --tiktok: #D4A5A5;
-    --youtube: #A8B5A2;
+    --white: #ffffff;
+
+    /* Legacy aliases so existing HTML/JS needs no changes */
+    --linen: var(--soft);
+    --linen-2: var(--soft-2);
+    --walnut: var(--ink);
+    --charcoal: #333333;
+    --slate: var(--mid);
+    --black: var(--white);
+    --cream: var(--soft-2);
+    --border: rgba(0,0,0,0.09);
+    --card: var(--soft);
+
+    /* Channel accents */
+    --tiktok: #111111;
+    --youtube: #b85c3a;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  input, textarea, select, button {
+    font-family: 'DM Sans', 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  }
   html { scroll-behavior: smooth; }
   body {
-    background: var(--black);
-    color: var(--white);
-    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    font-family: 'DM Sans', 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', system-ui, sans-serif;
     font-size: 14px;
     line-height: 1.6;
     min-height: 100vh;
+    cursor: none;
   }
 
   /* ── TOP NAV ── */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: var(--black);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px; height: 48px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    display: flex; align-items: center;
+    padding: 0 24px 0 28px; height: 64px;
+    overflow: hidden; gap: 0;
   }
-  .nav-logo { font-size: 13px; letter-spacing: .08em; color: var(--mid); }
+  .nav-logo {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 17px; letter-spacing: -0.3px; color: var(--ink);
+    font-weight: 400; flex-shrink: 0; margin-right: 16px;
+  }
+  .nav-right {
+    display: flex; align-items: center; gap: 2px;
+    overflow-x: auto; scrollbar-width: none; flex: 1; justify-content: flex-end;
+  }
+  .nav-right::-webkit-scrollbar { display: none; }
+  .nav-sep { color: rgba(0,0,0,0.15); font-size: 14px; flex-shrink: 0; margin: 0 8px; }
+  .nav-tab {
+    background: none; border: none; padding: 5px 10px;
+    font-size: 12px; font-weight: 400; letter-spacing: .02em;
+    color: var(--mid); cursor: pointer;
+    white-space: nowrap; transition: color .15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-tab:hover { color: var(--ink); }
 
   /* ── CHANNEL SWITCHER ── */
   .channel-switcher {
-    display: flex; gap: 4px;
-    background: #1a1a1a; border-radius: 8px; padding: 3px;
+    display: flex; gap: 6px;
+    background: none; padding: 0;
   }
   .ch-btn {
-    padding: 5px 14px; border-radius: 6px; border: none;
-    font-size: 12px; font-weight: 600; cursor: pointer;
-    transition: all .2s; letter-spacing: .04em;
-    background: transparent; color: var(--mid);
+    padding: 7px 18px; border-radius: 9999px; border: 1px solid rgba(0,0,0,0.12);
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    transition: all .18s cubic-bezier(0.22,1,0.36,1); letter-spacing: .02em;
+    background: transparent; color: var(--ink);
   }
-  .ch-btn.active-tiktok { background: var(--tiktok); color: var(--black); }
-  .ch-btn.active-youtube { background: var(--youtube); color: var(--black); }
+  .ch-btn.active-tiktok { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .ch-btn.active-youtube { background: var(--youtube); color: #fff; border-color: var(--youtube); }
 
   /* ── CHANNEL PANELS ── */
-  .channel-panel { display: none; padding-top: 48px; }
+  .channel-panel { display: none; padding-top: 64px; }
   .channel-panel.active { display: block; }
 
   /* ── HERO ── */
   .hero {
-    padding: 60px 20px 40px;
-    border-bottom: 1px solid var(--border);
+    padding: 120px 48px 64px;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    min-height: calc(100vh - 64px);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    box-sizing: border-box;
+    position: relative;
+    background: var(--white);
   }
   .hero-tag {
-    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--mid); margin-bottom: 12px;
+    font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 28px; font-weight: 500;
   }
   .hero h1 {
-    font-size: clamp(28px, 8vw, 52px);
-    font-weight: 700; line-height: 1.1;
-    letter-spacing: -.02em; margin-bottom: 16px;
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(52px, 10vw, 120px);
+    font-weight: 400; line-height: 1.0;
+    letter-spacing: -.03em; margin-bottom: 24px;
+    color: var(--ink);
   }
-  .hero h1 em { font-style: italic; color: var(--blush); }
-  .hero-yt h1 em { color: var(--sage); }
+  .hero h1 em { font-style: italic; color: var(--mid); font-weight: 400; }
+  .hero-yt h1 em { color: var(--mid); }
   .hero-sub {
-    font-size: 14px; color: var(--mid); max-width: 320px; line-height: 1.7;
+    font-size: 15px; color: var(--mid); max-width: 360px; line-height: 1.65; font-weight: 300;
   }
-  .hero-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
   .pill {
-    padding: 4px 10px; border-radius: 20px;
-    border: 1px solid var(--border);
+    padding: 6px 16px; border-radius: 9999px;
+    border: 1px solid rgba(0,0,0,0.1);
     font-size: 11px; color: var(--mid); letter-spacing: .04em;
+    text-transform: uppercase; font-weight: 500;
   }
 
   /* ── WORKSPACE ── */
@@ -91,24 +139,26 @@
 
   /* ── TABS ── */
   .tabs {
-    display: flex; overflow-x: auto; gap: 0;
-    border-bottom: 1px solid var(--border);
-    scrollbar-width: none; position: sticky; top: 48px;
-    background: var(--black); z-index: 50;
+    display: flex; overflow-x: auto; gap: 6px;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    scrollbar-width: none; position: sticky; top: 64px;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+    z-index: 50; padding: 10px 20px;
   }
   .tabs::-webkit-scrollbar { display: none; }
   .tab {
-    padding: 12px 16px; font-size: 12px; letter-spacing: .06em;
+    padding: 7px 16px; font-size: 12px; letter-spacing: .01em;
     color: var(--mid); cursor: pointer; white-space: nowrap;
-    border-bottom: 2px solid transparent; transition: all .2s;
-    background: none; border-top: none; border-left: none; border-right: none;
+    border-radius: 9999px; border: 1px solid transparent;
+    transition: all .18s cubic-bezier(0.22,1,0.36,1);
+    background: none; font-weight: 500; font-family: 'DM Sans', sans-serif;
   }
-  .tab:hover { color: var(--white); }
-  .tab.active-tiktok { color: var(--tiktok); border-bottom-color: var(--tiktok); }
-  .tab.active-youtube { color: var(--sage); border-bottom-color: var(--sage); }
+  .tab:hover { color: var(--ink); background: var(--soft); }
+  .tab.active-tiktok { color: var(--ink); background: var(--soft); border-color: rgba(0,0,0,0.1); }
+  .tab.active-youtube { color: var(--youtube); background: #fdf2ee; border-color: rgba(184,92,58,0.2); }
 
   /* ── SECTION ── */
-  .section { padding: 24px 20px; border-bottom: 1px solid var(--border); display: none; }
+  .section { padding: 24px 20px; border-bottom: 1px solid rgba(0,0,0,0.06); display: none; }
   .section.active { display: block; }
   .section-title {
     font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
@@ -117,35 +167,37 @@
 
   /* ── SCRIPTS ── */
   .script-card {
-    background: var(--card); border-radius: 10px;
-    margin-bottom: 12px; overflow: hidden;
+    background: var(--white); border-radius: 16px; border: 1px solid rgba(0,0,0,0.08);
+    margin-bottom: 10px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
   .script-header {
-    padding: 14px 16px; cursor: pointer;
+    padding: 16px 20px; cursor: pointer;
     display: flex; align-items: center; justify-content: space-between;
     gap: 12px;
   }
-  .script-header:hover { background: #1f1f1f; }
+  .script-header:hover { background: var(--soft); }
   .script-meta { flex: 1; min-width: 0; }
-  .script-num { font-size: 10px; color: var(--mid); letter-spacing: .08em; margin-bottom: 4px; }
-  .script-title { font-size: 14px; font-weight: 600; }
+  .script-num { font-size: 10px; color: var(--mid); letter-spacing: .08em; margin-bottom: 4px; text-transform: uppercase; }
+  .script-title { font-size: 14px; font-weight: 500; color: var(--ink); }
   .script-date { font-size: 11px; color: var(--mid); margin-top: 3px; }
   .script-status {
-    font-size: 10px; padding: 3px 8px; border-radius: 4px;
-    border: 1px solid var(--border); color: var(--mid); white-space: nowrap;
+    font-size: 10px; padding: 3px 10px; border-radius: 9999px;
+    border: 1px solid rgba(0,0,0,0.1); color: var(--mid); white-space: nowrap;
+    text-transform: uppercase; letter-spacing: .04em;
   }
-  .script-status.urgent { border-color: #ff6b6b; color: #ff6b6b; }
+  .script-status.urgent { border-color: #c0392b; color: #c0392b; background: #fff5f5; }
   .script-chevron { color: var(--mid); font-size: 12px; transition: transform .2s; flex-shrink: 0; }
-  .script-body { display: none; padding: 0 16px 16px; }
+  .script-body { display: none; padding: 0 20px 20px; }
   .script-body.open { display: block; }
   .script-chevron.open { transform: rotate(180deg); }
 
   .script-content {
-    font-size: 13px; line-height: 1.8; color: #ccc;
+    font-size: 13px; line-height: 1.8; color: var(--charcoal);
     white-space: pre-wrap; word-break: break-word;
-    background: #0f0f0f; border-radius: 8px;
+    background: var(--soft); border: 1px solid rgba(0,0,0,0.07); border-radius: 10px;
     padding: 14px; margin-bottom: 12px;
-    font-family: 'SF Mono', monospace;
+    font-family: 'DM Sans', sans-serif;
   }
   .prod-section { margin-top: 12px; }
   .prod-title {
@@ -154,123 +206,126 @@
   }
   .prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .prod-item {
-    background: #0f0f0f; border-radius: 6px; padding: 8px 10px;
-    font-size: 11px;
+    background: var(--soft); border-radius: 10px; padding: 10px 12px;
+    font-size: 11px; border: 1px solid rgba(0,0,0,0.06);
   }
   .prod-item strong { display: block; color: var(--mid); font-size: 10px; margin-bottom: 2px; letter-spacing:.04em; }
   .checklist { list-style: none; }
   .checklist li {
     display: flex; align-items: flex-start; gap: 8px;
-    padding: 6px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px;
+    padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px;
   }
   .checklist li:last-child { border-bottom: none; }
   .check-box {
     width: 16px; height: 16px; border-radius: 4px;
-    border: 1px solid var(--border); cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.15); cursor: pointer;
     flex-shrink: 0; margin-top: 2px; display: flex;
     align-items: center; justify-content: center;
     font-size: 10px; transition: all .15s;
   }
-  .check-box.done { background: var(--blush); border-color: var(--blush); color: var(--black); }
-  .check-box.done-yt { background: var(--sage); border-color: var(--sage); color: var(--black); }
+  .check-box.done { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .check-box.done-yt { background: var(--youtube); border-color: var(--youtube); color: #fff; }
 
   /* ── NEW SCRIPT BTN ── */
   .add-btn {
-    width: 100%; padding: 12px; border-radius: 10px;
-    border: 1px dashed var(--border); background: none;
+    width: 100%; padding: 12px; border-radius: 12px;
+    border: 1.5px dashed rgba(0,0,0,0.15); background: none;
     color: var(--mid); font-size: 13px; cursor: pointer;
     transition: all .2s; margin-top: 4px;
   }
-  .add-btn:hover { border-color: var(--blush); color: var(--blush); }
-  .add-btn.yt:hover { border-color: var(--sage); color: var(--sage); }
+  .add-btn:hover { border-color: var(--ink); color: var(--ink); background: var(--soft); }
+  .add-btn.yt:hover { border-color: var(--youtube); color: var(--youtube); }
 
   /* ── MEMO ── */
   .memo-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
   .memo-tag {
-    padding: 4px 10px; border-radius: 20px; font-size: 11px;
-    border: 1px solid var(--border); cursor: pointer; color: var(--mid);
-    transition: all .15s;
+    padding: 5px 12px; border-radius: 9999px; font-size: 11px;
+    border: 1px solid rgba(0,0,0,0.1); cursor: pointer; color: var(--mid);
+    transition: all .15s; background: transparent;
   }
-  .memo-tag.active { border-color: var(--blush); color: var(--blush); }
-  .memo-tag.active-yt { border-color: var(--sage); color: var(--sage); }
+  .memo-tag.active { border-color: var(--ink); color: var(--ink); background: var(--soft); }
+  .memo-tag.active-yt { border-color: var(--youtube); color: var(--youtube); background: #fdf2ee; }
   .memo-input {
-    width: 100%; background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 12px; color: var(--white);
-    font-size: 13px; resize: none; height: 80px; font-family: inherit;
+    width: 100%; background: var(--soft); border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px; padding: 10px 14px; color: var(--ink);
+    font-size: 13px; resize: none; height: 80px; font-family: 'DM Sans', inherit;
     margin-bottom: 8px;
   }
-  .memo-input:focus { outline: none; border-color: var(--blush); }
-  .memo-input.yt:focus { border-color: var(--sage); }
+  .memo-input:focus { outline: none; border-color: var(--ink); }
+  .memo-input.yt:focus { border-color: var(--youtube); }
   .memo-save {
-    padding: 8px 16px; border-radius: 6px; border: none;
-    background: var(--blush); color: var(--black);
+    padding: 8px 20px; border-radius: 9999px; border: none;
+    background: var(--ink); color: #fff;
     font-size: 12px; font-weight: 600; cursor: pointer;
   }
-  .memo-save.yt { background: var(--sage); }
+  .memo-save.yt { background: var(--youtube); }
   .memo-list { margin-top: 16px; }
   .memo-item {
-    background: var(--card); border-radius: 8px; padding: 12px;
+    background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 14px 16px;
     margin-bottom: 8px; display: flex; justify-content: space-between;
     align-items: flex-start; gap: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
   .memo-item-text { font-size: 13px; line-height: 1.6; flex: 1; }
   .memo-item-tag {
-    font-size: 10px; color: var(--mid); border: 1px solid var(--border);
-    padding: 2px 6px; border-radius: 4px; white-space: nowrap;
+    font-size: 10px; color: var(--mid); border: 1px solid rgba(0,0,0,0.08);
+    padding: 2px 8px; border-radius: 9999px; white-space: nowrap; background: var(--soft);
   }
   .memo-del { color: var(--mid); cursor: pointer; font-size: 16px; flex-shrink: 0; }
-  .memo-del:hover { color: #ff6b6b; }
+  .memo-del:hover { color: #c0392b; }
 
   /* ── CALENDAR ── */
   .cal-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 12px; }
-  .cal-day-label { text-align: center; font-size: 10px; color: var(--mid); padding: 4px 0; letter-spacing: .06em; }
+  .cal-day-label { text-align: left; font-size: 10px; color: var(--mid); padding: 4px; letter-spacing: .06em; }
   .cal-day {
-    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-    font-size: 12px; border-radius: 6px; cursor: pointer;
+    aspect-ratio: 1; display: flex; align-items: flex-start; justify-content: flex-start;
+    padding: 4px;
+    font-size: 12px; border-radius: 10px; cursor: pointer;
     border: 1px solid transparent; transition: all .15s; position: relative;
   }
-  .cal-day:hover { border-color: var(--border); }
-  .cal-day.today { border-color: var(--blush); color: var(--blush); }
-  .cal-day.today-yt { border-color: var(--sage); color: var(--sage); }
+  .cal-day:hover { border-color: rgba(0,0,0,0.1); background: var(--soft); }
+  .cal-day.today { border-color: var(--ink); color: var(--ink); background: var(--soft); }
+  .cal-day.today-yt { border-color: var(--youtube); color: var(--youtube); background: #fdf2ee; }
   .cal-day.has-post::after {
     content: ''; width: 4px; height: 4px; border-radius: 50%;
-    background: var(--blush); position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
   }
-  .cal-day.has-post-yt::after { background: var(--sage); }
+  .cal-day.has-post-yt::after { background: var(--youtube); }
   .cal-events { margin-top: 8px; }
   .cal-event {
-    background: var(--card); border-radius: 8px; padding: 10px 12px;
+    background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: 12px; padding: 12px 14px;
     margin-bottom: 6px; display: flex; gap: 10px; align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
-  .cal-event-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blush); flex-shrink: 0; }
-  .cal-event-dot.yt { background: var(--sage); }
+  .cal-event-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); flex-shrink: 0; }
+  .cal-event-dot.yt { background: var(--youtube); }
   .cal-event-info { flex: 1; }
   .cal-event-title { font-size: 13px; font-weight: 500; }
   .cal-event-date { font-size: 11px; color: var(--mid); margin-top: 2px; }
   .add-event-row { display: flex; gap: 8px; margin-top: 12px; }
   .add-event-input {
-    flex: 1; background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 8px 12px; color: var(--white);
-    font-size: 13px; font-family: inherit;
+    flex: 1; background: var(--soft); border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px; padding: 8px 12px; color: var(--ink);
+    font-size: 13px; font-family: 'DM Sans', inherit;
   }
-  .add-event-input:focus { outline: none; border-color: var(--blush); }
-  .add-event-input.yt:focus { border-color: var(--sage); }
+  .add-event-input:focus { outline: none; border-color: var(--ink); }
+  .add-event-input.yt:focus { border-color: var(--youtube); }
   .add-event-btn {
-    padding: 8px 14px; border-radius: 8px; border: none;
-    background: var(--blush); color: var(--black);
+    padding: 8px 16px; border-radius: 9999px; border: none;
+    background: var(--ink); color: #fff;
     font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
   }
-  .add-event-btn.yt { background: var(--sage); }
+  .add-event-btn.yt { background: var(--youtube); }
 
   /* ── PERFORMANCE ── */
   .perf-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-  .perf-stat { background: var(--card); border-radius: 8px; padding: 12px; text-align: center; }
-  .perf-stat-num { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+  .perf-stat { background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 16px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .perf-stat-num { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); }
   .perf-stat-label { font-size: 10px; color: var(--mid); margin-top: 2px; letter-spacing: .06em; text-transform: uppercase; }
   .perf-item {
-    background: var(--card); border-radius: 8px; padding: 12px 14px;
+    background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 14px 16px;
     margin-bottom: 6px; display: flex; justify-content: space-between;
-    align-items: center; gap: 12px;
+    align-items: center; gap: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
   .perf-item-title { font-size: 13px; flex: 1; }
   .perf-item-stats { display: flex; gap: 12px; }
@@ -278,21 +333,21 @@
   .perf-item-stat span { display: block; }
   .perf-item-stat .num { font-size: 14px; font-weight: 600; }
   .perf-item-stat .lbl { font-size: 10px; color: var(--mid); }
-  .add-perf-form { background: var(--card); border-radius: 10px; padding: 14px; margin-top: 12px; }
+  .add-perf-form { background: var(--soft); border: 1px solid rgba(0,0,0,0.07); border-radius: 16px; padding: 16px; margin-top: 12px; }
   .form-row { display: flex; gap: 8px; margin-bottom: 8px; }
   .form-input {
-    flex: 1; background: #0f0f0f; border: 1px solid var(--border);
-    border-radius: 6px; padding: 8px 10px; color: var(--white);
-    font-size: 13px; font-family: inherit;
+    flex: 1; background: var(--white); border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px; padding: 8px 12px; color: var(--ink);
+    font-size: 13px; font-family: 'DM Sans', inherit;
   }
-  .form-input:focus { outline: none; border-color: var(--blush); }
-  .form-input.yt:focus { border-color: var(--sage); }
+  .form-input:focus { outline: none; border-color: var(--ink); }
+  .form-input.yt:focus { border-color: var(--youtube); }
   .form-submit {
-    width: 100%; padding: 9px; border-radius: 6px; border: none;
-    background: var(--blush); color: var(--black);
+    width: 100%; padding: 9px; border-radius: 9999px; border: none;
+    background: var(--ink); color: #fff;
     font-size: 12px; font-weight: 600; cursor: pointer;
   }
-  .form-submit.yt { background: var(--sage); }
+  .form-submit.yt { background: var(--youtube); }
 
   /* ── ASSETS ── */
   .asset-group { margin-bottom: 20px; }
@@ -301,79 +356,80 @@
     color: var(--mid); margin-bottom: 8px;
   }
   .asset-item {
-    background: var(--card); border-radius: 8px; padding: 12px;
-    margin-bottom: 6px; position: relative;
+    background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: 14px; padding: 14px 16px;
+    margin-bottom: 6px; position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
-  .asset-item-text { font-size: 13px; line-height: 1.6; padding-right: 40px; }
+  .asset-item-text { font-size: 13px; line-height: 1.6; padding-right: 52px; }
   .copy-btn {
-    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-    background: none; border: 1px solid var(--border); border-radius: 5px;
-    color: var(--mid); font-size: 11px; padding: 3px 7px; cursor: pointer;
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: var(--soft); border: 1px solid rgba(0,0,0,0.08); border-radius: 9999px;
+    color: var(--mid); font-size: 11px; padding: 4px 10px; cursor: pointer;
     transition: all .15s;
   }
-  .copy-btn:hover { border-color: var(--blush); color: var(--blush); }
-  .copy-btn.yt:hover { border-color: var(--sage); color: var(--sage); }
+  .copy-btn:hover { border-color: var(--ink); color: var(--ink); background: var(--soft-2); }
+  .copy-btn.yt:hover { border-color: var(--youtube); color: var(--youtube); }
   .asset-add-row { display: flex; gap: 8px; margin-top: 8px; }
   .asset-input {
-    flex: 1; background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 8px 12px; color: var(--white);
-    font-size: 13px; font-family: inherit;
+    flex: 1; background: var(--soft); border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 10px; padding: 8px 12px; color: var(--ink);
+    font-size: 13px; font-family: 'DM Sans', inherit;
   }
-  .asset-input:focus { outline: none; border-color: var(--blush); }
-  .asset-input.yt:focus { border-color: var(--sage); }
+  .asset-input:focus { outline: none; border-color: var(--ink); }
+  .asset-input.yt:focus { border-color: var(--youtube); }
   .asset-add-btn {
-    padding: 8px 14px; border-radius: 8px; border: none;
-    background: var(--blush); color: var(--black);
+    padding: 8px 16px; border-radius: 9999px; border: none;
+    background: var(--ink); color: #fff;
     font-size: 12px; font-weight: 600; cursor: pointer;
   }
-  .asset-add-btn.yt { background: var(--sage); }
+  .asset-add-btn.yt { background: var(--youtube); }
 
   /* ── SETTINGS ── */
-  .settings-block { background: var(--card); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+  .settings-block { background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; padding: 18px 20px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
   .settings-block-title {
     font-size: 12px; font-weight: 600; margin-bottom: 12px;
     display: flex; align-items: center; gap: 6px;
   }
-  .settings-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #1f1f1f; font-size: 13px; }
+  .settings-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
   .settings-row:last-child { border-bottom: none; }
   .settings-row-label { color: var(--mid); font-size: 12px; }
   .settings-row-val { font-weight: 500; text-align: right; max-width: 60%; }
 
   /* ── MODAL ── */
   .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,.85);
+    position: fixed; inset: 0; background: rgba(0,0,0,.5);
     z-index: 200; display: none; align-items: flex-end;
     justify-content: center;
   }
   .modal-overlay.open { display: flex; }
   .modal {
-    background: #1a1a1a; border-radius: 16px 16px 0 0;
-    padding: 20px; width: 100%; max-width: 500px;
+    background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: 24px 24px 0 0;
+    padding: 28px 24px; width: 100%; max-width: 500px;
     max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
   }
-  .modal-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+  .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 18px; color: var(--ink); font-family: 'DM Serif Display', serif; }
   .modal-input {
-    width: 100%; background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 12px; color: var(--white);
-    font-size: 13px; font-family: inherit; margin-bottom: 10px;
+    width: 100%; background: var(--soft); border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px; padding: 10px 14px; color: var(--ink);
+    font-size: 13px; font-family: 'DM Sans', inherit; margin-bottom: 10px;
     resize: vertical;
   }
-  .modal-input:focus { outline: none; border-color: var(--blush); }
-  .modal-input.yt:focus { border-color: var(--sage); }
+  .modal-input:focus { outline: none; border-color: var(--ink); }
+  .modal-input.yt:focus { border-color: var(--youtube); }
   .modal-label { font-size: 11px; color: var(--mid); margin-bottom: 4px; letter-spacing: .06em; text-transform: uppercase; }
   .modal-row { display: flex; gap: 8px; margin-bottom: 10px; }
   .modal-btns { display: flex; gap: 8px; margin-top: 16px; }
   .modal-cancel {
-    flex: 1; padding: 11px; border-radius: 8px;
-    border: 1px solid var(--border); background: none;
+    flex: 1; padding: 11px; border-radius: 9999px;
+    border: 1px solid rgba(0,0,0,0.1); background: none;
     color: var(--mid); font-size: 13px; cursor: pointer;
   }
   .modal-save {
-    flex: 2; padding: 11px; border-radius: 8px; border: none;
-    background: var(--blush); color: var(--black);
+    flex: 2; padding: 11px; border-radius: 9999px; border: none;
+    background: var(--ink); color: #fff;
     font-size: 13px; font-weight: 600; cursor: pointer;
   }
-  .modal-save.yt { background: var(--sage); }
+  .modal-save.yt { background: var(--youtube); }
 
   /* ── EMPTY STATE ── */
   .empty { text-align: center; padding: 40px 20px; color: var(--mid); font-size: 13px; }
@@ -381,14 +437,15 @@
   /* ── MOBILE ── */
   @media (max-width: 480px) {
     /* Nav */
-    nav { padding: 0 14px; }
-    .nav-logo { font-size: 12px; }
-    .ch-btn { padding: 5px 10px; font-size: 11px; }
+    nav { padding: 0 16px; height: 56px; }
+    .nav-logo { font-size: 15px; }
+    .ch-btn { padding: 5px 12px; font-size: 11px; }
+    .channel-panel { padding-top: 56px; }
 
     /* Hero */
-    .hero { padding: 48px 16px 28px; }
-    .hero h1 { font-size: 32px; }
-    .hero-sub { font-size: 13px; }
+    .hero { padding: 88px 20px 40px; }
+    .hero h1 { font-size: 48px; }
+    .hero-sub { font-size: 14px; }
 
     /* Tabs — 가로 스크롤 */
     .tab { padding: 10px 12px; font-size: 11px; }
@@ -431,7 +488,7 @@
     .asset-input { min-width: 0; }
 
     /* Calendar */
-    .cal-day { font-size: 11px; border-radius: 4px; }
+    .cal-day { font-size: 11px; border-radius: 8px; }
 
     /* Memo */
     .memo-tags { gap: 4px; }
@@ -450,42 +507,397 @@
   /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
-    background: var(--white); color: var(--black);
-    padding: 10px 18px; border-radius: 20px;
+    background: var(--ink); color: #fff;
+    padding: 10px 20px; border-radius: 9999px;
     font-size: 13px; font-weight: 500; z-index: 300;
     transition: transform .3s; pointer-events: none; white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
   /* ── LOCK SCREEN ── */
   .lock-screen {
-    position: fixed; inset: 0; background: var(--black);
+    position: fixed; inset: 0; background: var(--white);
     z-index: 999; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     padding: 40px 24px;
   }
   .lock-screen.hidden { display: none; }
-  .lock-logo { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--mid); margin-bottom: 40px; }
-  .lock-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px; text-align: center; }
-  .lock-sub { font-size: 13px; color: var(--mid); margin-bottom: 32px; text-align: center; }
+  .lock-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; letter-spacing: -0.3px; color: var(--ink);
+    margin-bottom: 56px; font-weight: 400;
+  }
+  .lock-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px; font-weight: 400; letter-spacing: -.02em;
+    margin-bottom: 10px; text-align: center; color: var(--ink);
+  }
+  .lock-sub { font-size: 14px; color: var(--mid); margin-bottom: 36px; text-align: center; font-weight: 300; }
   .lock-input {
     width: 100%; max-width: 280px;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px 16px;
-    color: var(--white); font-size: 15px; text-align: center;
+    background: var(--soft); border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 12px; padding: 14px 16px;
+    color: var(--ink); font-size: 15px; text-align: center;
     letter-spacing: .12em; outline: none;
     transition: border-color .2s; margin-bottom: 12px;
-    font-family: inherit;
+    font-family: 'DM Sans', inherit;
   }
-  .lock-input:focus { border-color: var(--blush); }
+  .lock-input:focus { border-color: var(--ink); }
   .lock-btn {
-    width: 100%; max-width: 280px; padding: 13px;
-    border-radius: 10px; border: none;
-    background: var(--blush); color: var(--black);
-    font-size: 14px; font-weight: 700; cursor: pointer;
-    letter-spacing: .04em;
+    width: 100%; max-width: 280px; padding: 14px;
+    border-radius: 9999px; border: none;
+    background: var(--ink); color: #fff;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    letter-spacing: .02em;
   }
-  .lock-error { font-size: 12px; color: #ff6b6b; margin-top: 10px; min-height: 18px; text-align: center; }
+  .lock-error { font-size: 12px; color: #c0392b; margin-top: 10px; min-height: 18px; text-align: center; }
+
+  /* ── HERO ACTIONS ── */
+  .hero-actions {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px;
+  }
+  .hero-action-btn {
+    background: none; border: 1px solid rgba(0,0,0,0.12);
+    padding: 9px 20px; font-size: 12px; font-weight: 500;
+    letter-spacing: .03em; color: var(--ink); cursor: pointer;
+    transition: all .18s cubic-bezier(0.22,1,0.36,1);
+    border-radius: 9999px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .hero-action-btn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  /* ── NAV MENU BUTTON + DROPDOWN ── */
+  .nav-menu-btn {
+    background: none; border: 1px solid rgba(0,0,0,0.1);
+    padding: 5px 12px; font-size: 13px; cursor: pointer;
+    color: var(--ink); line-height: 1; border-radius: 9999px;
+  }
+  .nav-dropdown {
+    position: fixed; top: 64px; left: 0; right: 0; z-index: 90;
+    background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    display: none;
+  }
+  .nav-dropdown.open { display: block; }
+  .nav-dropdown-ch {
+    display: flex; border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+  .nav-dropdown-ch button {
+    flex: 1; background: none; border: none; border-right: 1px solid rgba(0,0,0,0.06);
+    padding: 14px; font-size: 12px; font-weight: 500; letter-spacing: .02em;
+    color: var(--mid); cursor: pointer;
+    transition: background .15s;
+  }
+  .nav-dropdown-ch button:last-child { border-right: none; }
+  .nav-dropdown-ch button:hover { background: var(--soft); }
+  .nav-dropdown-ch button.active-dd { background: var(--ink); color: #fff; }
+  .nav-dropdown-list { list-style: none; }
+  .nav-dropdown-list li { border-bottom: 1px solid rgba(0,0,0,0.05); }
+  .nav-dropdown-list li:last-child { border-bottom: none; }
+  .nav-dropdown-list button {
+    width: 100%; background: none; border: none;
+    padding: 14px 24px; font-size: 13px; font-weight: 400;
+    color: var(--ink); cursor: pointer; text-align: left;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'DM Sans', sans-serif;
+    transition: background .15s;
+  }
+  .nav-dropdown-list button:hover { background: var(--soft); }
+  .nav-dropdown-list button span { color: var(--mid); font-size: 12px; }
+
+  /* ── REFERENCE SECTION ── */
+  .ref-section { margin-bottom: 10px; }
+  .ref-label {
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--mid); margin-bottom: 5px;
+  }
+  .ref-url-input {
+    width: 100%; background: var(--soft); border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px; padding: 8px 10px; color: var(--ink); font-size: 12px;
+    font-family: 'DM Sans', inherit; margin-bottom: 6px;
+  }
+  .ref-url-input:focus { outline: none; border-color: var(--ink); }
+  .ref-file-label {
+    display: inline-block; padding: 6px 14px; border: 1.5px dashed rgba(0,0,0,0.12);
+    border-radius: 9999px;
+    font-size: 11px; color: var(--mid); cursor: pointer; margin-bottom: 6px;
+    letter-spacing: .04em; transition: border-color .15s;
+  }
+  .ref-file-label:hover { border-color: var(--ink); color: var(--ink); }
+  .ref-file-input { display: none; }
+  .ref-img-preview { width: 100%; max-height: 200px; object-fit: contain; background: var(--soft); border-radius: 8px; display: none; margin-bottom: 6px; }
+
+  /* ── CUSTOM CURSOR ── */
+  *, *::before, *::after { cursor: none !important; }
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: #f07035; border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, opacity 0.2s ease;
+    opacity: 0;
+  }
+  .cursor.visible { opacity: 1; }
+  .cursor.expanded { width: 52px; height: 52px; background: #ffd6b8; }
+
+  /* ── HERO ANIMATIONS ── */
+  .line { display: block; overflow: hidden; }
+  .line-inner {
+    display: block;
+    transform: translateY(110%);
+    transition: transform 1s cubic-bezier(0.22,1,0.36,1);
+  }
+  .line-inner.in { transform: translateY(0); }
+  .hero-eyebrow-anim {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .hero-eyebrow-anim.in { opacity: 1; transform: translateY(0); }
+  .hero-bottom-anim {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+  }
+  .hero-bottom-anim.in { opacity: 1; transform: translateY(0); }
+
+  /* ── HERO SCROLL HINT ── */
+  .hero-scroll-hint {
+    position: absolute; right: 20px; top: 50%;
+    transform: translateY(-50%);
+    writing-mode: vertical-rl;
+    font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--slate); opacity: 0;
+    transition: opacity 0.8s ease 1s;
+    display: flex; align-items: center; gap: 10px;
+    pointer-events: none; user-select: none;
+  }
+  .hero-scroll-hint.in { opacity: 1; }
+  .hero-scroll-hint::before {
+    content: ''; display: block; width: 1px; height: 48px;
+    background: var(--slate);
+    animation: scrollLine 1.6s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ── HERO FLOATING TAGS ── */
+  .hero-float-tags {
+    position: absolute; top: 80px; right: 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    opacity: 0; transition: opacity 0.8s ease 0.8s;
+    pointer-events: none; user-select: none;
+  }
+  .hero-float-tags.in { opacity: 1; }
+  .hero-float-tag {
+    padding: 7px 16px; border-radius: 9999px; font-size: 11px;
+    font-weight: 500; letter-spacing: .04em;
+    border: 1px solid rgba(0,0,0,0.08); white-space: nowrap;
+  }
+  .hero-float-tag:nth-child(1) { background: #f2cfc4; animation: floatTag 4s ease-in-out infinite; }
+  .hero-float-tag:nth-child(2) { background: #c8d8c0; animation: floatTag 4s ease-in-out infinite; animation-delay: 0.6s; }
+  .hero-float-tag:nth-child(3) { background: #d4cfe8; animation: floatTag 4s ease-in-out infinite; animation-delay: 1.2s; }
+  .hero-float-tag:nth-child(4) { background: #f5e9c4; animation: floatTag 4s ease-in-out infinite; animation-delay: 1.8s; }
+  @keyframes floatTag {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @media (max-width: 480px) {
+    .hero-scroll-hint, .hero-float-tags { display: none; }
+    .cursor { display: none; }
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1), transform 0.85s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.12s; }
+  .reveal-delay-2 { transition-delay: 0.24s; }
+
+  /* ── ABOUT SECTION ── */
+  .about-section {
+    padding: 80px 24px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-eyebrow {
+    font-size: 11px; font-weight: 500; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--slate);
+    margin-bottom: 52px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .section-eyebrow::after {
+    content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--slate);
+  }
+  .about-split {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; margin-bottom: 60px; align-items: start;
+  }
+  .about-headline {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(30px, 3.5vw, 48px);
+    font-weight: 400; line-height: 1.1;
+    letter-spacing: -.02em; color: var(--walnut);
+  }
+  .about-headline em { font-style: italic; color: var(--slate); }
+  .about-body { padding-top: 8px; }
+  .about-body p {
+    font-size: 14px; color: var(--slate); line-height: 1.78;
+    margin-bottom: 14px; font-weight: 400;
+  }
+  .about-body p:last-child { margin-bottom: 0; }
+  .features-label {
+    font-size: 11px; font-weight: 500; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--slate); margin-bottom: 20px;
+  }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+    margin-bottom: 60px;
+  }
+  .feature-card {
+    border: 1px solid rgba(0,0,0,0.08); border-radius: 20px;
+    padding: 22px 18px; cursor: pointer;
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease;
+    position: relative; overflow: hidden; background: var(--white);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
+  .feature-card:active { transform: scale(0.97); transition-duration: 0.1s; }
+  .feature-card:nth-child(1) .feature-bg { background: #f2cfc4; }
+  .feature-card:nth-child(2) .feature-bg { background: #d4cfe8; }
+  .feature-card:nth-child(3) .feature-bg { background: #c8d8c0; }
+  .feature-card:nth-child(4) .feature-bg { background: #f5e9c4; }
+  .feature-card:nth-child(5) .feature-bg { background: #e8e4f0; }
+  .feature-bg { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s ease; }
+  .feature-card:hover .feature-bg { opacity: 1; }
+  .feature-icon { font-size: 22px; margin-bottom: 12px; position: relative; z-index: 1; }
+  .feature-name { font-size: 13px; font-weight: 500; color: var(--walnut); margin-bottom: 4px; position: relative; z-index: 1; }
+  .feature-desc { font-size: 11px; color: var(--slate); line-height: 1.5; position: relative; z-index: 1; }
+  .feature-arrow {
+    position: absolute; bottom: 14px; right: 14px;
+    font-size: 12px; color: var(--walnut); opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: opacity 0.2s ease, transform 0.2s ease; z-index: 1;
+  }
+  .feature-card:hover .feature-arrow { opacity: 1; transform: translate(0,0); }
+
+  /* ── MARQUEE ── */
+  .marquee-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0; margin: 0 -24px;
+  }
+  .marquee-track {
+    display: flex; gap: 48px;
+    animation: marquee 22s linear infinite; width: max-content;
+  }
+  .marquee-item {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 17px; font-style: italic; color: var(--slate);
+    white-space: nowrap; display: flex; align-items: center; gap: 48px;
+  }
+  .marquee-item::after { content: '·'; color: #f2cfc4; font-style: normal; font-size: 20px; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── CLICK ANIMATIONS ── */
+  .hero-action-btn { transition: all .18s cubic-bezier(0.22,1,0.36,1); }
+  .hero-action-btn:active { transform: scale(0.95); opacity: 0.85; }
+  .ch-btn { transition: all .18s cubic-bezier(0.22,1,0.36,1); }
+  .ch-btn:active { transform: scale(0.95); }
+  .tab { transition: color .15s ease, border-color .15s ease, opacity .1s ease; }
+  .tab:active { opacity: 0.65; }
+  .nav-tab:active { opacity: 0.65; }
+  .lock-btn { transition: all .18s cubic-bezier(0.22,1,0.36,1); }
+  .lock-btn:active { transform: scale(0.97); opacity: 0.9; }
+  .script-header { transition: opacity 0.12s ease, background 0.15s ease; }
+  .script-header:active { opacity: 0.72; }
+  .form-submit:active, .add-event-btn:active, .asset-add-btn:active,
+  .memo-save:active { transform: scale(0.96); opacity: 0.9; transition-duration: 0.1s; }
+
+  @media (max-width: 480px) {
+    .about-split { grid-template-columns: 1fr; gap: 28px; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .about-section { padding: 52px 16px 0; }
+    .marquee-wrap { margin: 0 -16px; }
+  }
+
+  /* ── TODAY ALERT ── */
+  .today-alert {
+    background: linear-gradient(135deg, #fff5ef 0%, #fde8d8 100%);
+    border: 1px solid rgba(240,112,53,0.18);
+    border-radius: 16px; padding: 14px 16px; margin-bottom: 16px;
+  }
+  .today-alert-label {
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: #f07035; font-weight: 600; margin-bottom: 10px;
+  }
+  .today-alert-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: #fff; border-radius: 10px;
+    margin-bottom: 6px; cursor: none; border: 1px solid rgba(240,112,53,0.12);
+    transition: all .18s cubic-bezier(0.22,1,0.36,1);
+  }
+  .today-alert-item:last-child { margin-bottom: 0; }
+  .today-alert-item:hover { background: #fff8f5; transform: translateX(3px); box-shadow: 0 2px 12px rgba(240,112,53,0.1); }
+  .today-alert-title { font-size: 13px; font-weight: 500; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .today-alert-arrow { color: #f07035; font-size: 14px; flex-shrink: 0; margin-left: 8px; transition: transform .18s; }
+  .today-alert-item:hover .today-alert-arrow { transform: translateX(3px); }
+
+  /* ── Hero Today Bar (marquee 아래 텍스트박스) ── */
+  .hero-today-bar {
+    padding: 14px 24px 0;
+  }
+  .hero-today-card {
+    background: #fff;
+    border: 1px solid rgba(240,112,53,0.18);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+  .hero-today-head {
+    display: flex; align-items: baseline; gap: 12px;
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid rgba(240,112,53,0.1);
+    background: linear-gradient(90deg, #fff5ef 0%, #fff 60%);
+  }
+  .hero-today-head-label {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 22px; font-weight: 400; letter-spacing: -.01em;
+    color: var(--ink); line-height: 1;
+  }
+  .hero-today-head-date {
+    font-size: 12px; color: var(--mid); margin-left: auto; font-weight: 400;
+  }
+  .hero-today-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 20px; border-bottom: 1px solid rgba(0,0,0,0.04);
+    cursor: none; transition: background .15s;
+  }
+  .hero-today-row:last-child { border-bottom: none; }
+  .hero-today-row:hover { background: #fff8f5; }
+  .hero-today-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #f07035; flex-shrink: 0;
+  }
+  .hero-today-title {
+    font-size: 14px; font-weight: 500; color: var(--ink);
+    flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .hero-today-status {
+    font-size: 11px; color: var(--mid); flex-shrink: 0;
+  }
+  .hero-today-arrow {
+    font-size: 13px; color: #f07035; flex-shrink: 0;
+    transition: transform .15s;
+  }
+  .hero-today-row:hover .hero-today-arrow { transform: translateX(3px); }
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -524,12 +936,24 @@
   <div class="lock-error" id="lock-error"></div>
 </div>
 
+<div class="cursor" id="cursor"></div>
+
 <!-- NAV -->
 <nav>
   <span class="nav-logo">content hub</span>
-  <div class="channel-switcher">
-    <button class="ch-btn active-tiktok" onclick="switchChannel('tiktok')">@somarchive</button>
-    <button class="ch-btn" onclick="switchChannel('youtube')">솜솜</button>
+  <div class="nav-right">
+    <button class="nav-tab" onclick="goToSection(state.currentChannel,'scripts')">Scripts</button>
+    <button class="nav-tab" onclick="goToSection(state.currentChannel,'weekly')">Weekly</button>
+    <button class="nav-tab" onclick="goToSection(state.currentChannel,'memo')">Memo</button>
+    <button class="nav-tab" onclick="goToSection(state.currentChannel,'calendar')">Cal</button>
+    <button class="nav-tab" onclick="goToSection(state.currentChannel,'performance')">Perf</button>
+    <button class="nav-tab" onclick="goToSection(state.currentChannel,'assets')">Assets</button>
+    <button class="nav-tab" onclick="goToSection(state.currentChannel,'settings')">Settings</button>
+    <span class="nav-sep">|</span>
+    <div class="channel-switcher">
+      <button class="ch-btn active-tiktok" onclick="switchChannel('tiktok')">@somarchive</button>
+      <button class="ch-btn" onclick="switchChannel('youtube')">솜솜</button>
+    </div>
   </div>
 </nav>
 
@@ -538,21 +962,93 @@
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-tag">TikTok · @somarchive · 영어 · 글로벌</div>
-    <h1>I live in Seoul.<br>You <em>don't.</em></h1>
-    <p class="hero-sub">K-beauty from the inside. Scripts, strategy, and production tools — all in one place.</p>
-    <div class="hero-pills">
-      <span class="pill">#kbeauty</span>
-      <span class="pill">#seoulinsider</span>
-      <span class="pill">#makeup</span>
-      <span class="pill">#skincare</span>
+    <div class="hero-float-tags" id="tk-float-tags">
+      <span class="hero-float-tag">#kbeauty</span>
+      <span class="hero-float-tag">#seoulinsider</span>
+      <span class="hero-float-tag">#makeup</span>
+      <span class="hero-float-tag">#skincare</span>
     </div>
+    <div class="hero-scroll-hint" id="tk-scroll-hint">Scroll</div>
+    <div class="hero-tag hero-eyebrow-anim" id="tk-hero-tag">TikTok · @somarchive · 영어 · 글로벌</div>
+    <h1>
+      <span class="line"><span class="line-inner" id="tk-hl1">I live in Seoul.</span></span>
+      <span class="line"><span class="line-inner" id="tk-hl2">You <em>don't.</em></span></span>
+    </h1>
+    <div id="tk-hero-bottom" class="hero-bottom-anim">
+      <p class="hero-sub">K-beauty from the inside. Scripts, strategy, and production tools — all in one place.</p>
+      <div class="hero-pills">
+        <span class="pill">#kbeauty</span>
+        <span class="pill">#seoulinsider</span>
+        <span class="pill">#makeup</span>
+        <span class="pill">#skincare</span>
+      </div>
+      <div class="hero-actions">
+        <button class="hero-action-btn" onclick="goToSection('tiktok','scripts')">Scripts →</button>
+        <button class="hero-action-btn" onclick="goToSection('tiktok','memo')">Memo →</button>
+        <button class="hero-action-btn" onclick="goToSection('tiktok','calendar')">Calendar →</button>
+        <button class="hero-action-btn" onclick="goToSection('tiktok','performance')">Performance →</button>
+        <button class="hero-action-btn" onclick="goToSection('tiktok','assets')">Assets →</button>
+        <button class="hero-action-btn" onclick="goToSection('tiktok','weekly')">Weekly Plan →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT SECTION -->
+  <div class="about-section">
+    <p class="section-eyebrow reveal">About @somarchive</p>
+    <div class="about-split">
+      <h2 class="about-headline reveal">Content from<br>the <em>inside.</em></h2>
+      <div class="about-body reveal reveal-delay-1">
+        <p>@somarchive는 서울에서 만드는 K-beauty 콘텐츠예요. 진짜 피부, 진짜 루틴, 진짜 제품 — 인사이더만 아는 이야기를 영어로 전 세계에 전달해요.</p>
+        <p>스크립트부터 촬영 계획, 퍼포먼스 분석까지 — 모든 걸 한 곳에서 관리해요.</p>
+      </div>
+    </div>
+    <p class="features-label reveal">What's inside</p>
+    <div class="features-grid reveal reveal-delay-1">
+      <div class="feature-card" onclick="goToSection('tiktok','scripts')">
+        <div class="feature-bg"></div><div class="feature-icon">📝</div>
+        <div class="feature-name">Scripts</div><div class="feature-desc">날짜별 대본 관리</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('tiktok','memo')">
+        <div class="feature-bg"></div><div class="feature-icon">💡</div>
+        <div class="feature-name">Memo</div><div class="feature-desc">아이디어 & 레퍼런스</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('tiktok','calendar')">
+        <div class="feature-bg"></div><div class="feature-icon">📅</div>
+        <div class="feature-name">Calendar</div><div class="feature-desc">업로드 일정 관리</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('tiktok','performance')">
+        <div class="feature-bg"></div><div class="feature-icon">📊</div>
+        <div class="feature-name">Performance</div><div class="feature-desc">조회수 & 통계</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('tiktok','assets')">
+        <div class="feature-bg"></div><div class="feature-icon">🗂</div>
+        <div class="feature-name">Assets</div><div class="feature-desc">해시태그 & 스니펫</div>
+        <span class="feature-arrow">→</span>
+      </div>
+    </div>
+    <div class="marquee-wrap reveal">
+      <div class="marquee-track">
+        <span class="marquee-item">Glass Skin</span><span class="marquee-item">K-beauty</span>
+        <span class="marquee-item">Daily Routine</span><span class="marquee-item">Dewy Finish</span>
+        <span class="marquee-item">Seoul Insider</span><span class="marquee-item">Skincare First</span>
+        <span class="marquee-item">Glass Skin</span><span class="marquee-item">K-beauty</span>
+        <span class="marquee-item">Daily Routine</span><span class="marquee-item">Dewy Finish</span>
+        <span class="marquee-item">Seoul Insider</span><span class="marquee-item">Skincare First</span>
+      </div>
+    </div>
+    <div class="hero-today-bar" id="tiktok-hero-today"></div>
   </div>
 
   <!-- WORKSPACE -->
   <div class="workspace">
     <div class="tabs" id="tabs-tiktok">
       <button class="tab active-tiktok" onclick="switchTab('tiktok','scripts')">🎬 Scripts</button>
+      <button class="tab" onclick="switchTab('tiktok','weekly')">📋 Weekly</button>
       <button class="tab" onclick="switchTab('tiktok','memo')">💡 Memo</button>
       <button class="tab" onclick="switchTab('tiktok','calendar')">📅 Calendar</button>
       <button class="tab" onclick="switchTab('tiktok','performance')">📊 Performance</button>
@@ -562,9 +1058,20 @@
 
     <!-- SCRIPTS -->
     <div class="section active" id="tiktok-scripts">
-      <div class="section-title">이번 주 대본</div>
+      <div id="tiktok-today-alert"></div>
       <div id="tiktok-script-list"></div>
-      <button class="add-btn" onclick="openScriptModal('tiktok')">+ 새 대본 추가</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+        <button class="add-btn" onclick="openScriptModal('tiktok')">+ 새 대본 추가</button>
+        <button class="add-btn" onclick="openAIModal('tiktok')" style="background:var(--purple);">✨ AI 생성</button>
+        <button class="add-btn" onclick="openCoworkModal('tiktok')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 코웍 가져오기</button>
+      </div>
+    </div>
+
+    <!-- WEEKLY PLAN -->
+    <div class="section" id="tiktok-weekly">
+      <div class="section-title">이번 주 대본</div>
+      <div id="tiktok-weekly-today"></div>
+      <div id="tiktok-weekly-list"></div>
     </div>
 
     <!-- MEMO -->
@@ -573,16 +1080,27 @@
       <div class="memo-tags">
         <span class="memo-tag active" onclick="filterMemo('tiktok','all',this)">All</span>
         <span class="memo-tag" onclick="filterMemo('tiktok','idea',this)">💡 Idea</span>
-        <span class="memo-tag" onclick="filterMemo('tiktok','ref',this)">🔗 Reference</span>
+        <span class="memo-tag" onclick="filterMemo('tiktok','ref',this)">🔗 Ref</span>
         <span class="memo-tag" onclick="filterMemo('tiktok','todo',this)">✅ To do</span>
+        <span class="memo-tag" onclick="filterMemo('tiktok','buy',this)">🛒 Buy</span>
         <span class="memo-tag" onclick="filterMemo('tiktok','general',this)">📝 General</span>
       </div>
       <textarea class="memo-input" id="tiktok-memo-input" placeholder="메모 입력..."></textarea>
+      <div class="ref-section">
+        <div class="ref-label">Reference Link</div>
+        <input class="ref-url-input" id="tiktok-memo-ref-url" type="url" placeholder="https://...">
+        <div class="ref-label">Reference Photo (10MB 이하)</div>
+        <label class="ref-file-label" for="tiktok-memo-img-input">+ 이미지 첨부</label>
+        <input class="ref-file-input" id="tiktok-memo-img-input" type="file" accept="image/*" onchange="handleMemoImage('tiktok',this)">
+        <input type="hidden" id="tiktok-memo-img-data">
+        <img class="ref-img-preview" id="tiktok-memo-img-preview" alt="">
+      </div>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
-        <select id="tiktok-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--white);font-size:12px;">
+        <select id="tiktok-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:0px;padding:6px 10px;color:var(--walnut);font-size:12px;">
           <option value="idea">💡 Idea</option>
           <option value="ref">🔗 Reference</option>
           <option value="todo">✅ To do</option>
+          <option value="buy">🛒 Buy</option>
           <option value="general">📝 General</option>
         </select>
         <button class="memo-save" onclick="saveMemo('tiktok')">Save</button>
@@ -726,21 +1244,93 @@
 
   <!-- HERO -->
   <div class="hero hero-yt">
-    <div class="hero-tag">YouTube Shorts · 솜솜 · 한국어 · 한국인 타겟</div>
-    <h1>서울 사는<br>내가 쓰는 <em>진짜.</em></h1>
-    <p class="hero-sub">한국인을 위한 K-뷰티 콘텐츠. 로컬이 직접 쓰는 제품과 루틴을 공유해요.</p>
-    <div class="hero-pills">
-      <span class="pill">#케이뷰티</span>
-      <span class="pill">#서울인사이더</span>
-      <span class="pill">#메이크업</span>
-      <span class="pill">#스킨케어</span>
+    <div class="hero-float-tags" id="yt-float-tags">
+      <span class="hero-float-tag">#케이뷰티</span>
+      <span class="hero-float-tag">#서울인사이더</span>
+      <span class="hero-float-tag">#메이크업</span>
+      <span class="hero-float-tag">#스킨케어</span>
     </div>
+    <div class="hero-scroll-hint" id="yt-scroll-hint">Scroll</div>
+    <div class="hero-tag hero-eyebrow-anim" id="yt-hero-tag">YouTube Shorts · 솜솜 · 한국어 · 한국인 타겟</div>
+    <h1>
+      <span class="line"><span class="line-inner" id="yt-hl1">서울 사는</span></span>
+      <span class="line"><span class="line-inner" id="yt-hl2">내가 쓰는 <em>진짜.</em></span></span>
+    </h1>
+    <div id="yt-hero-bottom" class="hero-bottom-anim">
+      <p class="hero-sub">한국인을 위한 K-뷰티 콘텐츠. 로컬이 직접 쓰는 제품과 루틴을 공유해요.</p>
+      <div class="hero-pills">
+        <span class="pill">#케이뷰티</span>
+        <span class="pill">#서울인사이더</span>
+        <span class="pill">#메이크업</span>
+        <span class="pill">#스킨케어</span>
+      </div>
+      <div class="hero-actions">
+        <button class="hero-action-btn" onclick="goToSection('youtube','scripts')">Scripts →</button>
+        <button class="hero-action-btn" onclick="goToSection('youtube','memo')">Memo →</button>
+        <button class="hero-action-btn" onclick="goToSection('youtube','calendar')">Calendar →</button>
+        <button class="hero-action-btn" onclick="goToSection('youtube','performance')">Performance →</button>
+        <button class="hero-action-btn" onclick="goToSection('youtube','assets')">Assets →</button>
+        <button class="hero-action-btn" onclick="goToSection('youtube','weekly')">Weekly Plan →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT SECTION -->
+  <div class="about-section">
+    <p class="section-eyebrow reveal">솜솜 채널 소개</p>
+    <div class="about-split">
+      <h2 class="about-headline reveal">솔직한 K-뷰티<br><em>이야기.</em></h2>
+      <div class="about-body reveal reveal-delay-1">
+        <p>솜솜은 한국인을 위한 K-뷰티 콘텐츠를 만들어요. 로컬이 직접 쓰는 제품과 루틴을 솔직하게 공유해요.</p>
+        <p>스크립트, 촬영 계획, 퍼포먼스 분석까지 — 콘텐츠 제작의 모든 과정을 한 곳에서 관리해요.</p>
+      </div>
+    </div>
+    <p class="features-label reveal">What's inside</p>
+    <div class="features-grid reveal reveal-delay-1">
+      <div class="feature-card" onclick="goToSection('youtube','scripts')">
+        <div class="feature-bg"></div><div class="feature-icon">📝</div>
+        <div class="feature-name">Scripts</div><div class="feature-desc">날짜별 대본 관리</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('youtube','memo')">
+        <div class="feature-bg"></div><div class="feature-icon">💡</div>
+        <div class="feature-name">Memo</div><div class="feature-desc">아이디어 & 레퍼런스</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('youtube','calendar')">
+        <div class="feature-bg"></div><div class="feature-icon">📅</div>
+        <div class="feature-name">Calendar</div><div class="feature-desc">업로드 일정 관리</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('youtube','performance')">
+        <div class="feature-bg"></div><div class="feature-icon">📊</div>
+        <div class="feature-name">Performance</div><div class="feature-desc">조회수 & 통계</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('youtube','assets')">
+        <div class="feature-bg"></div><div class="feature-icon">🗂</div>
+        <div class="feature-name">Assets</div><div class="feature-desc">해시태그 & 스니펫</div>
+        <span class="feature-arrow">→</span>
+      </div>
+    </div>
+    <div class="marquee-wrap reveal">
+      <div class="marquee-track">
+        <span class="marquee-item">유리피부</span><span class="marquee-item">케이뷰티</span>
+        <span class="marquee-item">데일리 루틴</span><span class="marquee-item">듀이 피니시</span>
+        <span class="marquee-item">스킨케어</span><span class="marquee-item">솔직 후기</span>
+        <span class="marquee-item">유리피부</span><span class="marquee-item">케이뷰티</span>
+        <span class="marquee-item">데일리 루틴</span><span class="marquee-item">듀이 피니시</span>
+        <span class="marquee-item">스킨케어</span><span class="marquee-item">솔직 후기</span>
+      </div>
+    </div>
+    <div class="hero-today-bar" id="youtube-hero-today"></div>
   </div>
 
   <!-- WORKSPACE -->
   <div class="workspace">
     <div class="tabs" id="tabs-youtube">
       <button class="tab active-youtube" onclick="switchTab('youtube','scripts')">🎬 Scripts</button>
+      <button class="tab" onclick="switchTab('youtube','weekly')">📋 Weekly</button>
       <button class="tab" onclick="switchTab('youtube','memo')">💡 Memo</button>
       <button class="tab" onclick="switchTab('youtube','calendar')">📅 Calendar</button>
       <button class="tab" onclick="switchTab('youtube','performance')">📊 Performance</button>
@@ -750,9 +1340,20 @@
 
     <!-- SCRIPTS -->
     <div class="section active" id="youtube-scripts">
-      <div class="section-title">이번 주 대본</div>
+      <div id="youtube-today-alert"></div>
       <div id="youtube-script-list"></div>
-      <button class="add-btn yt" onclick="openScriptModal('youtube')">+ 새 대본 추가</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+        <button class="add-btn yt" onclick="openScriptModal('youtube')">+ 새 대본 추가</button>
+        <button class="add-btn yt" onclick="openAIModal('youtube')" style="background:var(--purple);">✨ AI 생성</button>
+        <button class="add-btn yt" onclick="openCoworkModal('youtube')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 코웍 가져오기</button>
+      </div>
+    </div>
+
+    <!-- WEEKLY PLAN -->
+    <div class="section" id="youtube-weekly">
+      <div class="section-title">이번 주 대본</div>
+      <div id="youtube-weekly-today"></div>
+      <div id="youtube-weekly-list"></div>
     </div>
 
     <!-- MEMO -->
@@ -761,16 +1362,27 @@
       <div class="memo-tags">
         <span class="memo-tag active-yt" onclick="filterMemo('youtube','all',this)">All</span>
         <span class="memo-tag" onclick="filterMemo('youtube','idea',this)">💡 Idea</span>
-        <span class="memo-tag" onclick="filterMemo('youtube','ref',this)">🔗 Reference</span>
+        <span class="memo-tag" onclick="filterMemo('youtube','ref',this)">🔗 Ref</span>
         <span class="memo-tag" onclick="filterMemo('youtube','todo',this)">✅ To do</span>
+        <span class="memo-tag" onclick="filterMemo('youtube','buy',this)">🛒 Buy</span>
         <span class="memo-tag" onclick="filterMemo('youtube','general',this)">📝 General</span>
       </div>
       <textarea class="memo-input yt" id="youtube-memo-input" placeholder="메모 입력..."></textarea>
+      <div class="ref-section">
+        <div class="ref-label">Reference Link</div>
+        <input class="ref-url-input" id="youtube-memo-ref-url" type="url" placeholder="https://...">
+        <div class="ref-label">Reference Photo (10MB 이하)</div>
+        <label class="ref-file-label" for="youtube-memo-img-input">+ 이미지 첨부</label>
+        <input class="ref-file-input" id="youtube-memo-img-input" type="file" accept="image/*" onchange="handleMemoImage('youtube',this)">
+        <input type="hidden" id="youtube-memo-img-data">
+        <img class="ref-img-preview" id="youtube-memo-img-preview" alt="">
+      </div>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
-        <select id="youtube-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--white);font-size:12px;">
+        <select id="youtube-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:0px;padding:6px 10px;color:var(--walnut);font-size:12px;">
           <option value="idea">💡 Idea</option>
           <option value="ref">🔗 Reference</option>
           <option value="todo">✅ To do</option>
+          <option value="buy">🛒 Buy</option>
           <option value="general">📝 General</option>
         </select>
         <button class="memo-save yt" onclick="saveMemo('youtube')">Save</button>
@@ -860,6 +1472,17 @@
     <!-- SETTINGS -->
     <div class="section" id="youtube-settings">
       <div class="section-title">제작 세팅 (솜솜)</div>
+      <div class="settings-block" style="background:linear-gradient(135deg,#f9f5ff 0%,#ede8f8 100%);border:1px solid rgba(179,77,255,0.15);">
+        <div class="settings-block-title" style="color:var(--purple);">✨ Gemini API 키</div>
+        <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px;">
+          <span class="settings-row-label" style="font-size:11px;color:var(--mid);">aistudio.google.com/apikey 에서 발급 (무료)</span>
+          <div style="display:flex;gap:8px;width:100%;">
+            <input type="password" id="youtube-gemini-key" placeholder="AIza..." oninput="saveGeminiKey(this.value)"
+              style="flex:1;padding:8px 12px;border-radius:8px;border:1.5px solid rgba(179,77,255,0.2);font-size:13px;background:#fff;font-family:monospace;color:var(--ink);outline:none;">
+            <button onclick="toggleGeminiKey('youtube-gemini-key')" style="padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:#fff;font-size:12px;color:var(--mid);">보기</button>
+          </div>
+        </div>
+      </div>
       <div class="settings-block">
         <div class="settings-block-title">📷 Camera</div>
         <div class="settings-row"><span class="settings-row-label">Mode</span><span class="settings-row-val">4K 30fps · H.264</span></div>
@@ -899,9 +1522,9 @@
     <div class="modal-label">포스팅 날짜</div>
     <div class="modal-row">
       <input class="modal-input" id="modal-script-date" type="date" style="margin-bottom:0;">
-      <select id="modal-script-status" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--white);font-size:13px;flex:1;">
+      <select id="modal-script-status" style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--walnut);font-size:13px;flex:1;">
         <option value="not-filmed">Not filmed</option>
-        <option value="filmed">Filmed</option>
+        <option value="filmed">Filmed ✓</option>
         <option value="editing">Editing</option>
         <option value="done">Done ✓</option>
         <option value="urgent">⚡ Urgent</option>
@@ -918,6 +1541,48 @@
   </div>
 </div>
 
+<!-- AI 대본 생성 MODAL -->
+<div class="modal-overlay" id="ai-modal">
+  <div class="modal">
+    <div class="modal-title">✨ AI 대본 생성</div>
+    <div class="modal-label">채널</div>
+    <select class="modal-input" id="ai-channel" style="margin-bottom:10px;">
+      <option value="youtube">솜솜 (YouTube)</option>
+      <option value="tiktok">@somarchive (TikTok)</option>
+    </select>
+    <div class="modal-label">필라 유형</div>
+    <select class="modal-input" id="ai-pillar" style="margin-bottom:10px;">
+      <option value="1">1 — 아이돌 커버 메이크업</option>
+      <option value="2">2 — 변신 / 트랜지션</option>
+      <option value="3">3 — 제품 추천</option>
+    </select>
+    <div class="modal-label">핵심 한 줄 *</div>
+    <textarea class="modal-input" id="ai-keymsg" placeholder="예: 제니 거버너스볼 립 메이크업 — 눈물 자국 없이 오래가는 꿀팁" style="height:72px;"></textarea>
+    <div class="modal-label">경험 / 에피소드 (선택)</div>
+    <textarea class="modal-input" id="ai-episode" placeholder="예: 립이 번져서 난리난 적 있어서 이번엔 꼭 고정시키고 싶었음" style="height:72px;"></textarea>
+    <div class="modal-label">포스팅 예정일 (선택)</div>
+    <input class="modal-input" id="ai-date" type="date">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeAIModal()">취소</button>
+      <button class="modal-save" id="ai-generate-btn" onclick="generateAIScript()">✨ 생성하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 코웍 가져오기 MODAL -->
+<div class="modal-overlay" id="cowork-modal">
+  <div class="modal">
+    <div class="modal-title">📋 코웍 대본 가져오기</div>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.6;">Claude Cowork 세션에서 생성된 대본의 JSON 블록을 복사해서 붙여넣으세요.</p>
+    <div class="modal-label">JSON 붙여넣기</div>
+    <textarea class="modal-input" id="cowork-json" placeholder='{"title":"...","body":"...","channel":"youtube"}' style="height:180px;font-family:monospace;font-size:12px;"></textarea>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeCoworkModal()">취소</button>
+      <button class="modal-save" onclick="importCoworkScript()">가져오기</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -929,6 +1594,7 @@ function checkPassword() {
   if (val === PW) {
     document.getElementById("lock-screen").classList.add("hidden");
     sessionStorage.setItem("unlocked","1");
+    setTimeout(() => triggerHeroAnim(state && state.currentChannel ? state.currentChannel : 'tiktok'), 100);
   } else {
     document.getElementById("lock-error").textContent = "비밀번호가 틀렸어요";
     document.getElementById("lock-input").value = "";
@@ -938,6 +1604,7 @@ function checkPassword() {
 (function(){
   if (sessionStorage.getItem("unlocked") === "1") {
     document.getElementById("lock-screen").classList.add("hidden");
+    setTimeout(() => triggerHeroAnim('tiktok'), 300);
   } else {
     setTimeout(() => document.getElementById("lock-input").focus(), 100);
   }
@@ -1002,11 +1669,44 @@ async function initData() {
   isLoaded = true;
 }
 
+function renderHeroTodayBar(ch) {
+  const el = document.getElementById(ch + '-hero-today');
+  if (!el) return;
+  const today = new Date().toISOString().split('T')[0];
+  const todayScripts = (state.scripts[ch] || []).filter(function(s) { return s.date === today; });
+  if (!todayScripts.length) { el.innerHTML = ''; return; }
+
+  const statusIcons = { 'not-filmed':'○', 'filmed':'🎬', 'editing':'✂️', 'done':'✅', 'urgent':'⚡' };
+  const statusLabels = { 'not-filmed':'Not filmed', 'filmed':'Filmed', 'editing':'Editing', 'done':'Done', 'urgent':'Urgent' };
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+
+  var rows = todayScripts.map(function(s) {
+    var icon = statusIcons[s.status] || '○';
+    var label = statusLabels[s.status] || s.status;
+    return '<div class="hero-today-row" onclick="openScript(' + s.id + ',\'' + ch + '\')">'
+      + '<div class="hero-today-dot"></div>'
+      + '<span class="hero-today-title">' + s.title + '</span>'
+      + '<span class="hero-today-status">' + icon + ' ' + label + '</span>'
+      + '<span class="hero-today-arrow">→</span>'
+      + '</div>';
+  }).join('');
+
+  el.innerHTML = '<div class="hero-today-card">'
+    + '<div class="hero-today-head">'
+    + '<span class="hero-today-head-label">Today\'s posting.</span>'
+    + '<span class="hero-today-head-date">' + dateStr + '</span>'
+    + '</div>'
+    + rows
+    + '</div>';
+}
+
 function renderAll() {
   ['tiktok','youtube'].forEach(ch => {
     if (typeof renderScripts === 'function') renderScripts(ch);
     if (typeof renderMemos === 'function') renderMemos(ch);
     if (typeof renderPerf === 'function') renderPerf(ch);
+    renderHeroTodayBar(ch);
   });
 }
 
@@ -1032,6 +1732,7 @@ function switchChannel(ch) {
     b.classList.remove('active-tiktok','active-youtube');
   });
   event.currentTarget.classList.add('active-' + ch);
+  triggerHeroAnim(ch);
   save();
 }
 
@@ -1045,13 +1746,15 @@ function switchTab(ch, tab) {
   event.currentTarget.classList.add('active-' + ch);
 
   const prefix = ch + '-';
-  ['scripts','memo','calendar','performance','assets','settings'].forEach(s => {
+  ['scripts','weekly','memo','calendar','performance','assets','settings'].forEach(s => {
     const el = document.getElementById(prefix + s);
     if (el) el.classList.toggle('active', s === tab);
   });
 
   if (tab === 'calendar') renderCalendar(ch);
   if (tab === 'performance') renderPerf(ch);
+  if (tab === 'weekly') renderWeeklyPlan(ch);
+  if (tab === 'scripts') renderTodayAlert(ch);
   save();
 }
 
@@ -1109,7 +1812,72 @@ const DEFAULT_CHECKS = [
   { id: 'c12', label: 'Engage 5-10 similar accounts after posting', done: false },
 ];
 
+function buildStatusSelect(ch, s) {
+  var isUrgent = s.status === 'urgent';
+  var opts = [
+    ['not-filmed', '○ Not filmed'],
+    ['filmed', '🎬 Filmed ✓'],
+    ['editing', '✂️ Editing'],
+    ['done', '✅ Done ✓'],
+    ['urgent', '⚡ Urgent']
+  ];
+  var clr = isUrgent ? '#c0392b' : 'var(--mid)';
+  var bg  = isUrgent ? '#fff5f5' : 'var(--soft-2)';
+  var bdr = isUrgent ? '#c0392b' : 'rgba(0,0,0,0.12)';
+  var html = '<select class="script-status" onchange="changeStatus(\'' + ch + '\',' + s.id + ',this.value)" '
+    + 'style="appearance:none;-webkit-appearance:none;cursor:pointer;color:' + clr + ';background:' + bg + ';border-color:' + bdr + ';">';
+  opts.forEach(function(o) {
+    html += '<option value="' + o[0] + '"' + (s.status === o[0] ? ' selected' : '') + '>' + o[1] + '</option>';
+  });
+  html += '</select>';
+  return html;
+}
+
+function changeStatus(ch, id, val) {
+  var s = state.scripts[ch].find(function(x) { return x.id === id; });
+  if (!s) return;
+  var wasOpen = (function() { var b = document.getElementById('body-' + id); return b && b.classList.contains('open'); })();
+  s.status = val;
+  if (val === 'filmed') s.filmed = true;
+  else if (val === 'not-filmed') s.filmed = false;
+  save(); renderScripts(ch);
+  if (wasOpen) setTimeout(function() {
+    var b = document.getElementById('body-' + id);
+    var c = document.getElementById('chev-' + id);
+    if (b) b.classList.add('open');
+    if (c) c.classList.add('open');
+  }, 10);
+}
+
+function buildImgSection(s, ch) {
+  var imgs = (s.refImages && s.refImages.length) ? s.refImages : (s.refImage ? [s.refImage] : []);
+  var cnt = imgs.length;
+  var cols = Math.min(Math.max(cnt, 1), 4);
+  var html = '';
+  if (cnt < 7) {
+    var lbl = cnt > 0 ? '이미지 ' + cnt + '/7 — 추가' : '+ 이미지 첨부 (최대 7장)';
+    html += '<label style="display:inline-block;padding:5px 14px;border:1.5px dashed rgba(0,0,0,0.12);border-radius:9999px;font-size:11px;color:var(--mid);margin-bottom:8px;letter-spacing:.04em;">'
+      + lbl
+      + '<input type="file" accept="image/*" style="display:none;" onchange="handleScriptImage(\'' + ch + '\',' + s.id + ',this)"></label>';
+  } else {
+    html += '<div style="font-size:11px;color:var(--mid);margin-bottom:8px;">이미지 7/7 (최대)</div>';
+  }
+  if (cnt > 0) {
+    html += '<div style="display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:6px;margin-bottom:8px;">';
+    for (var i = 0; i < imgs.length; i++) {
+      html += '<div style="position:relative;">'
+        + '<img src="' + imgs[i] + '" style="width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:8px;display:block;">'
+        + '<button onclick="deleteScriptImage(\'' + ch + '\',' + s.id + ',' + i + ')" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:9999px;font-size:9px;padding:2px 7px;">✕</button>'
+        + '</div>';
+    }
+    html += '</div>';
+  }
+  return html;
+}
+
 function renderScripts(ch) {
+  renderTodayAlert(ch);
+  renderHeroTodayBar(ch);
   const list = document.getElementById(ch + '-script-list');
   if (!list) return;
   if (!state.scripts[ch].length) {
@@ -1134,7 +1902,7 @@ function renderScripts(ch) {
       <li>
         <div class="check-box ${c.done ? (ch==='youtube'?'done-yt':'done') : ''}"
           onclick="toggleCheck('${ch}',${s.id},'${c.id}')">${c.done ? '✓' : ''}</div>
-        <span style="color:${c.done?'var(--mid)':'var(--white)'};text-decoration:${c.done?'line-through':'none'}">${c.label}</span>
+        <span style="color:${c.done?'var(--slate)':'var(--walnut)'};text-decoration:${c.done?'line-through':'none'}">${c.label}</span>
       </li>`).join('');
     const memoVal = s.memo || '';
     return `
@@ -1146,10 +1914,7 @@ function renderScripts(ch) {
           ${s.date ? `<div class="script-date">Posting: ${formatDate(s.date)}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
-          <span class="script-status ${statusClass}">${statusLabel}</span>
-          <button onclick="toggleFilmed('${ch}',${s.id})" style="padding:3px 8px;border-radius:4px;border:1px solid ${filmed?'var(--sage)':'var(--border)'};background:${filmed?'var(--sage)':'none'};color:${filmed?'var(--black)':'var(--mid)'};font-size:10px;cursor:pointer;white-space:nowrap;font-weight:600;">
-            ${filmed ? '🎬 촬영완료' : '○ 촬영미완료'}
-          </button>
+          ${buildStatusSelect(ch, s)}
         </div>
         <span class="script-chevron" id="chev-${s.id}">▾</span>
       </div>
@@ -1165,12 +1930,20 @@ function renderScripts(ch) {
         </div>
         <div class="prod-section">
           <div class="prod-title">💬 메모</div>
-          <textarea id="smemo-${s.id}" onchange="saveScriptMemo('${ch}',${s.id},this.value)"
-            style="width:100%;background:#0f0f0f;border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--white);font-size:12px;resize:vertical;min-height:72px;font-family:inherit;outline:none;line-height:1.6;"
+          <textarea id="smemo-${s.id}" oninput="saveScriptMemo('${ch}',${s.id},this.value)"
+            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:vertical;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;"
             placeholder="촬영 메모, 수정사항, 아이디어...">${escHtml(memoVal)}</textarea>
         </div>
+        <div class="prod-section">
+          <div class="prod-title">📎 레퍼런스</div>
+          <input type="url" value="${escHtml(s.refUrl||'')}"
+            onchange="saveScriptRef('${ch}',${s.id},'refUrl',this.value)"
+            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 10px;color:var(--ink);font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;"
+            placeholder="https://">
+          ${buildImgSection(s, ch)}
+        </div>
         <div style="display:flex;gap:8px;margin-top:12px;">
-          <button onclick="deleteScript('${ch}',${s.id})" style="background:none;border:1px solid #333;border-radius:6px;color:#666;font-size:11px;padding:5px 10px;cursor:pointer;">삭제</button>
+          <button onclick="deleteScript('${ch}',${s.id})" style="background:none;border:1px solid rgba(0,0,0,0.12);border-radius:9999px;color:var(--mid);font-size:11px;padding:5px 14px;cursor:pointer;">삭제</button>
         </div>
       </div>
     </div>`;
@@ -1180,14 +1953,77 @@ function renderScripts(ch) {
 function toggleScript(id, ch) {
   const body = document.getElementById('body-' + id);
   const chev = document.getElementById('chev-' + id);
-  body.classList.toggle('open');
-  chev.classList.toggle('open');
+  const isOpen = body.classList.contains('open');
+  state.scripts[ch].forEach(s => {
+    const b = document.getElementById('body-' + s.id);
+    const c = document.getElementById('chev-' + s.id);
+    if (b) b.classList.remove('open');
+    if (c) c.classList.remove('open');
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    chev.classList.add('open');
+  }
+}
+
+function renderTodayAlert(ch) {
+  const el = document.getElementById(ch + '-today-alert');
+  if (!el) return;
+  const today = new Date().toISOString().split('T')[0];
+  const todayScripts = (state.scripts[ch] || []).filter(s => s.date === today);
+  if (!todayScripts.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="today-alert">
+    <div class="today-alert-label">📅 오늘 포스팅 예정</div>
+    ${todayScripts.map(s => `
+      <div class="today-alert-item" onclick="openScript(${s.id},'${ch}')">
+        <span class="today-alert-title">${s.title}</span>
+        <span class="today-alert-arrow">→</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderWeeklyTodayAlert(ch) {
+  const el = document.getElementById(ch + '-weekly-today');
+  if (!el) return;
+  const today = new Date().toISOString().split('T')[0];
+  const todayScripts = (state.scripts[ch] || []).filter(s => s.date === today);
+  if (!todayScripts.length) { el.innerHTML = ''; return; }
+  const statusIcons = { 'not-filmed':'○', 'filmed':'🎬', 'editing':'✂️', 'done':'✅', 'urgent':'⚡' };
+  el.innerHTML = `<div class="today-alert" style="margin-bottom:16px;">
+    <div class="today-alert-label">📅 오늘 포스팅 예정</div>
+    ${todayScripts.map(s => `
+      <div class="today-alert-item" onclick="openScript(${s.id},'${ch}')">
+        <span class="today-alert-title">${s.title}</span>
+        <span style="font-size:11px;color:var(--mid);margin-left:8px;flex-shrink:0;">${statusIcons[s.status] || '○'} ${s.status === 'done' ? 'Done' : s.status === 'filmed' ? 'Filmed' : s.status === 'editing' ? 'Editing' : s.status === 'urgent' ? 'Urgent' : 'Not filmed'}</span>
+        <span class="today-alert-arrow">→</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+function openScript(id, ch) {
+  const tabBtn = document.querySelector('#tabs-' + ch + ' .tab');
+  if (tabBtn) tabBtn.click();
+  setTimeout(() => {
+    const body = document.getElementById('body-' + id);
+    const chev = document.getElementById('chev-' + id);
+    if (body && !body.classList.contains('open')) {
+      body.classList.add('open');
+      if (chev) chev.classList.add('open');
+    }
+    const card = body ? body.closest('.script-card') : null;
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
 }
 
 function toggleFilmed(ch, id) {
   const s = state.scripts[ch].find(x => x.id === id);
-  if (s) { s.filmed = !s.filmed; save(); renderScripts(ch);
-    setTimeout(() => { const b = document.getElementById('body-'+id); const c = document.getElementById('chev-'+id); if(b) b.classList.add('open'); if(c) c.classList.add('open'); }, 10); }
+  if (s) {
+    s.filmed = !s.filmed;
+    if (s.filmed && s.status === 'not-filmed') s.status = 'filmed';
+    else if (!s.filmed && s.status === 'filmed') s.status = 'not-filmed';
+    save(); renderScripts(ch);
+    setTimeout(() => { const b = document.getElementById('body-'+id); const c = document.getElementById('chev-'+id); if(b) b.classList.add('open'); if(c) c.classList.add('open'); }, 10);
+  }
 }
 
 function toggleCheck(ch, scriptId, checkId) {
@@ -1224,8 +2060,18 @@ function saveMemo(ch) {
   const text = document.getElementById(ch + '-memo-input').value.trim();
   if (!text) return;
   const type = document.getElementById(ch + '-memo-type').value;
-  state.memos[ch].unshift({ id: Date.now(), text, type });
+  const refUrlEl = document.getElementById(ch + '-memo-ref-url');
+  const imgDataEl = document.getElementById(ch + '-memo-img-data');
+  const refUrl = refUrlEl ? refUrlEl.value.trim() : '';
+  const refImage = imgDataEl ? imgDataEl.value : '';
+  state.memos[ch].unshift({ id: Date.now(), text, type, refUrl, refImage });
   document.getElementById(ch + '-memo-input').value = '';
+  if (refUrlEl) refUrlEl.value = '';
+  if (imgDataEl) imgDataEl.value = '';
+  const prev = document.getElementById(ch + '-memo-img-preview');
+  if (prev) { prev.style.display = 'none'; prev.src = ''; }
+  const fileInput = document.getElementById(ch + '-memo-img-input');
+  if (fileInput) fileInput.value = '';
   save(); renderMemos(ch);
   showToast('메모 저장됐어요 ✓');
 }
@@ -1244,12 +2090,18 @@ function renderMemos(ch) {
   const f = state.memoFilter[ch] || 'all';
   const items = f === 'all' ? state.memos[ch] : state.memos[ch].filter(m => m.type === f);
   if (!items.length) { list.innerHTML = '<div class="empty">메모 없음</div>'; return; }
-  const labels = { idea:'💡', ref:'🔗', todo:'✅', general:'📝' };
+  const labels = { idea:'💡', ref:'🔗', todo:'✅', general:'📝', buy:'🛒' };
   list.innerHTML = items.map(m => `
-    <div class="memo-item">
-      <div class="memo-item-text">${escHtml(m.text)}</div>
-      <span class="memo-item-tag">${labels[m.type] || '📝'}</span>
-      <span class="memo-del" onclick="deleteMemo('${ch}',${m.id})">×</span>
+    <div class="memo-item" style="flex-direction:column;align-items:flex-start;gap:6px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;width:100%;">
+        <div class="memo-item-text">${escHtml(m.text)}</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          <span class="memo-item-tag">${labels[m.type] || '📝'}</span>
+          <span class="memo-del" onclick="deleteMemo('${ch}',${m.id})">×</span>
+        </div>
+      </div>
+      ${m.refUrl ? `<a href="${escHtml(m.refUrl)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--slate);text-decoration:none;word-break:break-all;border-bottom:1px solid var(--slate);padding-bottom:1px;">🔗 ${escHtml(m.refUrl)}</a>` : ''}
+      ${m.refImage ? `<img src="${m.refImage}" style="width:100%;max-height:280px;object-fit:contain;background:var(--linen-2);display:block;" loading="lazy">` : ''}
     </div>`).join('');
 }
 
@@ -1375,6 +2227,302 @@ function addAsset(ch, type) {
   showToast('추가됐어요 ✓');
 }
 
+// ── NAV DROPDOWN ──
+let ddCh = 'tiktok';
+
+function toggleNavMenu() {
+  const dd = document.getElementById('nav-dropdown');
+  dd.classList.toggle('open');
+  document.getElementById('dd-btn-tiktok').classList.toggle('active-dd', ddCh === 'tiktok');
+  document.getElementById('dd-btn-youtube').classList.toggle('active-dd', ddCh === 'youtube');
+}
+
+function setDdChannel(ch) {
+  ddCh = ch;
+  document.getElementById('dd-btn-tiktok').classList.toggle('active-dd', ch === 'tiktok');
+  document.getElementById('dd-btn-youtube').classList.toggle('active-dd', ch === 'youtube');
+}
+
+function goToSection(ch, tab) {
+  const navDrop = document.getElementById('nav-dropdown');
+  if (navDrop) navDrop.classList.remove('open');
+  if (state.currentChannel !== ch) {
+    state.currentChannel = ch;
+    document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + ch).classList.add('active');
+    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-tiktok','active-youtube'));
+    const chBtn = document.querySelector(`.ch-btn[onclick*="'${ch}'"]`);
+    if (chBtn) chBtn.classList.add('active-' + ch);
+  }
+  state.currentTab[ch] = tab;
+  const tabs = document.querySelectorAll('#tabs-' + ch + ' .tab');
+  tabs.forEach(t => t.classList.remove('active-tiktok','active-youtube'));
+  const tabOrder = ['scripts','weekly','memo','calendar','performance','assets','settings'];
+  const idx = tabOrder.indexOf(tab);
+  if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active-' + ch);
+  tabOrder.forEach(s => {
+    const el = document.getElementById(ch + '-' + s);
+    if (el) el.classList.toggle('active', s === tab);
+  });
+  if (tab === 'calendar') renderCalendar(ch);
+  if (tab === 'performance') renderPerf(ch);
+  if (tab === 'weekly') renderWeeklyPlan(ch);
+  const ws = document.querySelector('#panel-' + ch + ' .workspace');
+  if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── WEEKLY PLAN ──
+function renderWeeklyPlan(ch) {
+  renderWeeklyTodayAlert(ch);
+  const container = document.getElementById(ch + '-weekly-list');
+  if (!container) return;
+  const now = new Date();
+  const dow = now.getDay();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - dow);
+  startOfWeek.setHours(0, 0, 0, 0);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  const weekScripts = state.scripts[ch].filter(s => {
+    if (!s.date) return false;
+    const d = new Date(s.date + 'T00:00:00');
+    return d >= startOfWeek && d <= endOfWeek;
+  }).sort((a, b) => a.date > b.date ? 1 : -1);
+
+  if (!weekScripts.length) {
+    container.innerHTML = '<div class="empty">이번 주 예정된 영상이 없어요.<br>대본에서 발행일자를 이번 주로 설정해보세요.</div>';
+    return;
+  }
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  container.innerHTML = weekScripts.map(s => {
+    const statusClass = s.status === 'urgent' ? 'urgent' : '';
+    const statusLabel = { 'not-filmed':'Not filmed','filmed':'Filmed ✓','editing':'Editing','done':'Done ✓','urgent':'⚡ Urgent' }[s.status] || s.status;
+    if (!s.checks || !s.checks.length) { s.checks = DEFAULT_CHECKS.map(c => ({...c})); save(); }
+    const checks = s.checks;
+    const checksDone = checks.filter(c => c.done).length;
+    const checksTotal = checks.length;
+    const dt = s.date ? new Date(s.date + 'T00:00:00') : null;
+    const dayLabel = dt ? days[dt.getDay()] : '';
+    const checklistHtml = checks.map(c => `
+      <li>
+        <div class="check-box ${c.done ? (ch==='youtube'?'done-yt':'done') : ''}"
+          onclick="toggleWeeklyCheck('${ch}',${s.id},'${c.id}')">${c.done ? '✓' : ''}</div>
+        <span style="color:${c.done?'var(--slate)':'var(--walnut)'};text-decoration:${c.done?'line-through':'none'}">${c.label}</span>
+      </li>`).join('');
+    return `
+    <div class="script-card">
+      <div class="script-header" onclick="toggleWeeklyScript(${s.id},'${ch}')">
+        <div class="script-meta">
+          <div class="script-num">${dayLabel}${s.date ? ' · ' + formatDate(s.date) : ''}</div>
+          <div class="script-title">${s.title}</div>
+          ${checksTotal ? `<div class="script-date">체크리스트 ${checksDone}/${checksTotal}</div>` : ''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
+          ${buildStatusSelect(ch, s)}
+        </div>
+        <span class="script-chevron" id="wchev-${s.id}">▾</span>
+      </div>
+      <div class="script-body" id="wbody-${s.id}">
+        ${s.body ? `<div class="prod-title" style="margin-bottom:6px;">📝 SCRIPT</div><div class="script-content">${escHtml(s.body)}</div>` : ''}
+        ${s.notes ? `<div class="prod-section"><div class="prod-title">▶ Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
+        <div class="prod-section">
+          <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>✅ Checklist</span>
+            <span style="color:var(--mid);font-size:11px;">${checksDone}/${checksTotal}</span>
+          </div>
+          <ul class="checklist">${checklistHtml}</ul>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleWeeklyScript(id, ch) {
+  const body = document.getElementById('wbody-' + id);
+  const chev = document.getElementById('wchev-' + id);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  state.scripts[ch].forEach(s => {
+    const b = document.getElementById('wbody-' + s.id);
+    const c = document.getElementById('wchev-' + s.id);
+    if (b) b.classList.remove('open');
+    if (c) c.classList.remove('open');
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    if (chev) chev.classList.add('open');
+  }
+}
+
+function toggleWeeklyCheck(ch, scriptId, checkId) {
+  const s = state.scripts[ch].find(x => x.id === scriptId);
+  if (!s) return;
+  if (!s.checks || !s.checks.length) s.checks = DEFAULT_CHECKS.map(c => ({...c}));
+  const c = s.checks.find(x => x.id === checkId);
+  if (c) { c.done = !c.done; save(); renderWeeklyPlan(ch); }
+}
+
+function goToScript(ch, scriptId) {
+  goToSection(ch, 'scripts');
+  setTimeout(() => {
+    const body = document.getElementById('body-' + scriptId);
+    const chev = document.getElementById('chev-' + scriptId);
+    state.scripts[ch].forEach(s => {
+      const b = document.getElementById('body-' + s.id);
+      const c = document.getElementById('chev-' + s.id);
+      if (b) b.classList.remove('open');
+      if (c) c.classList.remove('open');
+    });
+    if (body) { body.classList.add('open'); body.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (chev) chev.classList.add('open');
+  }, 150);
+}
+
+// ── SCRIPT REFERENCE ──
+function saveScriptRef(ch, id, field, val) {
+  const s = state.scripts[ch].find(x => x.id === id);
+  if (s) { s[field] = val; save(); }
+}
+
+function handleScriptImage(ch, id, input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('10MB 이하 이미지만 첨부 가능해요'); input.value = ''; return; }
+  const s = state.scripts[ch].find(x => x.id === id);
+  if (!s) return;
+  if (!s.refImages) s.refImages = s.refImage ? [s.refImage] : [];
+  if (s.refImages.length >= 7) { showToast('이미지는 최대 7장까지 첨부 가능해요'); input.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      const MAX = 800;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = canvas.toDataURL('image/jpeg', 0.65);
+      s.refImages.push(data);
+      save(); renderScripts(ch);
+      setTimeout(() => {
+        const b = document.getElementById('body-' + id);
+        const c = document.getElementById('chev-' + id);
+        if (b) b.classList.add('open');
+        if (c) c.classList.add('open');
+      }, 10);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function deleteScriptImage(ch, id, idx) {
+  const s = state.scripts[ch].find(x => x.id === id);
+  if (!s) return;
+  if (!s.refImages) s.refImages = s.refImage ? [s.refImage] : [];
+  s.refImages.splice(idx, 1);
+  save(); renderScripts(ch);
+  setTimeout(() => {
+    const b = document.getElementById('body-' + id);
+    const c = document.getElementById('chev-' + id);
+    if (b) b.classList.add('open');
+    if (c) c.classList.add('open');
+  }, 10);
+}
+
+// ── MEMO IMAGE UPLOAD ──
+function handleMemoImage(ch, input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('10MB 이하 이미지만 첨부 가능해요'); input.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      const MAX = 800;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = canvas.toDataURL('image/jpeg', 0.65);
+      const preview = document.getElementById(ch + '-memo-img-preview');
+      const dataEl = document.getElementById(ch + '-memo-img-data');
+      if (preview) { preview.src = data; preview.style.display = 'block'; }
+      if (dataEl) dataEl.value = data;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── SCROLL REVEAL ──
+(function() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  function bindReveal() {
+    document.querySelectorAll('.reveal:not([data-observed])').forEach(el => {
+      el.dataset.observed = '1';
+      obs.observe(el);
+    });
+  }
+  bindReveal();
+  setTimeout(bindReveal, 800);
+  document.addEventListener('scroll', bindReveal, { passive: true, once: true });
+})();
+
+// ── CURSOR ──
+(function() {
+  const cur = document.getElementById('cursor');
+  if (!cur) return;
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top = e.clientY + 'px';
+    cur.classList.add('visible');
+  });
+  document.addEventListener('mouseleave', () => cur.classList.remove('visible'));
+  function bindCursorHover() {
+    document.querySelectorAll('a, button, input, textarea, label, .script-header, .cal-day').forEach(el => {
+      if (!el.dataset.cursorBound) {
+        el.dataset.cursorBound = '1';
+        el.addEventListener('mouseenter', () => cur.classList.add('expanded'));
+        el.addEventListener('mouseleave', () => cur.classList.remove('expanded'));
+      }
+    });
+  }
+  bindCursorHover();
+  document.addEventListener('DOMContentLoaded', bindCursorHover);
+  setTimeout(bindCursorHover, 1500);
+})();
+
+// ── HERO ANIMATIONS ──
+function triggerHeroAnim(ch) {
+  const p = ch === 'tiktok' ? 'tk' : 'yt';
+  // Reset previous state for re-triggering on channel switch
+  ['hero-tag','hl1','hl2','hero-bottom','float-tags','scroll-hint'].forEach(key => {
+    const el = document.getElementById(p + '-' + key);
+    if (el) el.classList.remove('in');
+  });
+  const d = (id, ms) => {
+    const el = document.getElementById(id);
+    if (el) setTimeout(() => el.classList.add('in'), ms);
+  };
+  d(p + '-hero-tag', 80);
+  d(p + '-hl1', 320);
+  d(p + '-hl2', 520);
+  d(p + '-hero-bottom', 680);
+  d(p + '-float-tags', 880);
+  d(p + '-scroll-hint', 1050);
+}
+
 // ── INIT ──
 function init() {
   // Firebase SDK 로드 대기 후 데이터 초기화
@@ -1389,7 +2537,194 @@ function init() {
   }
 }
 
+// ── AI 모달 ──────────────────────────────────────────────────────────
+function openAIModal(ch) {
+  document.getElementById('ai-channel').value = ch;
+  document.getElementById('ai-keymsg').value = '';
+  document.getElementById('ai-episode').value = '';
+  document.getElementById('ai-date').value = '';
+  document.getElementById('ai-modal').classList.add('open');
+}
+function closeAIModal() {
+  document.getElementById('ai-modal').classList.remove('open');
+}
+
+async function generateAIScript() {
+  const ch = document.getElementById('ai-channel').value;
+  const pillar = document.getElementById('ai-pillar').value;
+  const keyMsg = document.getElementById('ai-keymsg').value.trim();
+  const episode = document.getElementById('ai-episode').value.trim();
+  const date = document.getElementById('ai-date').value;
+
+  if (!keyMsg) { showToast('핵심 한 줄을 입력해주세요'); return; }
+
+  const geminiKey = localStorage.getItem('gemini_api_key') || '';
+  if (!geminiKey) { showToast('Settings에서 Gemini API 키를 먼저 입력해주세요'); return; }
+
+  const btn = document.getElementById('ai-generate-btn');
+  btn.textContent = '생성 중...'; btn.disabled = true;
+
+  const pillarDescriptions = {
+    '1': '아이돌 커버 메이크업 — 실존 아이돌의 특정 이벤트/컴백/사진 속 메이크업을 따라하는 콘텐츠. 제목 패턴: "[아이돌명] [이벤트] 메이크업 따라해봄" 또는 "[아이돌명] [이벤트] 메이크업 튜토리얼 — [차별 포인트] 꿀팁". 차별화된 디테일 하나를 반드시 넣는다.',
+    '2': '변신/트랜지션 — 맨 얼굴→완성 메이크업의 극적 전환. 제목 패턴: "누구세요..? 딱 N초 만에 변신 완료". 0-2초 안에 강한 비주얼 대비 필수.',
+    '3': '제품 추천 — 특정 퍼스널컬러/상황에 맞춘 제품 추천. 제목 패턴: "[타겟 퍼스널컬러/상황] + 공감형 후킹 — [화자 포지셔닝]의 [카테고리] 추천 N가지". "아직도 이거 없음 유죄" 같은 겁주기/죄책감 표현 절대 금지. 대신 "한 번쯤 고민했을", "이런 거 찾고 있었다면" 같은 공감형 진입.'
+  };
+
+  const prompt = '너는 솜솜(@ssommos) 유튜브 쇼츠 채널의 전문 대본 작가야.\n\n'
+    + '포지셔닝: 퍼스널컬러 안 가리고 진짜 예쁜 메이크업을 같이 찾아가는 친구. 옆집 언니 / 같이 덕질하는 친구 톤.\n\n'
+    + '절대 금지: 가르치는 톤, "99%가 모르는", "무조건 해야 하는", 죄책감/겁주는 표현, 전문가처럼 거리두는 말투\n\n'
+    + '필라 유형: ' + pillarDescriptions[pillar] + '\n\n'
+    + '핵심 메시지: ' + keyMsg + '\n'
+    + (episode ? '경험/에피소드: ' + episode + '\n' : '')
+    + '\n아래 정확한 형식으로 대본 작성:\n\n'
+    + '제목: [제목]\n\n'
+    + 'HOOK (0-3초):\n[화면 묘사 + 대사]\n\n'
+    + '본문:\n[단계별 대사, 자연스러운 구어체]\n\n'
+    + '엔딩:\n[마무리 + 자연스러운 CTA]\n\n'
+    + '해시태그: [3-5개 #포함]';
+
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + geminiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.9, maxOutputTokens: 2048 }
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || 'API 오류');
+    const text = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) || '';
+    if (!text) throw new Error('응답 없음');
+
+    const titleMatch = text.match(/제목:\s*(.+)/);
+    const hookMatch = text.match(/HOOK[^:\n]*:\s*([\s\S]*?)(?=본문:|$)/i);
+    const bodyMatch = text.match(/본문:\s*([\s\S]*?)(?=엔딩:|$)/i);
+    const endingMatch = text.match(/엔딩:\s*([\s\S]*?)(?=해시태그:|$)/i);
+    const tagsMatch = text.match(/해시태그:\s*(.+)/);
+
+    const title = titleMatch ? titleMatch[1].trim() : keyMsg;
+    const body = [
+      hookMatch ? 'HOOK (0-3초)\n' + hookMatch[1].trim() : '',
+      bodyMatch ? '본문\n' + bodyMatch[1].trim() : '',
+      endingMatch ? '엔딩\n' + endingMatch[1].trim() : '',
+      tagsMatch ? '해시태그: ' + tagsMatch[1].trim() : ''
+    ].filter(Boolean).join('\n\n') || text;
+
+    const newScript = {
+      id: Date.now(),
+      title: title,
+      body: body,
+      notes: '✨ AI 생성 | 필라 ' + pillar,
+      date: date || '',
+      status: 'not-filmed',
+      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
+      memo: '',
+      refUrl: '',
+      refImages: [],
+      filmed: false
+    };
+
+    state.scripts[ch].unshift(newScript);
+    save();
+    renderScripts(ch);
+    closeAIModal();
+    showToast('AI 대본이 생성됐어요!');
+
+    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
+    if (scriptTabBtn) scriptTabBtn.click();
+    setTimeout(function() {
+      var b = document.getElementById('body-' + newScript.id);
+      var c = document.getElementById('chev-' + newScript.id);
+      if (b) { b.classList.add('open'); }
+      if (c) { c.classList.add('open'); }
+      var card = b ? b.closest('.script-card') : null;
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+
+  } catch(e) {
+    showToast('생성 실패: ' + (e.message || '다시 시도해주세요'));
+  } finally {
+    btn.textContent = '✨ 생성하기'; btn.disabled = false;
+  }
+}
+
+// ── 코웍 가져오기 모달 ───────────────────────────────────────────────
+function openCoworkModal(ch) {
+  document.getElementById('cowork-json').value = '';
+  document.getElementById('cowork-modal').setAttribute('data-ch', ch);
+  document.getElementById('cowork-modal').classList.add('open');
+}
+function closeCoworkModal() {
+  document.getElementById('cowork-modal').classList.remove('open');
+}
+
+function importCoworkScript() {
+  var raw = document.getElementById('cowork-json').value.trim();
+  var defaultCh = document.getElementById('cowork-modal').getAttribute('data-ch') || 'youtube';
+  try {
+    var jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('JSON 블록을 찾을 수 없어요');
+    var data = JSON.parse(jsonMatch[0]);
+    if (!data.title) throw new Error('title 필드가 없어요');
+    if (!data.body) throw new Error('body 필드가 없어요');
+
+    var ch = data.channel || defaultCh;
+    if (!state.scripts[ch]) ch = defaultCh;
+
+    var newScript = {
+      id: Date.now(),
+      title: data.title,
+      body: data.body,
+      notes: data.notes || '📋 코웍 가져오기',
+      date: data.date || '',
+      status: 'not-filmed',
+      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
+      memo: '',
+      refUrl: '',
+      refImages: [],
+      filmed: false
+    };
+
+    state.scripts[ch].unshift(newScript);
+    save();
+    renderScripts(ch);
+    closeCoworkModal();
+    showToast('코웍 대본을 가져왔어요!');
+
+    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
+    if (scriptTabBtn) scriptTabBtn.click();
+    setTimeout(function() {
+      var b = document.getElementById('body-' + newScript.id);
+      var c = document.getElementById('chev-' + newScript.id);
+      if (b) b.classList.add('open');
+      if (c) c.classList.add('open');
+      var card = b ? b.closest('.script-card') : null;
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+
+  } catch(e) {
+    showToast('가져오기 실패: ' + e.message);
+  }
+}
+
+// ── Gemini 키 설정 ────────────────────────────────────────────────────
+function saveGeminiKey(val) {
+  localStorage.setItem('gemini_api_key', val.trim());
+}
+function toggleGeminiKey(inputId) {
+  var el = document.getElementById(inputId);
+  if (!el) return;
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+function loadGeminiKey() {
+  var key = localStorage.getItem('gemini_api_key') || '';
+  var el = document.getElementById('youtube-gemini-key');
+  if (el) el.value = key;
+}
+
 init();
+loadGeminiKey();
 </script>
 </body>
 </html>
