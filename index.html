@@ -2056,6 +2056,24 @@ function renderScripts(ch) {
             placeholder="https://">
           ${buildImgSection(s, ch)}
         </div>
+        <div class="prod-section">
+          <div class="prod-title">✂️ EDITING GUIDE</div>
+          <textarea oninput="saveScriptRef('${ch}',${s.id},'editingGuide',this.value)"
+            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:vertical;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;"
+            placeholder="컷 순서, 트랜지션, 음악, 효과음...">${escHtml(s.editingGuide||'')}</textarea>
+        </div>
+        <div class="prod-section">
+          <div class="prod-title">🖼 THUMBNAIL GUIDE</div>
+          <textarea oninput="saveScriptRef('${ch}',${s.id},'thumbnailGuide',this.value)"
+            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:vertical;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;"
+            placeholder="썸네일 텍스트, 컨셉, 색상...">${escHtml(s.thumbnailGuide||'')}</textarea>
+        </div>
+        <div class="prod-section">
+          <div class="prod-title">💬 CAPTIONS</div>
+          <textarea oninput="saveScriptRef('${ch}',${s.id},'captions',this.value)"
+            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:vertical;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;"
+            placeholder="캡션, 해시태그, 첫 댓글...">${escHtml(s.captions||'')}</textarea>
+        </div>
         <div style="display:flex;gap:8px;margin-top:12px;">
           <button onclick="deleteScript('${ch}',${s.id})" style="background:none;border:1px solid rgba(0,0,0,0.12);border-radius:9999px;color:var(--mid);font-size:11px;padding:5px 14px;cursor:pointer;">삭제</button>
         </div>
