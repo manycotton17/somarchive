@@ -1790,8 +1790,11 @@ function saveScript() {
     notes: document.getElementById('modal-script-notes').value,
     checks: [],
   };
-  state.scripts[ch].unshift(script);
-  save();
+  state.scripts[ch].unshift(newScript);
+if (data.date) {
+  state.events[ch].push({ id: Date.now() + 1, title: data.title, date: data.date });
+}
+save();
   renderScripts(ch);
   closeModal();
   showToast('대본 저장됐어요 ✓');
