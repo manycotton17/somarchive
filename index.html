@@ -2845,20 +2845,22 @@ function importCoworkScript() {
     var ch = data.channel || defaultCh;
     if (!state.scripts[ch]) ch = defaultCh;
 
-    var newScript = {
-      id: Date.now(),
-      title: data.title,
-      body: data.body,
-      notes: data.notes || '📋 cowork에서 가져오기',
-      date: data.date || '',
-      status: 'not-filmed',
-      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
-      memo: '',
-      refUrl: '',
-      refImages: [],
-      filmed: false
-    };
-
+   var newScript = {
+  id: Date.now(),
+  title: data.title,
+  body: data.body,
+  notes: data.notes || '📋 cowork에서 가져오기',
+  date: data.date || '',
+  status: 'not-filmed',
+  checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
+  memo: '',
+  refUrl: '',
+  refImages: [],
+  filmed: false,
+  editingGuide: data.editingGuide || '',       
+  thumbnailGuide: data.thumbnailGuide || '',   
+  captions: data.captions || ''               
+};
     state.scripts[ch].unshift(newScript);
     if (data.date) {
       state.events[ch].push({ id: Date.now() + 1, title: data.title, date: data.date });
