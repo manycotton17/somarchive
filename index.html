@@ -141,7 +141,8 @@
   }
 
   /* ── WORKSPACE ── */
-  .workspace { padding: 0 0 80px; }
+  .workspace { padding: 0 0 80px; display: none; }
+  .workspace.visible { display: block; }
 
   /* ── TABS ── */
   .tabs {
@@ -301,7 +302,7 @@
     background: var(--soft-2); color: var(--ink);
   }
   .cal-day-chip-script { background: var(--soft-2); color: var(--ink); }
-  .cal-day-chip-script:hover { background: #fde8d8; }
+  .cal-day-chip-script:hover { background: #fde8f0; }
   .cal-day-chip-event { background: rgba(0,0,0,0.05); color: var(--mid); }
   .cal-day-more { font-size: 11px; color: var(--mid); padding-left: 2px; }
   .cal-events { margin-top: 8px; }
@@ -508,7 +509,7 @@
     .memo-tag { padding: 3px 8px; font-size: 10px; }
 
     /* Add event row */
-    #tiktok-event-date, #youtube-event-date { max-width: 100% !important; }
+    #tiktok-event-date, #youtube-event-date, #instagram-event-date { max-width: 100% !important; }
   }
 
   /* iPhone safe area (홈바) */
@@ -645,14 +646,14 @@
   *, *::before, *::after { cursor: none !important; }
   .cursor {
     position: fixed; width: 12px; height: 12px;
-    background: #f07035; border-radius: 50%;
+    background: #FF66CC; border-radius: 50%;
     pointer-events: none; z-index: 9999;
     transform: translate(-50%, -50%);
     transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, opacity 0.2s ease;
     opacity: 0;
   }
   .cursor.visible { opacity: 1; }
-  .cursor.expanded { width: 52px; height: 52px; background: #ffd6b8; }
+  .cursor.expanded { width: 52px; height: 52px; background: #F81894; opacity: 0.18; }
 
   /* ── HERO ANIMATIONS ── */
   .line { display: block; overflow: hidden; }
@@ -844,24 +845,24 @@
 
   /* ── TODAY ALERT ── */
   .today-alert {
-    background: linear-gradient(135deg, #fff5ef 0%, #fde8d8 100%);
-    border: 1px solid rgba(240,112,53,0.18);
+    background: linear-gradient(135deg, #fff5f9 0%, #fde8f0 100%);
+    border: 1px solid rgba(255,77,141,0.18);
     border-radius: 16px; padding: 14px 16px; margin-bottom: 16px;
   }
   .today-alert-label {
     font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-    color: #f07035; font-weight: 600; margin-bottom: 10px;
+    color: #ff4d8d; font-weight: 600; margin-bottom: 10px;
   }
   .today-alert-item {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 14px; background: #fff; border-radius: 10px;
-    margin-bottom: 6px; cursor: none; border: 1px solid rgba(240,112,53,0.12);
+    margin-bottom: 6px; cursor: none; border: 1px solid rgba(255,77,141,0.12);
     transition: all .18s cubic-bezier(0.22,1,0.36,1);
   }
   .today-alert-item:last-child { margin-bottom: 0; }
-  .today-alert-item:hover { background: #fff8f5; transform: translateX(3px); box-shadow: 0 2px 12px rgba(240,112,53,0.1); }
+  .today-alert-item:hover { background: #fff5f9; transform: translateX(3px); box-shadow: 0 2px 12px rgba(255,77,141,0.1); }
   .today-alert-title { font-size: 13px; font-weight: 500; color: var(--ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .today-alert-arrow { color: #f07035; font-size: 14px; flex-shrink: 0; margin-left: 8px; transition: transform .18s; }
+  .today-alert-arrow { color: #ff4d8d; font-size: 14px; flex-shrink: 0; margin-left: 8px; transition: transform .18s; }
   .today-alert-item:hover .today-alert-arrow { transform: translateX(3px); }
 
   /* ── Script filter bar ── */
@@ -889,15 +890,15 @@
   }
   .hero-today-card {
     background: #fff;
-    border: 1px solid rgba(240,112,53,0.18);
+    border: 1px solid rgba(255,77,141,0.18);
     border-radius: 18px;
     overflow: hidden;
   }
   .hero-today-head {
     display: flex; align-items: baseline; gap: 12px;
     padding: 16px 20px 14px;
-    border-bottom: 1px solid rgba(240,112,53,0.1);
-    background: linear-gradient(90deg, #fff5ef 0%, #fff 60%);
+    border-bottom: 1px solid rgba(255,77,141,0.1);
+    background: linear-gradient(90deg, #fff5f9 0%, #fff 60%);
   }
   .hero-today-head-label {
     font-family: 'DM Serif Display', Georgia, serif;
@@ -913,10 +914,10 @@
     cursor: none; transition: background .15s;
   }
   .hero-today-row:last-child { border-bottom: none; }
-  .hero-today-row:hover { background: #fff8f5; }
+  .hero-today-row:hover { background: #fff5f9; }
   .hero-today-dot {
     width: 7px; height: 7px; border-radius: 50%;
-    background: #f07035; flex-shrink: 0;
+    background: #ff4d8d; flex-shrink: 0;
   }
   .hero-today-title {
     font-size: 14px; font-weight: 500; color: var(--ink);
@@ -926,10 +927,133 @@
     font-size: 11px; color: var(--mid); flex-shrink: 0;
   }
   .hero-today-arrow {
-    font-size: 13px; color: #f07035; flex-shrink: 0;
+    font-size: 13px; color: #ff4d8d; flex-shrink: 0;
     transition: transform .15s;
   }
   .hero-today-row:hover .hero-today-arrow { transform: translateX(3px); }
+
+  /* ── INSTAGRAM ── */
+  .ch-btn.active-instagram { background: linear-gradient(135deg, #f77737 0%, #e1306c 100%); color: #fff; border-color: #e1306c; }
+  .tab.active-instagram { color: #e1306c; background: #fef0f5; border-color: rgba(225,48,108,0.2); }
+  .check-box.done-ig { background: linear-gradient(135deg, #f77737, #e1306c); border-color: #e1306c; color: #fff; }
+  .sfilter-pill.active-ig { background: linear-gradient(135deg, #f77737, #e1306c); color: #fff; border-color: #e1306c; }
+  .memo-input.ig:focus { border-color: #e1306c; }
+  .memo-save.ig { background: linear-gradient(135deg, #f77737, #e1306c); }
+  .memo-tag.active-ig { border-color: #e1306c; color: #e1306c; background: #fef0f5; }
+  .add-event-input.ig:focus { border-color: #e1306c; }
+  .add-event-btn.ig { background: linear-gradient(135deg, #f77737, #e1306c); }
+  .asset-input.ig:focus { border-color: #e1306c; }
+  .asset-add-btn.ig { background: linear-gradient(135deg, #f77737, #e1306c); }
+  .form-input.ig:focus { border-color: #e1306c; }
+  .form-submit.ig { background: linear-gradient(135deg, #f77737, #e1306c); }
+  .modal-input.ig:focus { border-color: #e1306c; }
+  .modal-save.ig { background: linear-gradient(135deg, #f77737, #e1306c); }
+  .copy-btn.ig:hover { border-color: #e1306c; color: #e1306c; }
+  .cal-day.today-ig { border-color: #e1306c; background: #fef0f5; }
+  .cal-day.today-ig .cal-day-num { color: #e1306c; }
+  .cal-event-dot.ig { background: #e1306c; }
+  #panel-instagram .hero-sub,
+  #panel-instagram .about-body,
+  #panel-instagram .feature-desc,
+  #panel-instagram .settings-block,
+  #panel-instagram .section-title { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; }
+  #panel-instagram .hero h1 { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; font-weight: 700; letter-spacing: -0.03em; }
+
+  /* ── CONTENT PLANNER ── */
+  .cp-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+  .cp-nav { display:flex; align-items:center; gap:8px; }
+  .cp-nav-btn { background:var(--soft-2); border:none; border-radius:8px; width:28px; height:28px; cursor:pointer; font-size:16px; color:var(--ink); display:flex; align-items:center; justify-content:center; transition:.12s; font-family:inherit; line-height:1; }
+  .cp-nav-btn:hover { background:var(--blush); }
+  .cp-nav-label { font-size:13px; font-weight:600; color:var(--ink); min-width:130px; text-align:center; }
+  .cp-view-toggle { display:flex; gap:3px; background:var(--soft-2); border-radius:10px; padding:3px; }
+  .cp-vbtn { background:none; border:none; border-radius:8px; padding:5px 14px; font-size:11px; font-weight:600; color:var(--mid); cursor:pointer; transition:.12s; font-family:inherit; letter-spacing:.03em; }
+  .cp-vbtn.active { background:var(--white); color:var(--ink); box-shadow:0 1px 4px rgba(0,0,0,.09); }
+
+  /* Date View */
+  .cp-date-view { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; }
+  .cp-date-col { display:flex; flex-direction:column; gap:6px; }
+  .cp-dcol-head { text-align:center; padding:8px 4px 6px; border-radius:10px; margin-bottom:2px; }
+  .cp-dcol-head .dow { font-size:9px; font-weight:700; color:var(--mid); letter-spacing:.1em; text-transform:uppercase; }
+  .cp-dcol-head .dom { font-size:20px; font-weight:700; color:var(--ink); line-height:1.1; margin-top:2px; }
+  .cp-dcol-head.today-dc { background:var(--ink); }
+  .cp-dcol-head.today-dc .dow, .cp-dcol-head.today-dc .dom { color:var(--white); }
+  .cp-dcol-head.today-dc-ig { background:linear-gradient(135deg,#f77737,#e1306c); }
+  .cp-dcol-head.today-dc-ig .dow, .cp-dcol-head.today-dc-ig .dom { color:#fff; }
+  .cp-add-slot { border:1.5px dashed rgba(0,0,0,.1); border-radius:10px; padding:8px 4px; text-align:center; font-size:18px; color:var(--mid); cursor:pointer; transition:.12s; line-height:1; }
+  .cp-add-slot:hover { border-color:rgba(0,0,0,.3); background:var(--soft); color:var(--ink); }
+
+  /* Card */
+  .cp-card { background:var(--white); border-radius:10px; overflow:hidden; box-shadow:0 1px 5px rgba(0,0,0,.07); cursor:pointer; transition:.15s; position:relative; border:1.5px solid rgba(0,0,0,.04); }
+  .cp-card:hover { box-shadow:0 3px 12px rgba(0,0,0,.12); transform:translateY(-1px); }
+  .cp-card-img { width:100%; aspect-ratio:9/16; object-fit:cover; display:block; }
+  .cp-card-img-ph { width:100%; aspect-ratio:9/16; background:linear-gradient(135deg,var(--soft) 0%,var(--blush) 100%); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--mid); }
+  .cp-card-body { padding:6px 7px 8px; }
+  .cp-card-top { display:flex; align-items:center; gap:4px; margin-bottom:4px; flex-wrap:wrap; }
+  .cp-status { font-size:9px; font-weight:700; padding:2px 6px; border-radius:20px; letter-spacing:.05em; text-transform:uppercase; flex-shrink:0; }
+  .cp-s-posted { background:#d4f7e8; color:#1a7a50; }
+  .cp-s-draft { background:#fff3cd; color:#7a5c00; }
+  .cp-s-filming { background:#dce8ff; color:#1a4a8a; }
+  .cp-s-needs-idea { background:#ffe4f0; color:#9a1a4a; }
+  .cp-s-script { background:var(--soft-2); color:var(--ink); }
+  .cp-cat-pill { font-size:9px; font-weight:600; padding:2px 6px; border-radius:20px; }
+  .cp-card-title { font-size:10px; color:var(--ink); font-weight:500; line-height:1.35; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .cp-card-del { position:absolute; top:4px; right:4px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,.5); color:#fff; font-size:11px; display:none; align-items:center; justify-content:center; cursor:pointer; line-height:1; z-index:2; }
+  .cp-card:hover .cp-card-del { display:flex; }
+
+  /* Month View */
+  .cp-month-header { display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:6px; }
+  .cp-month-dow { text-align:center; font-size:10px; font-weight:600; color:var(--mid); letter-spacing:.06em; padding:4px 0; }
+  .cp-month-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:5px; }
+  .cp-month-cell { border:1.5px solid rgba(0,0,0,.07); border-radius:10px; padding:5px; min-height:120px; transition:.12s; overflow:hidden; background:var(--white); }
+  .cp-month-cell:hover { border-color:rgba(0,0,0,.15); }
+  .cp-month-cell.today-mc { border-color:var(--ink); }
+  .cp-month-cell.today-mc-ig { border-color:#e1306c; }
+  .cp-month-cell-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+  .cp-month-cell-num { font-size:11px; font-weight:600; color:var(--mid); }
+  .cp-month-cell.today-mc .cp-month-cell-num { color:var(--ink); font-weight:700; }
+  .cp-month-cell.today-mc-ig .cp-month-cell-num { color:#e1306c; font-weight:700; }
+  .cp-month-cell-add { font-size:14px; color:var(--mid); cursor:pointer; width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:50%; line-height:1; flex-shrink:0; }
+  .cp-month-cell-add:hover { background:var(--soft-2); color:var(--ink); }
+  .cp-month-posts { display:grid; gap:2px; grid-template-columns:1fr; }
+  .cp-month-posts.two { grid-template-columns:1fr 1fr; }
+  .cp-month-post { position:relative; border-radius:5px; overflow:hidden; cursor:pointer; transition:.12s; }
+  .cp-month-post:hover { transform:scale(1.03); box-shadow:0 2px 8px rgba(0,0,0,.15); z-index:1; }
+  .cp-month-post-img { width:100%; aspect-ratio:3/4; object-fit:cover; display:block; }
+  .cp-month-post-ph { width:100%; aspect-ratio:3/4; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:8px; font-weight:700; padding:3px; text-align:center; gap:2px; }
+  .cp-month-post-overlay { position:absolute; inset:0; background:linear-gradient(transparent 50%,rgba(0,0,0,.5)); display:flex; align-items:flex-end; padding:4px; opacity:0; transition:.15s; }
+  .cp-month-post:hover .cp-month-post-overlay { opacity:1; }
+  .cp-month-post-label { font-size:8px; font-weight:700; color:#fff; letter-spacing:.03em; line-height:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cp-month-more { font-size:9px; color:var(--mid); text-align:center; margin-top:3px; cursor:pointer; }
+
+  /* CP Modal */
+  #cp-post-modal .modal { max-width:400px; }
+  .cp-status-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .cp-spick { background:var(--soft); border:1.5px solid transparent; border-radius:20px; padding:5px 12px; font-size:11px; font-weight:600; color:var(--mid); cursor:pointer; transition:.12s; font-family:inherit; }
+  .cp-spick.active-posted { border-color:#1a7a50; color:#1a7a50; background:#d4f7e8; }
+  .cp-spick.active-draft { border-color:#7a5c00; color:#7a5c00; background:#fff3cd; }
+  .cp-spick.active-filming { border-color:#1a4a8a; color:#1a4a8a; background:#dce8ff; }
+  .cp-spick.active-needs { border-color:#9a1a4a; color:#9a1a4a; background:#ffe4f0; }
+  .cp-img-upload { border:2px dashed rgba(0,0,0,.12); border-radius:10px; cursor:pointer; transition:.15s; overflow:hidden; display:flex; align-items:center; justify-content:center; min-height:72px; margin-bottom:12px; }
+  .cp-img-upload:hover { border-color:rgba(0,0,0,.3); background:var(--soft); }
+  .cp-img-upload img { width:100%; max-height:180px; object-fit:cover; display:none; }
+  .cp-img-ph { font-size:12px; color:var(--mid); padding:16px; }
+  .cp-cat-suggestions { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px; margin-top:-4px; }
+  .cp-cat-sug { font-size:10px; padding:3px 9px; border-radius:20px; cursor:pointer; border:1.5px solid transparent; font-weight:600; transition:.1s; }
+  .cp-cat-sug:hover { opacity:.75; }
+
+  /* Category Filter Bar */
+  .cp-filter-bar { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; align-items:center; }
+  .cp-filter-all { padding:5px 14px; border-radius:20px; font-size:11px; font-weight:600; cursor:pointer; transition:.12s; background:var(--ink); color:var(--white); border:1.5px solid var(--ink); }
+  .cp-filter-all.off { background:transparent; color:var(--mid); border-color:rgba(0,0,0,.12); }
+  .cp-filter-all.off:hover { border-color:rgba(0,0,0,.25); color:var(--ink); }
+  .cp-filter-cat { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:20px; font-size:11px; font-weight:600; cursor:pointer; border:1.5px solid transparent; transition:.12s; }
+  .cp-filter-cat:hover { opacity:.85; }
+  .cp-filter-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+  @media(max-width:768px) {
+    .cp-date-view { grid-template-columns:repeat(4,1fr); }
+    .cp-month-cell { min-height:55px; }
+  }
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -985,6 +1109,7 @@
     <div class="channel-switcher">
       <button class="ch-btn active-tiktok" onclick="switchChannel('tiktok')">@somarchive</button>
       <button class="ch-btn" onclick="switchChannel('youtube')">솜솜</button>
+      <button class="ch-btn" onclick="switchChannel('instagram')">Instagram</button>
     </div>
   </div>
 </nav>
@@ -1078,7 +1203,8 @@
   </div>
 
   <!-- WORKSPACE -->
-  <div class="workspace">
+  <div class="workspace" id="workspace-tiktok">
+    <div id="tiktok-today-alert"></div>
     <div class="tabs" id="tabs-tiktok">
       <button class="tab active-tiktok" onclick="switchTab('tiktok','scripts')">🎬 Scripts</button>
       <button class="tab" onclick="switchTab('tiktok','weekly')">📋 Weekly</button>
@@ -1091,7 +1217,6 @@
 
     <!-- SCRIPTS -->
     <div class="section active" id="tiktok-scripts">
-      <div id="tiktok-today-alert"></div>
       <div id="tiktok-script-filter"></div>
       <div id="tiktok-script-list"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
@@ -1104,7 +1229,6 @@
     <!-- WEEKLY PLAN -->
     <div class="section" id="tiktok-weekly">
       <div class="section-title">이번 주 대본</div>
-      <div id="tiktok-weekly-today"></div>
       <div id="tiktok-weekly-list"></div>
     </div>
 
@@ -1144,20 +1268,18 @@
 
     <!-- CALENDAR -->
     <div class="section" id="tiktok-calendar">
-      <div class="section-title">업로드 일정</div>
-      <div class="cal-week">
-        <div class="cal-day-label">SUN</div><div class="cal-day-label">MON</div>
-        <div class="cal-day-label">TUE</div><div class="cal-day-label">WED</div>
-        <div class="cal-day-label">THU</div><div class="cal-day-label">FRI</div>
-        <div class="cal-day-label">SAT</div>
+      <div class="cp-header">
+        <div class="cp-nav">
+          <button class="cp-nav-btn" onclick="cpNavigate('tiktok',-1)">‹</button>
+          <span class="cp-nav-label" id="tiktok-cp-label"></span>
+          <button class="cp-nav-btn" onclick="cpNavigate('tiktok',1)">›</button>
+        </div>
+        <div class="cp-view-toggle">
+          <button class="cp-vbtn active" id="tiktok-vbtn-date" onclick="cpSetView('tiktok','date')">Date View</button>
+          <button class="cp-vbtn" id="tiktok-vbtn-month" onclick="cpSetView('tiktok','month')">Month View</button>
+        </div>
       </div>
-      <div class="cal-week" id="tiktok-cal-grid"></div>
-      <div class="cal-events" id="tiktok-cal-events"></div>
-      <div class="add-event-row">
-        <input class="add-event-input" id="tiktok-event-title" placeholder="영상 제목">
-        <input class="add-event-input" id="tiktok-event-date" type="date" style="max-width:130px;">
-        <button class="add-event-btn" onclick="addEvent('tiktok')">+ Add</button>
-      </div>
+      <div id="tiktok-cp-content"></div>
     </div>
 
     <!-- PERFORMANCE -->
@@ -1360,7 +1482,8 @@
   </div>
 
   <!-- WORKSPACE -->
-  <div class="workspace">
+  <div class="workspace" id="workspace-youtube">
+    <div id="youtube-today-alert"></div>
     <div class="tabs" id="tabs-youtube">
       <button class="tab active-youtube" onclick="switchTab('youtube','scripts')">🎬 Scripts</button>
       <button class="tab" onclick="switchTab('youtube','weekly')">📋 Weekly</button>
@@ -1373,7 +1496,6 @@
 
     <!-- SCRIPTS -->
     <div class="section active" id="youtube-scripts">
-      <div id="youtube-today-alert"></div>
       <div id="youtube-script-filter"></div>
       <div id="youtube-script-list"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
@@ -1386,7 +1508,6 @@
     <!-- WEEKLY PLAN -->
     <div class="section" id="youtube-weekly">
       <div class="section-title">이번 주 대본</div>
-      <div id="youtube-weekly-today"></div>
       <div id="youtube-weekly-list"></div>
     </div>
 
@@ -1557,6 +1678,276 @@
   </div>
 </div>
 
+<!-- ══════════════ INSTAGRAM PANEL ══════════════ -->
+<div class="channel-panel" id="panel-instagram">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-float-tags" id="ig-float-tags">
+      <span class="hero-float-tag">#fashion</span>
+      <span class="hero-float-tag">#aesthetic</span>
+      <span class="hero-float-tag">#kbeauty</span>
+      <span class="hero-float-tag">#seoul</span>
+    </div>
+    <div class="hero-scroll-hint" id="ig-scroll-hint">Scroll</div>
+    <div class="hero-tag hero-eyebrow-anim" id="ig-hero-tag">Instagram Reels · @som___archive · English · Global</div>
+    <h1>
+      <span class="line"><span class="line-inner" id="ig-hl1">things that</span></span>
+      <span class="line"><span class="line-inner" id="ig-hl2">I <em>love.</em></span></span>
+    </h1>
+    <div id="ig-hero-bottom" class="hero-bottom-anim">
+      <p class="hero-sub">K-beauty from Seoul, shared globally. TikTok content re-optimized for Instagram — captions, cover frames, hashtags, all managed here.</p>
+      <a href="https://www.instagram.com/som___archive" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:inherit;text-decoration:none;font-size:13px;font-weight:500;backdrop-filter:blur(4px);">↗ @som___archive</a>
+      <div class="hero-pills">
+        <span class="pill">#kbeauty</span>
+        <span class="pill">#seoulinsider</span>
+        <span class="pill">#reels</span>
+      </div>
+      <div class="hero-actions">
+        <button class="hero-action-btn" onclick="goToSection('instagram','scripts')">Scripts →</button>
+        <button class="hero-action-btn" onclick="goToSection('instagram','memo')">Memo →</button>
+        <button class="hero-action-btn" onclick="goToSection('instagram','calendar')">Calendar →</button>
+        <button class="hero-action-btn" onclick="goToSection('instagram','performance')">Performance →</button>
+        <button class="hero-action-btn" onclick="goToSection('instagram','assets')">Assets →</button>
+        <button class="hero-action-btn" onclick="goToSection('instagram','weekly')">Weekly Plan →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT SECTION -->
+  <div class="about-section">
+    <p class="section-eyebrow reveal">Instagram Reels 소개</p>
+    <div class="about-split">
+      <h2 class="about-headline reveal">TikTok →<br><em>Instagram.</em></h2>
+      <div class="about-body reveal reveal-delay-1">
+        <p>@som___archive brings K-beauty from Seoul to a global audience — real products, honest routines, in English.</p>
+        <p>TikTok scripts re-adapted for Reels, then shared to Stories — one video, two placements.</p>
+      </div>
+    </div>
+    <p class="features-label reveal">What's inside</p>
+    <div class="features-grid reveal reveal-delay-1">
+      <div class="feature-card" onclick="goToSection('instagram','scripts')">
+        <div class="feature-bg"></div><div class="feature-icon">📝</div>
+        <div class="feature-name">Scripts</div><div class="feature-desc">릴스 대본 관리</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('instagram','memo')">
+        <div class="feature-bg"></div><div class="feature-icon">💡</div>
+        <div class="feature-name">Memo</div><div class="feature-desc">아이디어 & 레퍼런스</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('instagram','calendar')">
+        <div class="feature-bg"></div><div class="feature-icon">📅</div>
+        <div class="feature-name">Calendar</div><div class="feature-desc">업로드 일정 관리</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('instagram','performance')">
+        <div class="feature-bg"></div><div class="feature-icon">📊</div>
+        <div class="feature-name">Performance</div><div class="feature-desc">조회수 & 세이브</div>
+        <span class="feature-arrow">→</span>
+      </div>
+      <div class="feature-card" onclick="goToSection('instagram','assets')">
+        <div class="feature-bg"></div><div class="feature-icon">🗂</div>
+        <div class="feature-name">Assets</div><div class="feature-desc">해시태그 & 스니펫</div>
+        <span class="feature-arrow">→</span>
+      </div>
+    </div>
+    <div class="marquee-wrap reveal">
+      <div class="marquee-track">
+        <span class="marquee-item">Fashion</span><span class="marquee-item">Aesthetic</span>
+        <span class="marquee-item">K-beauty</span><span class="marquee-item">Seoul Style</span>
+        <span class="marquee-item">Minimal</span><span class="marquee-item">Clean Beauty</span>
+        <span class="marquee-item">Fashion</span><span class="marquee-item">Aesthetic</span>
+        <span class="marquee-item">K-beauty</span><span class="marquee-item">Seoul Style</span>
+        <span class="marquee-item">Minimal</span><span class="marquee-item">Clean Beauty</span>
+      </div>
+    </div>
+    <div class="hero-today-bar" id="instagram-hero-today"></div>
+  </div>
+
+  <!-- WORKSPACE -->
+  <div class="workspace" id="workspace-instagram">
+    <div id="instagram-today-alert"></div>
+    <div class="tabs" id="tabs-instagram">
+      <button class="tab active-instagram" onclick="switchTab('instagram','scripts')">🎬 Scripts</button>
+      <button class="tab" onclick="switchTab('instagram','weekly')">📋 Weekly</button>
+      <button class="tab" onclick="switchTab('instagram','memo')">💡 Memo</button>
+      <button class="tab" onclick="switchTab('instagram','calendar')">📅 Calendar</button>
+      <button class="tab" onclick="switchTab('instagram','performance')">📊 Performance</button>
+      <button class="tab" onclick="switchTab('instagram','assets')">🗂 Assets</button>
+      <button class="tab" onclick="switchTab('instagram','settings')">⚙ Settings</button>
+    </div>
+
+    <!-- SCRIPTS -->
+    <div class="section active" id="instagram-scripts">
+      <div id="instagram-script-filter"></div>
+      <div id="instagram-script-list"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+        <button class="add-btn" onclick="openScriptModal('instagram')">+ 새 Reels 대본 추가</button>
+        <button class="add-btn" onclick="openImportFromTiktokModal()" style="background:var(--ink);color:#fff;border-color:var(--ink);">↗ TikTok에서 가져오기</button>
+        <button class="add-btn" onclick="openAIModal('instagram')" style="background:var(--purple);">✨ AI 생성</button>
+        <button class="add-btn" onclick="openCoworkModal('instagram')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
+      </div>
+    </div>
+
+    <!-- WEEKLY PLAN -->
+    <div class="section" id="instagram-weekly">
+      <div class="section-title">이번 주 대본</div>
+      <div id="instagram-weekly-list"></div>
+    </div>
+
+    <!-- MEMO -->
+    <div class="section" id="instagram-memo">
+      <div class="section-title">메모</div>
+      <div class="memo-tags">
+        <span class="memo-tag active-ig" onclick="filterMemo('instagram','all',this)">All</span>
+        <span class="memo-tag" onclick="filterMemo('instagram','idea',this)">💡 Idea</span>
+        <span class="memo-tag" onclick="filterMemo('instagram','ref',this)">🔗 Ref</span>
+        <span class="memo-tag" onclick="filterMemo('instagram','todo',this)">✅ To do</span>
+        <span class="memo-tag" onclick="filterMemo('instagram','buy',this)">🛒 Buy</span>
+        <span class="memo-tag" onclick="filterMemo('instagram','general',this)">📝 General</span>
+      </div>
+      <textarea class="memo-input ig" id="instagram-memo-input" placeholder="메모 입력..."></textarea>
+      <div class="ref-section">
+        <div class="ref-label">Reference Link</div>
+        <input class="ref-url-input" id="instagram-memo-ref-url" type="url" placeholder="https://...">
+        <div class="ref-label">Reference Photo (10MB 이하)</div>
+        <label class="ref-file-label" for="instagram-memo-img-input">+ 이미지 첨부</label>
+        <input class="ref-file-input" id="instagram-memo-img-input" type="file" accept="image/*" onchange="handleMemoImage('instagram',this)">
+        <input type="hidden" id="instagram-memo-img-data">
+        <img class="ref-img-preview" id="instagram-memo-img-preview" alt="">
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
+        <select id="instagram-memo-type" style="background:var(--card);border:1px solid var(--border);border-radius:0px;padding:6px 10px;color:var(--walnut);font-size:12px;">
+          <option value="idea">💡 Idea</option>
+          <option value="ref">🔗 Reference</option>
+          <option value="todo">✅ To do</option>
+          <option value="buy">🛒 Buy</option>
+          <option value="general">📝 General</option>
+        </select>
+        <button class="memo-save ig" onclick="saveMemo('instagram')">Save</button>
+      </div>
+      <div class="memo-list" id="instagram-memo-list"></div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="section" id="instagram-calendar">
+      <div class="cp-header">
+        <div class="cp-nav">
+          <button class="cp-nav-btn" onclick="cpNavigate('instagram',-1)">‹</button>
+          <span class="cp-nav-label" id="instagram-cp-label"></span>
+          <button class="cp-nav-btn" onclick="cpNavigate('instagram',1)">›</button>
+        </div>
+        <div class="cp-view-toggle">
+          <button class="cp-vbtn active" id="instagram-vbtn-date" onclick="cpSetView('instagram','date')">Date View</button>
+          <button class="cp-vbtn" id="instagram-vbtn-month" onclick="cpSetView('instagram','month')">Month View</button>
+        </div>
+      </div>
+      <div id="instagram-cp-content"></div>
+    </div>
+
+    <!-- PERFORMANCE -->
+    <div class="section" id="instagram-performance">
+      <div class="section-title">조회수 & 통계</div>
+      <div class="perf-summary" style="grid-template-columns:repeat(4,1fr);">
+        <div class="perf-stat">
+          <div class="perf-stat-num" id="instagram-total-posts">0</div>
+          <div class="perf-stat-label">Posts</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-stat-num" id="instagram-avg-views">0</div>
+          <div class="perf-stat-label">Avg Views</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-stat-num" id="instagram-avg-likes">0</div>
+          <div class="perf-stat-label">Avg Likes</div>
+        </div>
+        <div class="perf-stat">
+          <div class="perf-stat-num" id="instagram-avg-saves">0</div>
+          <div class="perf-stat-label">Avg Saves</div>
+        </div>
+      </div>
+      <div id="instagram-perf-list"></div>
+      <div class="add-perf-form">
+        <div class="form-row">
+          <input class="form-input ig" id="instagram-perf-title" placeholder="영상 제목">
+        </div>
+        <div class="form-row">
+          <input class="form-input ig" id="instagram-perf-views" placeholder="조회수" type="number">
+          <input class="form-input ig" id="instagram-perf-likes" placeholder="좋아요" type="number">
+          <input class="form-input ig" id="instagram-perf-saves" placeholder="저장" type="number">
+        </div>
+        <button class="form-submit ig" onclick="addPerf('instagram')">+ Add Post</button>
+      </div>
+    </div>
+
+    <!-- ASSETS -->
+    <div class="section" id="instagram-assets">
+      <div class="section-title">Assets</div>
+      <div class="asset-group">
+        <div class="asset-group-title"># 해시태그 묶음</div>
+        <div id="instagram-hashtag-list">
+          <div class="asset-item">
+            <div class="asset-item-text">#케이뷰티 #릴스 #메이크업 #올리브영 #스킨케어</div>
+            <button class="copy-btn ig" onclick="copyText(this.previousElementSibling.textContent)">copy</button>
+          </div>
+        </div>
+        <div class="asset-add-row">
+          <input class="asset-input ig" id="instagram-hashtag-input" placeholder="새 해시태그 묶음">
+          <button class="asset-add-btn ig" onclick="addAsset('instagram','hashtag')">+ Add</button>
+        </div>
+      </div>
+      <div class="asset-group">
+        <div class="asset-group-title">✍️ 스니펫</div>
+        <div id="instagram-snippet-list">
+          <div class="asset-item">
+            <div class="asset-item-text">✨ 서울에 사는 한국인이 직접 쓰는 K-뷰티 🇰🇷 | 진짜 로컬 제품 공유</div>
+            <button class="copy-btn ig" onclick="copyText(this.previousElementSibling.textContent)">copy</button>
+          </div>
+        </div>
+        <div class="asset-add-row">
+          <input class="asset-input ig" id="instagram-snippet-input" placeholder="새 스니펫">
+          <button class="asset-add-btn ig" onclick="addAsset('instagram','snippet')">+ Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="section" id="instagram-settings">
+      <div class="section-title">제작 세팅 (Instagram)</div>
+      <div class="settings-block">
+        <div class="settings-block-title">📐 Reels 스펙</div>
+        <div class="settings-row"><span class="settings-row-label">비율</span><span class="settings-row-val">9:16 (1080×1920)</span></div>
+        <div class="settings-row"><span class="settings-row-label">최대 길이</span><span class="settings-row-val">3분</span></div>
+        <div class="settings-row"><span class="settings-row-label">권장 길이</span><span class="settings-row-val">15~60초</span></div>
+        <div class="settings-row"><span class="settings-row-label">캡션 핵심</span><span class="settings-row-val">첫 125자 (더보기 전)</span></div>
+        <div class="settings-row"><span class="settings-row-label">해시태그</span><span class="settings-row-val">5개 (최적)</span></div>
+      </div>
+      <div class="settings-block">
+        <div class="settings-block-title">📊 핵심 지표</div>
+        <div class="settings-row"><span class="settings-row-label">#1 신호</span><span class="settings-row-val">Watch time + DM 공유</span></div>
+        <div class="settings-row"><span class="settings-row-label">#2 신호</span><span class="settings-row-val">Saves</span></div>
+        <div class="settings-row"><span class="settings-row-label">#3 신호</span><span class="settings-row-val">Comments</span></div>
+        <div class="settings-row"><span class="settings-row-label">낮은 우선순위</span><span class="settings-row-val">Likes (분배 신호 약함)</span></div>
+      </div>
+      <div class="settings-block">
+        <div class="settings-block-title">⏱ 업로드 직후 룰</div>
+        <div class="settings-row"><span class="settings-row-label">최적 포스팅</span><span class="settings-row-val">오전 9AM or 오후 7PM</span></div>
+        <div class="settings-row"><span class="settings-row-label">스토리 공유</span><span class="settings-row-val">업로드 직후 바로</span></div>
+        <div class="settings-row"><span class="settings-row-label">댓글 답변</span><span class="settings-row-val">1시간 안에 전부</span></div>
+        <div class="settings-row"><span class="settings-row-label">위치 태그</span><span class="settings-row-val">서울 or 강남 or 홍대</span></div>
+      </div>
+      <div class="settings-block">
+        <div class="settings-block-title">🔄 TikTok → Instagram 워크플로우</div>
+        <div class="settings-row"><span class="settings-row-label">대본</span><span class="settings-row-val">TikTok 기반 + IG 캡션 별도 작성</span></div>
+        <div class="settings-row"><span class="settings-row-label">커버</span><span class="settings-row-val">정지 프레임 or 텍스트 오버레이</span></div>
+        <div class="settings-row"><span class="settings-row-label">워터마크</span><span class="settings-row-val">TikTok 워터마크 제거 필수</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- SCRIPT MODAL -->
 <div class="modal-overlay" id="script-modal">
   <div class="modal">
@@ -1574,6 +1965,9 @@
         <option value="urgent">⚡ Urgent</option>
       </select>
     </div>
+    <div class="modal-label">카테고리 <span style="font-size:10px;color:var(--mid);font-weight:400;">(캘린더 필터 연동)</span></div>
+    <input class="modal-input" id="modal-script-category" placeholder="예: Review, Haul, Tutorial..." style="margin-bottom:6px;">
+    <div id="modal-script-cat-sugs" class="cp-cat-suggestions"></div>
     <div class="modal-label">대본</div>
     <textarea class="modal-input" id="modal-script-body" placeholder="대본 내용 입력..." style="height:200px;"></textarea>
     <div class="modal-label">촬영 노트 (선택)</div>
@@ -1593,6 +1987,7 @@
     <select class="modal-input" id="ai-channel" style="margin-bottom:10px;">
       <option value="youtube">솜솜 (YouTube)</option>
       <option value="tiktok">@somarchive (TikTok)</option>
+      <option value="instagram">Instagram (@som___archive)</option>
     </select>
     <div class="modal-label">필라 유형</div>
     <select class="modal-input" id="ai-pillar" style="margin-bottom:10px;">
@@ -1627,6 +2022,51 @@
   </div>
 </div>
 
+<!-- TikTok → Instagram 가져오기 모달 -->
+<div class="modal-overlay" id="import-tiktok-modal">
+  <div class="modal">
+    <div class="modal-title">↗ TikTok 대본 가져오기</div>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.6;">TikTok 대본을 선택하면 Instagram에 복사돼요. IG 캡션과 커버 노트는 별도로 작성해주세요.</p>
+    <div id="import-tiktok-list" style="max-height:380px;overflow-y:auto;"></div>
+    <div class="modal-btns" style="margin-top:12px;">
+      <button class="modal-cancel" onclick="closeImportFromTiktokModal()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- CP POST MODAL -->
+<div class="modal-overlay" id="cp-post-modal">
+  <div class="modal">
+    <div class="modal-title" id="cp-modal-heading">New Post</div>
+    <div class="modal-label">Date</div>
+    <input type="date" class="modal-input" id="cp-modal-date" style="margin-bottom:12px;">
+    <div class="modal-label">Title / Caption</div>
+    <input type="text" class="modal-input" id="cp-modal-title-input" placeholder="What is this post about?" style="margin-bottom:12px;">
+    <div class="modal-label">Status</div>
+    <div class="cp-status-row">
+      <button class="cp-spick" data-s="posted" onclick="cpPickStatus(this)">Posted</button>
+      <button class="cp-spick" data-s="draft" onclick="cpPickStatus(this)">Draft</button>
+      <button class="cp-spick" data-s="filming" onclick="cpPickStatus(this)">Filming</button>
+      <button class="cp-spick" data-s="needs-idea" onclick="cpPickStatus(this)">Needs Idea</button>
+    </div>
+    <div class="modal-label">Category</div>
+    <input type="text" class="modal-input" id="cp-modal-cat" placeholder="e.g. Review, Haul, Tutorial..." style="margin-bottom:6px;">
+    <div class="cp-cat-suggestions" id="cp-cat-sugs"></div>
+    <div class="modal-label">Post URL <span style="font-size:10px;color:var(--mid);font-weight:400;">(클릭 시 바로 연결)</span></div>
+    <input type="url" class="modal-input" id="cp-modal-url" placeholder="https://www.instagram.com/reel/..." style="margin-bottom:12px;">
+    <div class="modal-label">Thumbnail</div>
+    <div class="cp-img-upload" id="cp-img-upload-area" onclick="document.getElementById('cp-img-file').click()">
+      <img id="cp-modal-preview" alt="">
+      <span class="cp-img-ph" id="cp-img-ph">+ Upload thumbnail</span>
+    </div>
+    <input type="file" id="cp-img-file" accept="image/*" style="display:none" onchange="handleCpImage(event)">
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeCpModal()">Cancel</button>
+      <button class="modal-save" id="cp-modal-save-btn" onclick="saveCpPost()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1656,18 +2096,18 @@ function checkPassword() {
 // ── STATE ──
 let state = {
   currentChannel: 'tiktok',
-  currentTab: { tiktok: 'scripts', youtube: 'scripts' },
-  scripts: { tiktok: [], youtube: [] },
-  memos: { tiktok: [], youtube: [] },
-  events: { tiktok: [], youtube: [] },
-  perfs: { tiktok: [], youtube: [] },
-  memoFilter: { tiktok: 'all', youtube: 'all' },
+  currentTab: { tiktok: 'scripts', youtube: 'scripts', instagram: 'scripts' },
+  scripts: { tiktok: [], youtube: [], instagram: [] },
+  memos: { tiktok: [], youtube: [], instagram: [] },
+  events: { tiktok: [], youtube: [], instagram: [] },
+  perfs: { tiktok: [], youtube: [], instagram: [] },
+  memoFilter: { tiktok: 'all', youtube: 'all', instagram: 'all' },
   modalChannel: 'tiktok',
   editingId: null,
 };
 
 let saveTimer = null;
-const scriptFilter = { tiktok: 'all', youtube: 'all' };
+const scriptFilter = { tiktok: 'all', youtube: 'all', instagram: 'all' };
 let isLoaded = false;
 
 // localStorage 백업 (오프라인/Firebase 실패 대비)
@@ -1707,11 +2147,33 @@ function save() {
   saveTimer = setTimeout(() => { saveToFirestore(); }, 500); // 디바운스 후 클라우드 저장
 }
 
+function normalizeState() {
+  ['scripts','memos','events','perfs'].forEach(key => {
+    if (!state[key]) state[key] = {};
+    ['tiktok','youtube','instagram'].forEach(ch => {
+      if (!Array.isArray(state[key][ch])) state[key][ch] = [];
+    });
+  });
+  if (!state.currentTab) state.currentTab = {};
+  if (!state.memoFilter) state.memoFilter = {};
+  if (!state.currentTab.instagram) state.currentTab.instagram = 'scripts';
+  if (!state.memoFilter.instagram) state.memoFilter.instagram = 'all';
+  if (!state.calView) state.calView = {};
+  if (!state.calOffset) state.calOffset = {};
+  if (!state.calFilter) state.calFilter = {};
+  ['tiktok','youtube','instagram'].forEach(ch => {
+    if (!state.calView[ch]) state.calView[ch] = 'date';
+    if (state.calOffset[ch] === undefined) state.calOffset[ch] = 0;
+    if (!('calFilter' in state) || state.calFilter[ch] === undefined) state.calFilter[ch] = null;
+  });
+}
+
 async function initData() {
   loadFromLocalStorage(); // 일단 로컬 데이터로 즉시 렌더링 (빠른 표시)
+  normalizeState();
   renderAll();
   const got = await loadFromFirestore(); // Firestore에서 최신 데이터 가져오기
-  if (got) renderAll(); // 최신 데이터로 다시 렌더링
+  if (got) { normalizeState(); renderAll(); } // 최신 데이터로 다시 렌더링
   isLoaded = true;
 }
 
@@ -1748,7 +2210,7 @@ function renderHeroTodayBar(ch) {
 }
 
 function renderAll() {
-  ['tiktok','youtube'].forEach(ch => {
+  ['tiktok','youtube','instagram'].forEach(ch => {
     if (typeof renderScripts === 'function') renderScripts(ch);
     if (typeof renderMemos === 'function') renderMemos(ch);
     if (typeof renderPerf === 'function') renderPerf(ch);
@@ -1775,7 +2237,7 @@ function switchChannel(ch) {
   document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + ch).classList.add('active');
   document.querySelectorAll('.ch-btn').forEach(b => {
-    b.classList.remove('active-tiktok','active-youtube');
+    b.classList.remove('active-tiktok','active-youtube','active-instagram');
   });
   event.currentTarget.classList.add('active-' + ch);
   triggerHeroAnim(ch);
@@ -1787,7 +2249,7 @@ function switchTab(ch, tab) {
   state.currentTab[ch] = tab;
   const tabs = document.querySelectorAll('#tabs-' + ch + ' .tab');
   tabs.forEach((t,i) => {
-    t.classList.remove('active-tiktok','active-youtube');
+    t.classList.remove('active-tiktok','active-youtube','active-instagram');
   });
   event.currentTarget.classList.add('active-' + ch);
 
@@ -1800,7 +2262,7 @@ function switchTab(ch, tab) {
   if (tab === 'calendar') renderCalendar(ch);
   if (tab === 'performance') renderPerf(ch);
   if (tab === 'weekly') renderWeeklyPlan(ch);
-  if (tab === 'scripts') renderTodayAlert(ch);
+  renderTodayAlert(ch);
   save();
 }
 
@@ -1809,16 +2271,21 @@ function openScriptModal(ch) {
   state.modalChannel = ch;
   state.editingId = null;
   document.getElementById('script-modal').classList.add('open');
-  document.getElementById('modal-title').textContent = ch === 'tiktok' ? '새 TikTok 대본' : '새 YouTube 대본';
+  const chSuffix = ch === 'youtube' ? ' yt' : ch === 'instagram' ? ' ig' : '';
+  document.getElementById('modal-title').textContent = ch === 'tiktok' ? '새 TikTok 대본' : ch === 'instagram' ? '새 Instagram Reels 대본' : '새 YouTube 대본';
   document.getElementById('modal-save-btn').textContent = '저장';
-  document.getElementById('modal-save-btn').className = 'modal-save' + (ch === 'youtube' ? ' yt' : '');
-  ['modal-script-title','modal-script-body','modal-script-notes'].forEach(id => {
+  document.getElementById('modal-save-btn').className = 'modal-save' + chSuffix;
+  ['modal-script-title','modal-script-body','modal-script-notes','modal-script-category'].forEach(id => {
     const el = document.getElementById(id);
     el.value = '';
-    el.className = 'modal-input' + (ch === 'youtube' ? ' yt' : '');
+    el.className = 'modal-input' + chSuffix;
   });
   document.getElementById('modal-script-date').value = '';
   document.getElementById('modal-script-status').value = 'not-filmed';
+  const cats = ch === 'instagram' ? CP_CATS_IG : CP_CATS_TK;
+  document.getElementById('modal-script-cat-sugs').innerHTML = cats.map(c =>
+    `<span class="cp-cat-sug" style="background:${c.color}22;color:${c.color};border-color:${c.color}55;" onclick="document.getElementById('modal-script-category').value='${c.name}'">${c.name}</span>`
+  ).join('');
 }
 
 function openEditModal(ch, id) {
@@ -1829,16 +2296,22 @@ function openEditModal(ch, id) {
   document.getElementById('script-modal').classList.add('open');
   document.getElementById('modal-title').textContent = '대본 수정';
   document.getElementById('modal-save-btn').textContent = '수정 저장';
-  document.getElementById('modal-save-btn').className = 'modal-save' + (ch === 'youtube' ? ' yt' : '');
-  const yt = ch === 'youtube' ? ' yt' : '';
+  const editSuffix = ch === 'youtube' ? ' yt' : ch === 'instagram' ? ' ig' : '';
+  document.getElementById('modal-save-btn').className = 'modal-save' + editSuffix;
   document.getElementById('modal-script-title').value = s.title || '';
-  document.getElementById('modal-script-title').className = 'modal-input' + yt;
+  document.getElementById('modal-script-title').className = 'modal-input' + editSuffix;
   document.getElementById('modal-script-date').value = s.date || '';
   document.getElementById('modal-script-status').value = s.status || 'not-filmed';
   document.getElementById('modal-script-body').value = s.body || '';
-  document.getElementById('modal-script-body').className = 'modal-input' + yt;
+  document.getElementById('modal-script-body').className = 'modal-input' + editSuffix;
   document.getElementById('modal-script-notes').value = s.notes || '';
-  document.getElementById('modal-script-notes').className = 'modal-input' + yt;
+  document.getElementById('modal-script-notes').className = 'modal-input' + editSuffix;
+  document.getElementById('modal-script-category').value = s.category || '';
+  document.getElementById('modal-script-category').className = 'modal-input' + editSuffix;
+  const editCats = ch === 'instagram' ? CP_CATS_IG : CP_CATS_TK;
+  document.getElementById('modal-script-cat-sugs').innerHTML = editCats.map(c =>
+    `<span class="cp-cat-sug" style="background:${c.color}22;color:${c.color};border-color:${c.color}55;" onclick="document.getElementById('modal-script-category').value='${c.name}'">${c.name}</span>`
+  ).join('');
 }
 
 function closeModal() {
@@ -1850,31 +2323,62 @@ function saveScript() {
   const ch = state.modalChannel;
   const title = document.getElementById('modal-script-title').value.trim();
   if (!title) { showToast('제목을 입력해주세요'); return; }
-  const date   = document.getElementById('modal-script-date').value;
-  const status = document.getElementById('modal-script-status').value;
-  const body   = document.getElementById('modal-script-body').value;
-  const notes  = document.getElementById('modal-script-notes').value;
+  const date     = document.getElementById('modal-script-date').value;
+  const status   = document.getElementById('modal-script-status').value;
+  const body     = document.getElementById('modal-script-body').value;
+  const notes    = document.getElementById('modal-script-notes').value;
+  const category = document.getElementById('modal-script-category').value.trim();
 
   if (state.editingId) {
     const s = state.scripts[ch].find(x => x.id === state.editingId);
-    if (s) { s.title = title; s.date = date; s.status = status; s.body = body; s.notes = notes; }
+    if (s) { s.title = title; s.date = date; s.status = status; s.body = body; s.notes = notes; s.category = category; }
     state.editingId = null;
-    save(); renderScripts(ch); closeModal();
+    save(); renderScripts(ch); refreshCalendarIfActive(ch); closeModal();
     showToast('수정됐어요 ✓');
     return;
   }
 
   const script = {
     id: Date.now(),
-    title, date, status, body, notes,
+    title, date, status, body, notes, category,
     checks: [],
   };
   state.scripts[ch].unshift(script);
   save();
   renderScripts(ch);
+  refreshCalendarIfActive(ch);
   closeModal();
   showToast('대본 저장됐어요 ✓');
 }
+
+const DEFAULT_CHECKS_IG = [
+  { id: 'ig1', label: 'TikTok 대본에서 가져오기', done: false },
+  { id: 'ig2', label: 'IG 캡션 작성 (첫 125자 핵심)', done: false },
+  { id: 'ig3', label: '커버 프레임 지정', done: false },
+  { id: 'ig4', label: '해시태그 5개 선택', done: false },
+  { id: 'ig5', label: '위치 태그 추가', done: false },
+  { id: 'ig6', label: 'Reels 업로드', done: false },
+  { id: 'ig7', label: 'Stories에 Reels 공유', done: false },
+  { id: 'ig8', label: 'Script reviewed', done: false },
+  { id: 'ig9', label: 'iPhone: 4K 30fps, HDR off', done: false },
+  { id: 'ig10', label: '편집 완료 (TikTok 워터마크 제거)', done: false },
+  { id: 'ig11', label: '댓글 답변 1시간 내', done: false },
+];
+
+const CP_CATS_SHARED = [
+  {name:'Review',     color:'#4EF5ED'},
+  {name:'Haul',       color:'#F54EAA'},
+  {name:'Ad',         color:'#4E99F5'},
+  {name:'Tutorial',   color:'#FF6699'},
+  {name:'Meem',       color:'#83F54E'},
+  {name:'Transition', color:'#B84DFF'},
+  {name:'Ootd',       color:'#2299E8'},
+  {name:'Seoul spot', color:'#EFF54E'},
+  {name:'Editorial',  color:'#777777'},
+];
+const CP_CATS_TK = CP_CATS_SHARED;
+const CP_CATS_IG = CP_CATS_SHARED;
+let cpModal = { ch: null, editId: null, status: 'draft', image: null };
 
 const DEFAULT_CHECKS = [
   { id: 'c1', label: 'Script reviewed', done: false },
@@ -1965,6 +2469,8 @@ function renderScriptFilter(ch) {
   const el = document.getElementById(ch + '-script-filter');
   if (!el) return;
   const isYt = ch === 'youtube';
+  const isIg = ch === 'instagram';
+  const activeClass = isYt ? 'active-yt' : isIg ? 'active-ig' : 'active';
   const cur = scriptFilter[ch] || 'all';
   const pills = [
     ['all', 'All'],
@@ -1977,7 +2483,7 @@ function renderScriptFilter(ch) {
   el.innerHTML = '<div class="script-filter-bar">'
     + pills.map(([val, label]) => {
         const isActive = cur === val;
-        const cls = isActive ? ('sfilter-pill ' + (isYt ? 'active-yt' : 'active')) : 'sfilter-pill';
+        const cls = isActive ? ('sfilter-pill ' + activeClass) : 'sfilter-pill';
         return '<button class="' + cls + '" onclick="setScriptFilter(\'' + ch + '\',\'' + val + '\')">' + label + '</button>';
       }).join('')
     + '</div>';
@@ -1990,9 +2496,9 @@ function renderScripts(ch) {
   const list = document.getElementById(ch + '-script-list');
   if (!list) return;
   const cur = scriptFilter[ch] || 'all';
-  const scripts = cur === 'all'
-    ? state.scripts[ch]
-    : state.scripts[ch].filter(s => s.status === cur);
+  const seenIds = new Set();
+  const deduped = state.scripts[ch].filter(s => { if (seenIds.has(s.id)) return false; seenIds.add(s.id); return true; });
+  const scripts = cur === 'all' ? deduped : deduped.filter(s => s.status === cur);
   if (!scripts.length) {
     list.innerHTML = '<div class="empty">' + (cur === 'all' ? '대본이 없어요.<br>아래 버튼으로 추가해보세요.' : '해당 상태의 대본이 없어요.') + '</div>';
     return;
@@ -2007,13 +2513,13 @@ function renderScripts(ch) {
       'done': 'Done ✓',
       'urgent': '⚡ Urgent',
     }[s.status] || s.status;
-    if (!s.checks || !s.checks.length) { s.checks = DEFAULT_CHECKS.map(c => ({...c})); save(); }
+    if (!s.checks || !s.checks.length) { s.checks = (ch === 'instagram' ? DEFAULT_CHECKS_IG : DEFAULT_CHECKS).map(c => ({...c})); save(); }
     const checks = s.checks;
     const checksDone = checks.filter(c => c.done).length;
     const checksTotal = checks.length;
     const checklistHtml = checks.map(c => `
       <li>
-        <div class="check-box ${c.done ? (ch==='youtube'?'done-yt':'done') : ''}"
+        <div class="check-box ${c.done ? (ch==='youtube'?'done-yt':ch==='instagram'?'done-ig':'done') : ''}"
           onclick="toggleCheck('${ch}',${s.id},'${c.id}')">${c.done ? '✓' : ''}</div>
         <span style="color:${c.done?'var(--slate)':'var(--walnut)'};text-decoration:${c.done?'line-through':'none'}">${c.label}</span>
       </li>`).join('');
@@ -2035,6 +2541,14 @@ function renderScripts(ch) {
       <div class="script-body" id="body-${s.id}">
         ${s.body ? `<div class="prod-title" style="margin-bottom:6px;">📝 SCRIPT</div><div class="script-content">${escHtml(s.body)}</div>` : ''}
         ${s.notes ? `<div class="prod-section"><div class="prod-title">▶ Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
+        ${ch === 'instagram' ? `<div class="prod-section">
+          <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;"><span>📲 IG 캡션</span><span style="font-size:10px;color:var(--mid);font-weight:normal;">첫 125자가 핵심</span></div>
+          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'igCaption',this.value);autoResizeTA(this)" style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;" placeholder="첫 125자에 핵심 — 더보기 이후는 해시태그...">${escHtml(s.igCaption||'')}</textarea>
+        </div>
+        <div class="prod-section">
+          <div class="prod-title">🖼 커버 프레임</div>
+          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'coverNote',this.value);autoResizeTA(this)" style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:60px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;" placeholder="커버로 쓸 프레임 — 예: 3.2초 정지 프레임, 핑크 배경...">${escHtml(s.coverNote||'')}</textarea>
+        </div>` : ''}
         <div class="prod-section">
           <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
             <span>✅ Checklist</span>
@@ -2058,20 +2572,20 @@ function renderScripts(ch) {
         </div>
         <div class="prod-section">
           <div class="prod-title">✂️ EDITING GUIDE</div>
-          <textarea oninput="saveScriptRef('${ch}',${s.id},'editingGuide',this.value)"
-            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:vertical;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;"
+          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'editingGuide',this.value);autoResizeTA(this)"
+            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;"
             placeholder="컷 순서, 트랜지션, 음악, 효과음...">${escHtml(s.editingGuide||'')}</textarea>
         </div>
         <div class="prod-section">
           <div class="prod-title">🖼 THUMBNAIL GUIDE</div>
-          <textarea oninput="saveScriptRef('${ch}',${s.id},'thumbnailGuide',this.value)"
-            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:vertical;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;"
+          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'thumbnailGuide',this.value);autoResizeTA(this)"
+            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;"
             placeholder="썸네일 텍스트, 컨셉, 색상...">${escHtml(s.thumbnailGuide||'')}</textarea>
         </div>
         <div class="prod-section">
           <div class="prod-title">💬 CAPTIONS</div>
-          <textarea oninput="saveScriptRef('${ch}',${s.id},'captions',this.value)"
-            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:vertical;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;"
+          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'captions',this.value);autoResizeTA(this)"
+            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;"
             placeholder="캡션, 해시태그, 첫 댓글...">${escHtml(s.captions||'')}</textarea>
         </div>
         <div style="display:flex;gap:8px;margin-top:12px;">
@@ -2080,6 +2594,7 @@ function renderScripts(ch) {
       </div>
     </div>`;
   }).join('');
+  setTimeout(initAutoResize, 0);
 }
 
 function toggleScript(id, ch) {
@@ -2101,17 +2616,38 @@ function toggleScript(id, ch) {
 function renderTodayAlert(ch) {
   const el = document.getElementById(ch + '-today-alert');
   if (!el) return;
+  if (state.currentTab[ch] === 'scripts') { el.innerHTML = ''; return; }
   const today = new Date().toISOString().split('T')[0];
-  const todayScripts = (state.scripts[ch] || []).filter(s => s.date === today);
-  if (!todayScripts.length) { el.innerHTML = ''; return; }
-  el.innerHTML = `<div class="today-alert">
-    <div class="today-alert-label">📅 오늘 포스팅 예정</div>
-    ${todayScripts.map(s => `
-      <div class="today-alert-item" onclick="openScript(${s.id},'${ch}')">
-        <span class="today-alert-title">${s.title}</span>
-        <span class="today-alert-arrow">→</span>
-      </div>`).join('')}
-  </div>`;
+  const allScripts = state.scripts[ch] || [];
+  const todayScripts = allScripts.filter(s => s.date === today);
+  const upcoming = allScripts
+    .filter(s => s.date && s.date > today && s.status !== 'done')
+    .sort((a, b) => a.date > b.date ? 1 : -1)
+    .slice(0, 1);
+  const statusIcon = { 'not-filmed':'○', 'filmed':'🎬', 'editing':'✂️', 'done':'✅', 'urgent':'⚡' };
+  if (!todayScripts.length && !upcoming.length) {
+    el.innerHTML = '<div class="today-alert" style="opacity:.55;"><div class="today-alert-label">📅 오늘 포스팅 예정</div><div style="font-size:13px;color:var(--mid);padding:4px 0;">오늘 예정 없음</div></div>';
+    return;
+  }
+  var items = '';
+  todayScripts.forEach(function(s) {
+    items += '<div class="today-alert-item" onclick="openScript(' + s.id + ',\'' + ch + '\')">'
+      + '<span class="today-alert-title">' + (statusIcon[s.status]||'○') + ' ' + s.title + '</span>'
+      + '<span class="today-alert-arrow">→</span>'
+      + '</div>';
+  });
+  if (todayScripts.length === 0 && upcoming.length) {
+    upcoming.forEach(function(s) {
+      items += '<div class="today-alert-item" onclick="openScript(' + s.id + ',\'' + ch + '\')" style="opacity:.7;">'
+        + '<span class="today-alert-title" style="color:var(--mid);">' + formatDate(s.date) + ' · ' + s.title + '</span>'
+        + '<span class="today-alert-arrow" style="color:var(--mid);">→</span>'
+        + '</div>';
+    });
+  }
+  el.innerHTML = '<div class="today-alert">'
+    + '<div class="today-alert-label">' + (todayScripts.length ? '📅 오늘 포스팅 예정' : '📅 next upload') + '</div>'
+    + items
+    + '</div>';
 }
 
 function renderWeeklyTodayAlert(ch) {
@@ -2172,9 +2708,26 @@ function saveScriptMemo(ch, id, val) {
   if (s) { s.memo = val; save(); }
 }
 
+function autoResizeTA(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+function refreshCalendarIfActive(ch) {
+  const calEl = document.getElementById(ch + '-calendar');
+  if (calEl && calEl.classList.contains('active')) renderCalendar(ch);
+}
+
+function initAutoResize() {
+  document.querySelectorAll('.auto-resize-ta').forEach(function(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  });
+}
+
 function deleteScript(ch, id) {
   state.scripts[ch] = state.scripts[ch].filter(s => s.id !== id);
-  save(); renderScripts(ch);
+  save(); renderScripts(ch); refreshCalendarIfActive(ch);
 }
 
 function formatDate(d) {
@@ -2211,8 +2764,8 @@ function saveMemo(ch) {
 function filterMemo(ch, filter, el) {
   state.memoFilter[ch] = filter;
   const tags = el.closest('.memo-tags').querySelectorAll('.memo-tag');
-  tags.forEach(t => t.classList.remove('active','active-yt'));
-  el.classList.add(ch === 'youtube' ? 'active-yt' : 'active');
+  tags.forEach(t => t.classList.remove('active','active-yt','active-ig'));
+  el.classList.add(ch === 'youtube' ? 'active-yt' : ch === 'instagram' ? 'active-ig' : 'active');
   renderMemos(ch);
 }
 
@@ -2243,7 +2796,23 @@ function deleteMemo(ch, id) {
 }
 
 // ── CALENDAR ──
+// ── CALENDAR DISPATCH ──
 function renderCalendar(ch) {
+  if (ch === 'youtube') { renderCalendarLegacy(ch); return; }
+  if (!state.calView) state.calView = {};
+  if (!state.calOffset) state.calOffset = {};
+  if (!state.calView[ch]) state.calView[ch] = 'date';
+  if (state.calOffset[ch] === undefined) state.calOffset[ch] = 0;
+  ['date','month'].forEach(v => {
+    const btn = document.getElementById(`${ch}-vbtn-${v}`);
+    if (btn) btn.classList.toggle('active', v === state.calView[ch]);
+  });
+  updateCpLabel(ch);
+  if (state.calView[ch] === 'month') renderCpMonthView(ch);
+  else renderCpDateView(ch);
+}
+
+function renderCalendarLegacy(ch) {
   const grid = document.getElementById(ch + '-cal-grid');
   const evEl = document.getElementById(ch + '-cal-events');
   if (!grid) return;
@@ -2252,12 +2821,12 @@ function renderCalendar(ch) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const today = now.getDate();
-
   const statusIcon = { 'not-filmed':'○', 'filmed':'🎬', 'editing':'✂️', 'done':'✅', 'urgent':'⚡' };
-
-  // 날짜별 아이템 맵 구성
   const dateMap = {};
+  const calSeen = new Set();
   (state.scripts[ch] || []).filter(s => s.date).forEach(s => {
+    if (calSeen.has(s.id)) return;
+    calSeen.add(s.id);
     if (!dateMap[s.date]) dateMap[s.date] = [];
     dateMap[s.date].push({ id: s.id, title: s.title, status: s.status, isScript: true });
   });
@@ -2265,644 +2834,73 @@ function renderCalendar(ch) {
     if (!dateMap[e.date]) dateMap[e.date] = [];
     dateMap[e.date].push({ id: e.id, title: e.title, isScript: false });
   });
-
   let html = '';
   for (let i = 0; i < firstDay; i++) html += '<div></div>';
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday = d === today;
     const items = dateMap[dateStr] || [];
-    const cls = [
-      'cal-day',
-      isToday ? (ch==='youtube'?'today-yt':'today') : '',
-    ].filter(Boolean).join(' ');
-
+    const cls = ['cal-day', isToday ? 'today-yt' : ''].filter(Boolean).join(' ');
     let inner = `<div class="cal-day-num">${d}</div>`;
-    const visible = items.slice(0, 3);
-    visible.forEach(item => {
-      if (item.isScript) {
-        inner += `<div class="cal-day-chip cal-day-chip-script" onclick="event.stopPropagation();openScript(${item.id},'${ch}')">${statusIcon[item.status]||'○'} ${escHtml(item.title)}</div>`;
-      } else {
-        inner += `<div class="cal-day-chip cal-day-chip-event">${escHtml(item.title)}</div>`;
-      }
+    items.slice(0, 3).forEach(item => {
+      inner += item.isScript
+        ? `<div class="cal-day-chip cal-day-chip-script" onclick="event.stopPropagation();openScript(${item.id},'${ch}')">${statusIcon[item.status]||'○'} ${escHtml(item.title)}</div>`
+        : `<div class="cal-day-chip cal-day-chip-event">${escHtml(item.title)}</div>`;
     });
     if (items.length > 3) inner += `<div class="cal-day-more">+${items.length - 3}개 더</div>`;
     html += `<div class="${cls}">${inner}</div>`;
   }
   grid.innerHTML = html;
-
-  // 스크립트 + 이벤트 합쳐서 날짜순 정렬
-  const scriptItems = (state.scripts[ch] || []).filter(s => s.date).map(s => ({
-    id: s.id, title: s.title, date: s.date, isScript: true,
-    status: s.status
-  }));
-  const eventItems = state.events[ch].map(e => ({ ...e, isScript: false }));
-  const allItems = [...scriptItems, ...eventItems].sort((a,b) => a.date > b.date ? 1 : -1);
-
+  const listSeen = new Set();
+  const scriptItems = (state.scripts[ch] || []).filter(s => {
+    if (!s.date || listSeen.has(s.id)) return false;
+    listSeen.add(s.id); return true;
+  }).map(s => ({ id: s.id, title: s.title, date: s.date, isScript: true, status: s.status }));
+  const allItems = [...scriptItems, ...state.events[ch].map(e => ({ ...e, isScript: false }))].sort((a,b) => a.date > b.date ? 1 : -1);
   evEl.innerHTML = allItems.length ? allItems.map(e => `
     <div class="cal-event">
-      <div class="cal-event-dot${ch==='youtube'?' yt':''}"></div>
+      <div class="cal-event-dot yt"></div>
       <div class="cal-event-info">
         <div class="cal-event-title">${e.isScript ? (statusIcon[e.status]||'○')+' ' : ''}${escHtml(e.title)}</div>
         <div class="cal-event-date">${formatDate(e.date)}${e.isScript ? ' · 대본' : ''}</div>
       </div>
-      ${e.isScript
-        ? `<span class="memo-del" onclick="openScript(${e.id},'${ch}')">→</span>`
-        : `<span class="memo-del" onclick="deleteEvent('${ch}',${e.id})">×</span>`}
+      ${e.isScript ? `<span class="memo-del" onclick="openScript(${e.id},'${ch}')">→</span>` : `<span class="memo-del" onclick="deleteEvent('${ch}',${e.id})">×</span>`}
     </div>`).join('') : '<div class="empty">일정 없음</div>';
 }
 
-function addEvent(ch) {
-  const title = document.getElementById(ch + '-event-title').value.trim();
-  const date = document.getElementById(ch + '-event-date').value;
-  if (!title || !date) { showToast('제목과 날짜를 입력해주세요'); return; }
-  state.events[ch].push({ id: Date.now(), title, date });
-  document.getElementById(ch + '-event-title').value = '';
-  document.getElementById(ch + '-event-date').value = '';
-  save(); renderCalendar(ch);
-  showToast('일정 추가됐어요 ✓');
+// ── CONTENT PLANNER HELPERS ──
+function cpDateStr(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
-function deleteEvent(ch, id) {
-  state.events[ch] = state.events[ch].filter(e => e.id !== id);
-  save(); renderCalendar(ch);
-}
-
-// ── PERFORMANCE ──
-function renderPerf(ch) {
-  const list = document.getElementById(ch + '-perf-list');
-  const posts = state.perfs[ch];
-  document.getElementById(ch + '-total-posts').textContent = posts.length;
-  if (posts.length) {
-    const avgV = Math.round(posts.reduce((s,p) => s + (p.views||0), 0) / posts.length);
-    const avgL = Math.round(posts.reduce((s,p) => s + (p.likes||0), 0) / posts.length);
-    document.getElementById(ch + '-avg-views').textContent = fmtNum(avgV);
-    document.getElementById(ch + '-avg-likes').textContent = fmtNum(avgL);
-  }
-  if (!list) return;
-  list.innerHTML = posts.length ? posts.map(p => `
-    <div class="perf-item">
-      <div class="perf-item-title">${escHtml(p.title)}</div>
-      <div class="perf-item-stats">
-        <div class="perf-item-stat"><span class="num">${fmtNum(p.views)}</span><span class="lbl">views</span></div>
-        <div class="perf-item-stat"><span class="num">${fmtNum(p.likes)}</span><span class="lbl">likes</span></div>
-      </div>
-      <span class="memo-del" onclick="deletePerf('${ch}',${p.id})">×</span>
-    </div>`).join('') : '<div class="empty">데이터 없음</div>';
-}
-
-function addPerf(ch) {
-  const title = document.getElementById(ch + '-perf-title').value.trim();
-  const views = parseInt(document.getElementById(ch + '-perf-views').value) || 0;
-  const likes = parseInt(document.getElementById(ch + '-perf-likes').value) || 0;
-  if (!title) { showToast('제목을 입력해주세요'); return; }
-  state.perfs[ch].unshift({ id: Date.now(), title, views, likes });
-  document.getElementById(ch + '-perf-title').value = '';
-  document.getElementById(ch + '-perf-views').value = '';
-  document.getElementById(ch + '-perf-likes').value = '';
-  save(); renderPerf(ch);
-  showToast('등록됐어요 ✓');
-}
-
-function deletePerf(ch, id) {
-  state.perfs[ch] = state.perfs[ch].filter(p => p.id !== id);
-  save(); renderPerf(ch);
-}
-
-function fmtNum(n) {
-  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
-  return String(n);
-}
-
-// ── ASSETS ──
-function addAsset(ch, type) {
-  const input = document.getElementById(ch + '-' + type + '-input');
-  const text = input.value.trim();
-  if (!text) return;
-  const list = document.getElementById(ch + '-' + type + '-list');
-  const div = document.createElement('div');
-  div.className = 'asset-item';
-  div.innerHTML = `<div class="asset-item-text">${escHtml(text)}</div>
-    <button class="copy-btn${ch==='youtube'?' yt':''}" onclick="copyText(this.previousElementSibling.textContent)">copy</button>`;
-  list.appendChild(div);
-  input.value = '';
-  showToast('추가됐어요 ✓');
-}
-
-// ── NAV DROPDOWN ──
-let ddCh = 'tiktok';
-
-function toggleNavMenu() {
-  const dd = document.getElementById('nav-dropdown');
-  dd.classList.toggle('open');
-  document.getElementById('dd-btn-tiktok').classList.toggle('active-dd', ddCh === 'tiktok');
-  document.getElementById('dd-btn-youtube').classList.toggle('active-dd', ddCh === 'youtube');
-}
-
-function setDdChannel(ch) {
-  ddCh = ch;
-  document.getElementById('dd-btn-tiktok').classList.toggle('active-dd', ch === 'tiktok');
-  document.getElementById('dd-btn-youtube').classList.toggle('active-dd', ch === 'youtube');
-}
-
-function goToSection(ch, tab) {
-  const navDrop = document.getElementById('nav-dropdown');
-  if (navDrop) navDrop.classList.remove('open');
-  if (state.currentChannel !== ch) {
-    state.currentChannel = ch;
-    document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-' + ch).classList.add('active');
-    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-tiktok','active-youtube'));
-    const chBtn = document.querySelector(`.ch-btn[onclick*="'${ch}'"]`);
-    if (chBtn) chBtn.classList.add('active-' + ch);
-  }
-  state.currentTab[ch] = tab;
-  const tabs = document.querySelectorAll('#tabs-' + ch + ' .tab');
-  tabs.forEach(t => t.classList.remove('active-tiktok','active-youtube'));
-  const tabOrder = ['scripts','weekly','memo','calendar','performance','assets','settings'];
-  const idx = tabOrder.indexOf(tab);
-  if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active-' + ch);
-  tabOrder.forEach(s => {
-    const el = document.getElementById(ch + '-' + s);
-    if (el) el.classList.toggle('active', s === tab);
+function buildCpDateMap(ch) {
+  const filter = state.calFilter && state.calFilter[ch];
+  const map = {};
+  (state.events[ch] || []).forEach(e => {
+    if (!e.date) return;
+    if (filter && (e.category || '').toLowerCase() !== filter.toLowerCase()) return;
+    if (!map[e.date]) map[e.date] = [];
+    map[e.date].push({ ...e, isScript: false });
   });
-  if (tab === 'calendar') renderCalendar(ch);
-  if (tab === 'performance') renderPerf(ch);
-  if (tab === 'weekly') renderWeeklyPlan(ch);
-  const ws = document.querySelector('#panel-' + ch + ' .workspace');
-  if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// ── WEEKLY PLAN ──
-function renderWeeklyPlan(ch) {
-  renderWeeklyTodayAlert(ch);
-  const container = document.getElementById(ch + '-weekly-list');
-  if (!container) return;
-  const now = new Date();
-  const dow = now.getDay();
-  const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - dow);
-  startOfWeek.setHours(0, 0, 0, 0);
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6);
-  endOfWeek.setHours(23, 59, 59, 999);
-
-  const weekScripts = state.scripts[ch].filter(s => {
-    if (!s.date) return false;
-    const d = new Date(s.date + 'T00:00:00');
-    return d >= startOfWeek && d <= endOfWeek;
-  }).sort((a, b) => a.date > b.date ? 1 : -1);
-
-  if (!weekScripts.length) {
-    container.innerHTML = '<div class="empty">이번 주 예정된 영상이 없어요.<br>대본에서 발행일자를 이번 주로 설정해보세요.</div>';
-    return;
-  }
-  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  container.innerHTML = weekScripts.map(s => {
-    const statusClass = s.status === 'urgent' ? 'urgent' : '';
-    const statusLabel = { 'not-filmed':'Not filmed','filmed':'Filmed ✓','editing':'Editing','done':'Done ✓','urgent':'⚡ Urgent' }[s.status] || s.status;
-    if (!s.checks || !s.checks.length) { s.checks = DEFAULT_CHECKS.map(c => ({...c})); save(); }
-    const checks = s.checks;
-    const checksDone = checks.filter(c => c.done).length;
-    const checksTotal = checks.length;
-    const dt = s.date ? new Date(s.date + 'T00:00:00') : null;
-    const dayLabel = dt ? days[dt.getDay()] : '';
-    const checklistHtml = checks.map(c => `
-      <li>
-        <div class="check-box ${c.done ? (ch==='youtube'?'done-yt':'done') : ''}"
-          onclick="toggleWeeklyCheck('${ch}',${s.id},'${c.id}')">${c.done ? '✓' : ''}</div>
-        <span style="color:${c.done?'var(--slate)':'var(--walnut)'};text-decoration:${c.done?'line-through':'none'}">${c.label}</span>
-      </li>`).join('');
-    return `
-    <div class="script-card">
-      <div class="script-header" onclick="toggleWeeklyScript(${s.id},'${ch}')">
-        <div class="script-meta">
-          <div class="script-num">${dayLabel}${s.date ? ' · ' + formatDate(s.date) : ''}</div>
-          <div class="script-title">${s.title}</div>
-          ${checksTotal ? `<div class="script-date">체크리스트 ${checksDone}/${checksTotal}</div>` : ''}
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
-          ${buildStatusSelect(ch, s)}
-        </div>
-        <span class="script-chevron" id="wchev-${s.id}">▾</span>
-      </div>
-      <div class="script-body" id="wbody-${s.id}">
-        ${s.body ? `<div class="prod-title" style="margin-bottom:6px;">📝 SCRIPT</div><div class="script-content">${escHtml(s.body)}</div>` : ''}
-        ${s.notes ? `<div class="prod-section"><div class="prod-title">▶ Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
-        <div class="prod-section">
-          <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
-            <span>✅ Checklist</span>
-            <span style="color:var(--mid);font-size:11px;">${checksDone}/${checksTotal}</span>
-          </div>
-          <ul class="checklist">${checklistHtml}</ul>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function toggleWeeklyScript(id, ch) {
-  const body = document.getElementById('wbody-' + id);
-  const chev = document.getElementById('wchev-' + id);
-  if (!body) return;
-  const isOpen = body.classList.contains('open');
-  state.scripts[ch].forEach(s => {
-    const b = document.getElementById('wbody-' + s.id);
-    const c = document.getElementById('wchev-' + s.id);
-    if (b) b.classList.remove('open');
-    if (c) c.classList.remove('open');
+  const seen = new Set();
+  (state.scripts[ch] || []).forEach(s => {
+    if (!s.date || seen.has(s.id)) return;
+    seen.add(s.id);
+    if (!map[s.date]) map[s.date] = [];
+    const status = s.status === 'done' ? 'posted' : s.status === 'not-filmed' ? 'filming' : 'draft';
+    map[s.date].push({ id: s.id, title: s.title, date: s.date, status, isScript: true, image: null, category: s.category || '' });
   });
-  if (!isOpen) {
-    body.classList.add('open');
-    if (chev) chev.classList.add('open');
-  }
+  return map;
 }
 
-function toggleWeeklyCheck(ch, scriptId, checkId) {
-  const s = state.scripts[ch].find(x => x.id === scriptId);
-  if (!s) return;
-  if (!s.checks || !s.checks.length) s.checks = DEFAULT_CHECKS.map(c => ({...c}));
-  const c = s.checks.find(x => x.id === checkId);
-  if (c) { c.done = !c.done; save(); renderWeeklyPlan(ch); }
-}
-
-function goToScript(ch, scriptId) {
-  goToSection(ch, 'scripts');
-  setTimeout(() => {
-    const body = document.getElementById('body-' + scriptId);
-    const chev = document.getElementById('chev-' + scriptId);
-    state.scripts[ch].forEach(s => {
-      const b = document.getElementById('body-' + s.id);
-      const c = document.getElementById('chev-' + s.id);
-      if (b) b.classList.remove('open');
-      if (c) c.classList.remove('open');
-    });
-    if (body) { body.classList.add('open'); body.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    if (chev) chev.classList.add('open');
-  }, 150);
-}
-
-// ── SCRIPT REFERENCE ──
-function saveScriptRef(ch, id, field, val) {
-  const s = state.scripts[ch].find(x => x.id === id);
-  if (s) { s[field] = val; save(); }
-}
-
-function handleScriptImage(ch, id, input) {
-  const files = Array.from(input.files);
-  if (!files.length) return;
-  const s = state.scripts[ch].find(x => x.id === id);
-  if (!s) return;
-  if (!s.refImages) s.refImages = s.refImage ? [s.refImage] : [];
-
-  const remaining = 7 - s.refImages.length;
-  if (remaining <= 0) { showToast('이미지는 최대 7장까지 첨부 가능해요'); input.value = ''; return; }
-  const toProcess = files.slice(0, remaining);
-  if (files.length > remaining) showToast(remaining + '장만 추가됐어요 (최대 7장)');
-
-  let processed = 0;
-  toProcess.forEach(file => {
-    if (file.size > 10 * 1024 * 1024) { showToast('10MB 이하 이미지만 첨부 가능해요'); processed++; return; }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let w = img.width, h = img.height;
-        const MAX = 800;
-        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-        if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        s.refImages.push(canvas.toDataURL('image/jpeg', 0.65));
-        processed++;
-        if (processed === toProcess.length) {
-          save(); renderScripts(ch);
-          setTimeout(() => {
-            const b = document.getElementById('body-' + id);
-            const c = document.getElementById('chev-' + id);
-            if (b) b.classList.add('open');
-            if (c) c.classList.add('open');
-          }, 10);
-        }
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function deleteScriptImage(ch, id, idx) {
-  const s = state.scripts[ch].find(x => x.id === id);
-  if (!s) return;
-  if (!s.refImages) s.refImages = s.refImage ? [s.refImage] : [];
-  s.refImages.splice(idx, 1);
-  save(); renderScripts(ch);
-  setTimeout(() => {
-    const b = document.getElementById('body-' + id);
-    const c = document.getElementById('chev-' + id);
-    if (b) b.classList.add('open');
-    if (c) c.classList.add('open');
-  }, 10);
-}
-
-// ── MEMO IMAGE UPLOAD ──
-function handleMemoImage(ch, input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 10 * 1024 * 1024) { showToast('10MB 이하 이미지만 첨부 가능해요'); input.value = ''; return; }
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      let w = img.width, h = img.height;
-      const MAX = 800;
-      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-      if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const data = canvas.toDataURL('image/jpeg', 0.65);
-      const preview = document.getElementById(ch + '-memo-img-preview');
-      const dataEl = document.getElementById(ch + '-memo-img-data');
-      if (preview) { preview.src = data; preview.style.display = 'block'; }
-      if (dataEl) dataEl.value = data;
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-// ── SCROLL REVEAL ──
-(function() {
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
-    });
-  }, { threshold: 0.1 });
-  function bindReveal() {
-    document.querySelectorAll('.reveal:not([data-observed])').forEach(el => {
-      el.dataset.observed = '1';
-      obs.observe(el);
-    });
-  }
-  bindReveal();
-  setTimeout(bindReveal, 800);
-  document.addEventListener('scroll', bindReveal, { passive: true, once: true });
-})();
-
-// ── CURSOR ──
-(function() {
-  const cur = document.getElementById('cursor');
-  if (!cur) return;
-  document.addEventListener('mousemove', e => {
-    cur.style.left = e.clientX + 'px';
-    cur.style.top = e.clientY + 'px';
-    cur.classList.add('visible');
-  });
-  document.addEventListener('mouseleave', () => cur.classList.remove('visible'));
-  function bindCursorHover() {
-    document.querySelectorAll('a, button, input, textarea, label, .script-header, .cal-day').forEach(el => {
-      if (!el.dataset.cursorBound) {
-        el.dataset.cursorBound = '1';
-        el.addEventListener('mouseenter', () => cur.classList.add('expanded'));
-        el.addEventListener('mouseleave', () => cur.classList.remove('expanded'));
-      }
-    });
-  }
-  bindCursorHover();
-  document.addEventListener('DOMContentLoaded', bindCursorHover);
-  setTimeout(bindCursorHover, 1500);
-})();
-
-// ── HERO ANIMATIONS ──
-function triggerHeroAnim(ch) {
-  const p = ch === 'tiktok' ? 'tk' : 'yt';
-  // Reset previous state for re-triggering on channel switch
-  ['hero-tag','hl1','hl2','hero-bottom','float-tags','scroll-hint'].forEach(key => {
-    const el = document.getElementById(p + '-' + key);
-    if (el) el.classList.remove('in');
-  });
-  const d = (id, ms) => {
-    const el = document.getElementById(id);
-    if (el) setTimeout(() => el.classList.add('in'), ms);
-  };
-  d(p + '-hero-tag', 80);
-  d(p + '-hl1', 320);
-  d(p + '-hl2', 520);
-  d(p + '-hero-bottom', 680);
-  d(p + '-float-tags', 880);
-  d(p + '-scroll-hint', 1050);
-}
-
-// ── INIT ──
-function init() {
-  // Firebase SDK 로드 대기 후 데이터 초기화
-  if (window.__firebaseReady) {
-    initData();
-  } else {
-    window.addEventListener('firebase-ready', initData, { once: true });
-    // 5초 안에 Firebase 준비 안 되면 로컬 데이터로만 진행 (네트워크 문제 대비)
-    setTimeout(() => {
-      if (!isLoaded) { loadFromLocalStorage(); renderAll(); }
-    }, 5000);
-  }
-}
-
-// ── AI 모달 ──────────────────────────────────────────────────────────
-function openAIModal(ch) {
-  document.getElementById('ai-channel').value = ch;
-  document.getElementById('ai-keymsg').value = '';
-  document.getElementById('ai-episode').value = '';
-  document.getElementById('ai-date').value = '';
-  document.getElementById('ai-modal').classList.add('open');
-}
-function closeAIModal() {
-  document.getElementById('ai-modal').classList.remove('open');
-}
-
-async function generateAIScript() {
-  const ch = document.getElementById('ai-channel').value;
-  const pillar = document.getElementById('ai-pillar').value;
-  const keyMsg = document.getElementById('ai-keymsg').value.trim();
-  const episode = document.getElementById('ai-episode').value.trim();
-  const date = document.getElementById('ai-date').value;
-
-  if (!keyMsg) { showToast('핵심 한 줄을 입력해주세요'); return; }
-
-  const geminiKey = localStorage.getItem('gemini_api_key') || '';
-  if (!geminiKey) { showToast('Settings에서 Gemini API 키를 먼저 입력해주세요'); return; }
-
-  const btn = document.getElementById('ai-generate-btn');
-  btn.textContent = '생성 중...'; btn.disabled = true;
-
-  const pillarDescriptions = {
-    '1': '아이돌 커버 메이크업 — 실존 아이돌의 특정 이벤트/컴백/사진 속 메이크업을 따라하는 콘텐츠. 제목 패턴: "[아이돌명] [이벤트] 메이크업 따라해봄" 또는 "[아이돌명] [이벤트] 메이크업 튜토리얼 — [차별 포인트] 꿀팁". 차별화된 디테일 하나를 반드시 넣는다.',
-    '2': '변신/트랜지션 — 맨 얼굴→완성 메이크업의 극적 전환. 제목 패턴: "누구세요..? 딱 N초 만에 변신 완료". 0-2초 안에 강한 비주얼 대비 필수.',
-    '3': '제품 추천 — 특정 퍼스널컬러/상황에 맞춘 제품 추천. 제목 패턴: "[타겟 퍼스널컬러/상황] + 공감형 후킹 — [화자 포지셔닝]의 [카테고리] 추천 N가지". "아직도 이거 없음 유죄" 같은 겁주기/죄책감 표현 절대 금지. 대신 "한 번쯤 고민했을", "이런 거 찾고 있었다면" 같은 공감형 진입.'
-  };
-
-  const prompt = '너는 솜솜(@ssommos) 유튜브 쇼츠 채널의 전문 대본 작가야.\n\n'
-    + '포지셔닝: 퍼스널컬러 안 가리고 진짜 예쁜 메이크업을 같이 찾아가는 친구. 옆집 언니 / 같이 덕질하는 친구 톤.\n\n'
-    + '절대 금지: 가르치는 톤, "99%가 모르는", "무조건 해야 하는", 죄책감/겁주는 표현, 전문가처럼 거리두는 말투\n\n'
-    + '필라 유형: ' + pillarDescriptions[pillar] + '\n\n'
-    + '핵심 메시지: ' + keyMsg + '\n'
-    + (episode ? '경험/에피소드: ' + episode + '\n' : '')
-    + '\n아래 정확한 형식으로 대본 작성:\n\n'
-    + '제목: [제목]\n\n'
-    + 'HOOK (0-3초):\n[화면 묘사 + 대사]\n\n'
-    + '본문:\n[단계별 대사, 자연스러운 구어체]\n\n'
-    + '엔딩:\n[마무리 + 자연스러운 CTA]\n\n'
-    + '해시태그: [3-5개 #포함]';
-
-  try {
-    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + geminiKey, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.9, maxOutputTokens: 2048 }
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message || 'API 오류');
-    const text = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) || '';
-    if (!text) throw new Error('응답 없음');
-
-    const titleMatch = text.match(/제목:\s*(.+)/);
-    const hookMatch = text.match(/HOOK[^:\n]*:\s*([\s\S]*?)(?=본문:|$)/i);
-    const bodyMatch = text.match(/본문:\s*([\s\S]*?)(?=엔딩:|$)/i);
-    const endingMatch = text.match(/엔딩:\s*([\s\S]*?)(?=해시태그:|$)/i);
-    const tagsMatch = text.match(/해시태그:\s*(.+)/);
-
-    const title = titleMatch ? titleMatch[1].trim() : keyMsg;
-    const body = [
-      hookMatch ? 'HOOK (0-3초)\n' + hookMatch[1].trim() : '',
-      bodyMatch ? '본문\n' + bodyMatch[1].trim() : '',
-      endingMatch ? '엔딩\n' + endingMatch[1].trim() : '',
-      tagsMatch ? '해시태그: ' + tagsMatch[1].trim() : ''
-    ].filter(Boolean).join('\n\n') || text;
-
-    const newScript = {
-      id: Date.now(),
-      title: title,
-      body: body,
-      notes: '✨ AI 생성 | 필라 ' + pillar,
-      date: date || '',
-      status: 'not-filmed',
-      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
-      memo: '',
-      refUrl: '',
-      refImages: [],
-      filmed: false
-    };
-
-    state.scripts[ch].unshift(newScript);
-    save();
-    renderScripts(ch);
-    closeAIModal();
-    showToast('AI 대본이 생성됐어요!');
-
-    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
-    if (scriptTabBtn) scriptTabBtn.click();
-    setTimeout(function() {
-      var b = document.getElementById('body-' + newScript.id);
-      var c = document.getElementById('chev-' + newScript.id);
-      if (b) { b.classList.add('open'); }
-      if (c) { c.classList.add('open'); }
-      var card = b ? b.closest('.script-card') : null;
-      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-
-  } catch(e) {
-    showToast('생성 실패: ' + (e.message || '다시 시도해주세요'));
-  } finally {
-    btn.textContent = '✨ 생성하기'; btn.disabled = false;
-  }
-}
-
-// ── 코웍 가져오기 모달 ───────────────────────────────────────────────
-function openCoworkModal(ch) {
-  document.getElementById('cowork-json').value = '';
-  document.getElementById('cowork-modal').setAttribute('data-ch', ch);
-  document.getElementById('cowork-modal').classList.add('open');
-}
-function closeCoworkModal() {
-  document.getElementById('cowork-modal').classList.remove('open');
-}
-
-function importCoworkScript() {
-  var raw = document.getElementById('cowork-json').value.trim();
-  var defaultCh = document.getElementById('cowork-modal').getAttribute('data-ch') || 'youtube';
-  try {
-    var jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('JSON 블록을 찾을 수 없어요');
-    var data = JSON.parse(jsonMatch[0]);
-    if (!data.title) throw new Error('title 필드가 없어요');
-    if (!data.body) throw new Error('body 필드가 없어요');
-
-    var ch = data.channel || defaultCh;
-    if (!state.scripts[ch]) ch = defaultCh;
-
-   var newScript = {
-  id: Date.now(),
-  title: data.title,
-  body: data.body,
-  notes: data.notes || '📋 cowork에서 가져오기',
-  date: data.date || '',
-  status: 'not-filmed',
-  checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
-  memo: '',
-  refUrl: '',
-  refImages: [],
-  filmed: false,
-  editingGuide: data.editingGuide || '',       
-  thumbnailGuide: data.thumbnailGuide || '',   
-  captions: data.captions || ''               
-};
-    state.scripts[ch].unshift(newScript);
-    if (data.date) {
-      state.events[ch].push({ id: Date.now() + 1, title: data.title, date: data.date });
+function renderCpFilterBar(ch) {
+  const defaultCats = ch === 'instagram' ? CP_CATS_IG : CP_CATS_TK;
+  const active = (state.calFilter && state.calFilter[ch]) || null;
+  // Collect user-created categories from events
+  const usedCatNames = new Set((state.events[ch] || []).map(e => e.category).filter(Boolean));
+  const allCats = [...defaultCats];
+  usedCatNames.forEach(name => {
+    if (!allCats.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+      allCats.push({ name, color: '#888888' });
     }
-    save();
-    renderScripts(ch);
-    closeCoworkModal();
-    showToast('코웍 대본을 가져왔어요!');
-
-    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
-    if (scriptTabBtn) scriptTabBtn.click();
-    setTimeout(function() {
-      var b = document.getElementById('body-' + newScript.id);
-      var c = document.getElementById('chev-' + newScript.id);
-      if (b) b.classList.add('open');
-      if (c) c.classList.add('open');
-      var card = b ? b.closest('.script-card') : null;
-      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-
-  } catch(e) {
-    showToast('가져오기 실패: ' + e.message);
-  }
-}
-
-// ── Gemini 키 설정 ────────────────────────────────────────────────────
-function saveGeminiKey(val) {
-  localStorage.setItem('gemini_api_key', val.trim());
-}
-function toggleGeminiKey(inputId) {
-  var el = document.getElementById(inputId);
-  if (!el) return;
-  el.type = el.type === 'password' ? 'text' : 'password';
-}
-function loadGeminiKey() {
-  var key = localStorage.getItem('gemini_api_key') || '';
-  var el = document.getElementById('youtube-gemini-key');
-  if (el) el.value = key;
-}
-
-init();
-loadGeminiKey();
-</script>
-</body>
-</html>
+  });
