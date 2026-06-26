@@ -1092,8 +1092,10 @@
   <div class="lock-logo">content hub</div>
   <div class="lock-title">Private workspace</div>
   <div class="lock-sub">비밀번호를 입력해주세요</div>
-  <input class="lock-input" id="lock-input" type="password" placeholder="password" onkeydown="if(event.key==='Enter')checkPassword()">
-  <button class="lock-btn" onclick="checkPassword()">Enter</button>
+  <form onsubmit="checkPassword();return false;" style="width:100%;max-width:280px;display:flex;flex-direction:column;align-items:center;">
+    <input class="lock-input" id="lock-input" type="password" placeholder="password" autocomplete="current-password" style="width:100%;box-sizing:border-box;">
+    <button class="lock-btn" type="submit">Enter</button>
+  </form>
   <div class="lock-error" id="lock-error"></div>
 </div>
 
@@ -2909,3 +2911,968 @@ function renderCpFilterBar(ch) {
       allCats.push({ name, color: '#888888' });
     }
   });
+  let html = `<div class="cp-filter-bar">`;
+  html += `<span class="cp-filter-all${active ? ' off' : ''}" onclick="cpSetFilter('${ch}',null)">All</span>`;
+  allCats.forEach(cat => {
+    const isActive = active && active.toLowerCase() === cat.name.toLowerCase();
+    const bg = isActive ? `${cat.color}22` : 'transparent';
+    const border = isActive ? cat.color : `${cat.color}55`;
+    html += `<span class="cp-filter-cat" style="background:${bg};color:${cat.color};border-color:${border};" onclick="cpSetFilter('${ch}','${escHtml(cat.name)}')">
+      <span class="cp-filter-dot" style="background:${cat.color};"></span>${escHtml(cat.name)}
+    </span>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function cpSetFilter(ch, cat) {
+  if (!state.calFilter) state.calFilter = {};
+  state.calFilter[ch] = cat || null;
+  renderCalendar(ch);
+}
+
+function getCpCatStyle(ch, catName) {
+  if (!catName) return 'background:var(--soft-2);color:var(--mid);';
+  const cats = ch === 'instagram' ? CP_CATS_IG : CP_CATS_TK;
+  const found = cats.find(c => c.name.toLowerCase() === catName.toLowerCase());
+  return found ? `background:${found.color}22;color:${found.color};` : 'background:var(--soft-2);color:var(--mid);';
+}
+
+function renderCpCard(item, ch) {
+  const statusMap = { posted:'cp-s-posted', draft:'cp-s-draft', filming:'cp-s-filming', 'needs-idea':'cp-s-needs-idea' };
+  const labelMap  = { posted:'Posted', draft:'Draft', filming:'Filming', 'needs-idea':'Needs Idea' };
+  const sCls = statusMap[item.status] || 'cp-s-draft';
+  const sLbl = labelMap[item.status] || 'Draft';
+  const catStyle = getCpCatStyle(ch, item.category);
+  const imgHtml = item.image
+    ? `<img class="cp-card-img" src="${item.image}" alt="" loading="lazy">`
+    : `<div class="cp-card-img-ph">📷</div>`;
+  const clickFn = item.isScript ? `openScript(${item.id},'${ch}')` : `openCpModal('${ch}','${item.date}',${item.id})`;
+  const delFn   = item.isScript ? `event.stopPropagation();openScript(${item.id},'${ch}')` : `event.stopPropagation();deleteCpPost('${ch}',${item.id})`;
+  return `<div class="cp-card" onclick="${clickFn}">
+    <div class="cp-card-del" onclick="${delFn}">×</div>
+    ${imgHtml}
+    <div class="cp-card-body">
+      <div class="cp-card-top">
+        <span class="cp-status ${sCls}">${sLbl}</span>
+        ${item.category ? `<span class="cp-cat-pill" style="${catStyle}">${escHtml(item.category)}</span>` : ''}
+      </div>
+      <div class="cp-card-title">${escHtml(item.title || '')}</div>
+    </div>
+  </div>`;
+}
+
+// ── DATE VIEW ──
+function renderCpDateView(ch) {
+  const el = document.getElementById(ch + '-cp-content');
+  if (!el) return;
+  const offset = state.calOffset[ch] || 0;
+  const today = new Date();
+  const monday = new Date(today);
+  const dow = monday.getDay();
+  monday.setDate(monday.getDate() - (dow === 0 ? 6 : dow - 1) + offset * 7);
+  const days = Array.from({length: 7}, (_, i) => { const d = new Date(monday); d.setDate(monday.getDate() + i); return d; });
+  const dows = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+  const todayStr = cpDateStr(today);
+  const dateMap = buildCpDateMap(ch);
+  let html = renderCpFilterBar(ch) + '<div class="cp-date-view">';
+  days.forEach((d, i) => {
+    const ds = cpDateStr(d);
+    const isToday = ds === todayStr;
+    const todayCls = isToday ? (ch === 'instagram' ? 'today-dc-ig' : 'today-dc') : '';
+    const items = dateMap[ds] || [];
+    html += `<div class="cp-date-col">
+      <div class="cp-dcol-head ${todayCls}"><div class="dow">${dows[i]}</div><div class="dom">${d.getDate()}</div></div>
+      ${items.map(item => renderCpCard(item, ch)).join('')}
+      <div class="cp-add-slot" onclick="openCpModal('${ch}','${ds}',null)">+</div>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ── MONTH VIEW ──
+function renderCpMonthView(ch) {
+  const el = document.getElementById(ch + '-cp-content');
+  if (!el) return;
+  const offset = state.calOffset[ch] || 0;
+  const base = new Date();
+  const ref = new Date(base.getFullYear(), base.getMonth() + offset, 1);
+  const yr = ref.getFullYear(), mo = ref.getMonth();
+  const firstDay = new Date(yr, mo, 1).getDay();
+  const daysInMonth = new Date(yr, mo + 1, 0).getDate();
+  const todayStr = cpDateStr(new Date());
+  const dateMap = buildCpDateMap(ch);
+  const dows = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const statusColors = { posted:'#22c55e', filming:'#60a5fa', 'needs-idea':'#f472b6', draft:'#facc15', script:'#a78bfa' };
+
+  let html = renderCpFilterBar(ch) + '<div class="cp-month-header">' + dows.map(d => `<div class="cp-month-dow">${d}</div>`).join('') + '</div>';
+  html += '<div class="cp-month-grid">';
+  for (let i = 0; i < firstDay; i++) html += '<div></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${yr}-${String(mo+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = ds === todayStr;
+    const todayCls = isToday ? (ch === 'instagram' ? 'today-mc-ig' : 'today-mc') : '';
+    const items = (dateMap[ds] || []).slice(0, 4);
+    const gridCls = items.length >= 2 ? 'two' : '';
+
+    html += `<div class="cp-month-cell ${todayCls}">
+      <div class="cp-month-cell-top">
+        <span class="cp-month-cell-num">${d}</span>
+        <span class="cp-month-cell-add" onclick="event.stopPropagation();openCpModal('${ch}','${ds}',null)">+</span>
+      </div>`;
+
+    if (items.length) {
+      html += `<div class="cp-month-posts ${gridCls}">`;
+      items.forEach(item => {
+        const cats = ch === 'instagram' ? CP_CATS_IG : CP_CATS_TK;
+        const catEntry = cats.find(ct => ct.name.toLowerCase() === (item.category || '').toLowerCase());
+        const c = catEntry ? catEntry.color : (statusColors[item.isScript ? 'script' : (item.status||'draft')] || '#ccc');
+        const clickFn = `handleCpMonthClick('${ch}',${item.id},${item.isScript})`;
+        if (item.image) {
+          html += `<div class="cp-month-post" onclick="${clickFn}">
+            <img class="cp-month-post-img" src="${item.image}" alt="">
+            <div class="cp-month-post-overlay"><span class="cp-month-post-label">${escHtml(item.title||'')}</span></div>
+          </div>`;
+        } else {
+          html += `<div class="cp-month-post" onclick="${clickFn}">
+            <div class="cp-month-post-ph" style="background:${c}22;border:1.5px solid ${c}66;color:${c};">
+              <span style="font-size:11px;">${item.isScript ? '📝' : '📷'}</span>
+              <span>${escHtml((item.title||'').substring(0,10))}</span>
+            </div>
+          </div>`;
+        }
+      });
+      html += '</div>';
+      const total = (dateMap[ds] || []).length;
+      if (total > 4) html += `<div class="cp-month-more">+${total - 4} more</div>`;
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function handleCpMonthClick(ch, id, isScript) {
+  if (isScript) { openScript(id, ch); return; }
+  const post = (state.events[ch] || []).find(e => e.id === id);
+  if (!post) return;
+  if (post.url) { window.open(post.url, '_blank'); return; }
+  openCpModal(ch, post.date, id);
+}
+
+// ── CP NAVIGATION ──
+function updateCpLabel(ch) {
+  const label = document.getElementById(ch + '-cp-label');
+  if (!label) return;
+  const view = state.calView[ch] || 'date';
+  const offset = state.calOffset[ch] || 0;
+  if (view === 'date') {
+    const today = new Date();
+    const monday = new Date(today);
+    const dow = monday.getDay();
+    monday.setDate(monday.getDate() - (dow === 0 ? 6 : dow - 1) + offset * 7);
+    const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+    const opts = { month: 'short', day: 'numeric' };
+    label.textContent = `${monday.toLocaleDateString('en-US', opts)} – ${sunday.toLocaleDateString('en-US', opts)}`;
+  } else {
+    const base = new Date();
+    const ref = new Date(base.getFullYear(), base.getMonth() + offset, 1);
+    label.textContent = ref.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+}
+
+function cpNavigate(ch, dir) {
+  if (!state.calOffset) state.calOffset = { tiktok:0, youtube:0, instagram:0 };
+  state.calOffset[ch] = (state.calOffset[ch] || 0) + dir;
+  renderCalendar(ch);
+}
+
+function cpSetView(ch, view) {
+  if (!state.calView) state.calView = { tiktok:'date', youtube:'date', instagram:'date' };
+  state.calView[ch] = view;
+  state.calOffset[ch] = 0;
+  renderCalendar(ch);
+}
+
+// ── CP MODAL ──
+function openCpModal(ch, dateStr, editId) {
+  cpModal = { ch, editId: editId || null, status: 'draft', image: null };
+  document.getElementById('cp-modal-heading').textContent = editId ? 'Edit Post' : 'New Post';
+  document.getElementById('cp-modal-date').value = dateStr || '';
+  document.getElementById('cp-modal-title-input').value = '';
+  document.getElementById('cp-modal-cat').value = '';
+  document.getElementById('cp-modal-url').value = '';
+  const preview = document.getElementById('cp-modal-preview');
+  preview.src = ''; preview.style.display = 'none';
+  document.getElementById('cp-img-ph').style.display = 'block';
+  document.getElementById('cp-img-file').value = '';
+  if (editId) {
+    const ex = (state.events[ch] || []).find(e => e.id === editId);
+    if (ex) {
+      document.getElementById('cp-modal-date').value = ex.date || '';
+      document.getElementById('cp-modal-title-input').value = ex.title || '';
+      document.getElementById('cp-modal-cat').value = ex.category || '';
+      document.getElementById('cp-modal-url').value = ex.url || '';
+      cpModal.status = ex.status || 'draft';
+      if (ex.image) { preview.src = ex.image; preview.style.display = 'block'; document.getElementById('cp-img-ph').style.display = 'none'; cpModal.image = ex.image; }
+    }
+  }
+  document.querySelectorAll('.cp-spick').forEach(btn => {
+    btn.className = 'cp-spick';
+    const s = btn.dataset.s;
+    if (s === cpModal.status) btn.classList.add('active-' + (s === 'needs-idea' ? 'needs' : s));
+  });
+  const cats = ch === 'instagram' ? CP_CATS_IG : CP_CATS_TK;
+  document.getElementById('cp-cat-sugs').innerHTML = cats.map(c =>
+    `<span class="cp-cat-sug" style="background:${c.color}22;color:${c.color};border-color:${c.color}55;" onclick="document.getElementById('cp-modal-cat').value='${c.name}'">${c.name}</span>`
+  ).join('');
+  const saveBtn = document.getElementById('cp-modal-save-btn');
+  saveBtn.style.background = ch === 'instagram' ? 'linear-gradient(135deg,#f77737,#e1306c)' : 'var(--ink)';
+  document.getElementById('cp-post-modal').classList.add('open');
+}
+
+function closeCpModal() {
+  document.getElementById('cp-post-modal').classList.remove('open');
+}
+
+function cpPickStatus(btn) {
+  document.querySelectorAll('.cp-spick').forEach(b => b.className = 'cp-spick');
+  const s = btn.dataset.s;
+  cpModal.status = s;
+  btn.classList.add('active-' + (s === 'needs-idea' ? 'needs' : s));
+}
+
+function handleCpImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    resizeCpImage(e.target.result, 480, dataUrl => {
+      cpModal.image = dataUrl;
+      const preview = document.getElementById('cp-modal-preview');
+      preview.src = dataUrl; preview.style.display = 'block';
+      document.getElementById('cp-img-ph').style.display = 'none';
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function resizeCpImage(dataUrl, maxPx, callback) {
+  const img = new Image();
+  img.onload = () => {
+    let w = img.width, h = img.height;
+    if (w > maxPx || h > maxPx) { const r = Math.min(maxPx/w, maxPx/h); w = Math.round(w*r); h = Math.round(h*r); }
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    callback(canvas.toDataURL('image/jpeg', 0.78));
+  };
+  img.src = dataUrl;
+}
+
+function saveCpPost() {
+  const ch = cpModal.ch;
+  const editId = cpModal.editId;
+  const date = document.getElementById('cp-modal-date').value;
+  const title = document.getElementById('cp-modal-title-input').value.trim();
+  if (!date || !title) { showToast('날짜와 제목을 입력해주세요'); return; }
+  const post = { id: editId || Date.now(), date, title, status: cpModal.status || 'draft', category: document.getElementById('cp-modal-cat').value.trim(), url: document.getElementById('cp-modal-url').value.trim() || null, image: cpModal.image || null, notes: '' };
+  if (editId) {
+    const idx = (state.events[ch] || []).findIndex(e => e.id === editId);
+    if (idx !== -1) state.events[ch][idx] = post; else state.events[ch].push(post);
+  } else {
+    state.events[ch].push(post);
+  }
+  save(); renderCalendar(ch);
+  closeCpModal();
+  showToast(editId ? '수정됐어요 ✓' : '포스트 추가됐어요 ✓');
+}
+
+function deleteCpPost(ch, id) {
+  state.events[ch] = (state.events[ch] || []).filter(e => e.id !== id);
+  save(); renderCalendar(ch);
+  showToast('삭제됐어요');
+}
+
+function addEvent(ch) {
+  const title = document.getElementById(ch + '-event-title').value.trim();
+  const date = document.getElementById(ch + '-event-date').value;
+  if (!title || !date) { showToast('제목과 날짜를 입력해주세요'); return; }
+  state.events[ch].push({ id: Date.now(), title, date });
+  document.getElementById(ch + '-event-title').value = '';
+  document.getElementById(ch + '-event-date').value = '';
+  save(); renderCalendar(ch);
+  showToast('일정 추가됐어요 ✓');
+}
+
+function deleteEvent(ch, id) {
+  state.events[ch] = state.events[ch].filter(e => e.id !== id);
+  save(); renderCalendar(ch);
+}
+
+// ── PERFORMANCE ──
+function renderPerf(ch) {
+  const list = document.getElementById(ch + '-perf-list');
+  const posts = state.perfs[ch];
+  if (!posts) return;
+  const totalEl = document.getElementById(ch + '-total-posts');
+  if (totalEl) totalEl.textContent = posts.length;
+  if (posts.length) {
+    const avgV = Math.round(posts.reduce((s,p) => s + (p.views||0), 0) / posts.length);
+    const avgL = Math.round(posts.reduce((s,p) => s + (p.likes||0), 0) / posts.length);
+    const avgVEl = document.getElementById(ch + '-avg-views');
+    const avgLEl = document.getElementById(ch + '-avg-likes');
+    if (avgVEl) avgVEl.textContent = fmtNum(avgV);
+    if (avgLEl) avgLEl.textContent = fmtNum(avgL);
+    if (ch === 'instagram') {
+      const avgS = Math.round(posts.reduce((s,p) => s + (p.saves||0), 0) / posts.length);
+      const avgSEl = document.getElementById('instagram-avg-saves');
+      if (avgSEl) avgSEl.textContent = fmtNum(avgS);
+    }
+  }
+  if (!list) return;
+  list.innerHTML = posts.length ? posts.map(p => `
+    <div class="perf-item">
+      <div class="perf-item-title">${escHtml(p.title)}</div>
+      <div class="perf-item-stats">
+        <div class="perf-item-stat"><span class="num">${fmtNum(p.views)}</span><span class="lbl">views</span></div>
+        <div class="perf-item-stat"><span class="num">${fmtNum(p.likes)}</span><span class="lbl">likes</span></div>
+        ${ch === 'instagram' ? `<div class="perf-item-stat"><span class="num">${fmtNum(p.saves||0)}</span><span class="lbl">saves</span></div>` : ''}
+      </div>
+      <span class="memo-del" onclick="deletePerf('${ch}',${p.id})">×</span>
+    </div>`).join('') : '<div class="empty">데이터 없음</div>';
+}
+
+function addPerf(ch) {
+  const title = document.getElementById(ch + '-perf-title').value.trim();
+  const views = parseInt(document.getElementById(ch + '-perf-views').value) || 0;
+  const likes = parseInt(document.getElementById(ch + '-perf-likes').value) || 0;
+  if (!title) { showToast('제목을 입력해주세요'); return; }
+  const perfObj = { id: Date.now(), title, views, likes };
+  if (ch === 'instagram') {
+    perfObj.saves = parseInt(document.getElementById('instagram-perf-saves').value) || 0;
+  }
+  state.perfs[ch].unshift(perfObj);
+  document.getElementById(ch + '-perf-title').value = '';
+  document.getElementById(ch + '-perf-views').value = '';
+  document.getElementById(ch + '-perf-likes').value = '';
+  if (ch === 'instagram') document.getElementById('instagram-perf-saves').value = '';
+  save(); renderPerf(ch);
+  showToast('등록됐어요 ✓');
+}
+
+function deletePerf(ch, id) {
+  state.perfs[ch] = state.perfs[ch].filter(p => p.id !== id);
+  save(); renderPerf(ch);
+}
+
+function fmtNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return String(n);
+}
+
+// ── ASSETS ──
+function addAsset(ch, type) {
+  const input = document.getElementById(ch + '-' + type + '-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const list = document.getElementById(ch + '-' + type + '-list');
+  const div = document.createElement('div');
+  div.className = 'asset-item';
+  div.innerHTML = `<div class="asset-item-text">${escHtml(text)}</div>
+    <button class="copy-btn${ch==='youtube'?' yt':''}" onclick="copyText(this.previousElementSibling.textContent)">copy</button>`;
+  list.appendChild(div);
+  input.value = '';
+  showToast('추가됐어요 ✓');
+}
+
+// ── NAV DROPDOWN ──
+let ddCh = 'tiktok';
+
+function toggleNavMenu() {
+  const dd = document.getElementById('nav-dropdown');
+  dd.classList.toggle('open');
+  document.getElementById('dd-btn-tiktok').classList.toggle('active-dd', ddCh === 'tiktok');
+  document.getElementById('dd-btn-youtube').classList.toggle('active-dd', ddCh === 'youtube');
+}
+
+function setDdChannel(ch) {
+  ddCh = ch;
+  document.getElementById('dd-btn-tiktok').classList.toggle('active-dd', ch === 'tiktok');
+  document.getElementById('dd-btn-youtube').classList.toggle('active-dd', ch === 'youtube');
+}
+
+function goToSection(ch, tab) {
+  const navDrop = document.getElementById('nav-dropdown');
+  if (navDrop) navDrop.classList.remove('open');
+  if (state.currentChannel !== ch) {
+    state.currentChannel = ch;
+    document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + ch).classList.add('active');
+    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-tiktok','active-youtube','active-instagram'));
+    const chBtn = document.querySelector(`.ch-btn[onclick*="'${ch}'"]`);
+    if (chBtn) chBtn.classList.add('active-' + ch);
+  }
+  state.currentTab[ch] = tab;
+  const tabs = document.querySelectorAll('#tabs-' + ch + ' .tab');
+  tabs.forEach(t => t.classList.remove('active-tiktok','active-youtube','active-instagram'));
+  const tabOrder = ['scripts','weekly','memo','calendar','performance','assets','settings'];
+  const idx = tabOrder.indexOf(tab);
+  if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active-' + ch);
+  tabOrder.forEach(s => {
+    const el = document.getElementById(ch + '-' + s);
+    if (el) el.classList.toggle('active', s === tab);
+  });
+  if (tab === 'calendar') renderCalendar(ch);
+  if (tab === 'performance') renderPerf(ch);
+  if (tab === 'weekly') renderWeeklyPlan(ch);
+  const ws = document.getElementById('workspace-' + ch);
+  if (ws) {
+    ws.classList.add('visible');
+    renderTodayAlert(ch);
+    const top = ws.getBoundingClientRect().top + window.scrollY - 60;
+    window.scrollTo({ top, behavior: 'instant' });
+  }
+}
+
+// ── WEEKLY PLAN ──
+function renderWeeklyPlan(ch) {
+  const container = document.getElementById(ch + '-weekly-list');
+  if (!container) return;
+  const now = new Date();
+  const dow = now.getDay();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - dow);
+  startOfWeek.setHours(0, 0, 0, 0);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  const weekScripts = state.scripts[ch].filter(s => {
+    if (!s.date) return false;
+    const d = new Date(s.date + 'T00:00:00');
+    return d >= startOfWeek && d <= endOfWeek;
+  }).sort((a, b) => a.date > b.date ? 1 : -1);
+
+  if (!weekScripts.length) {
+    container.innerHTML = '<div class="empty">이번 주 예정된 영상이 없어요.<br>대본에서 발행일자를 이번 주로 설정해보세요.</div>';
+    return;
+  }
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  container.innerHTML = weekScripts.map(s => {
+    const statusClass = s.status === 'urgent' ? 'urgent' : '';
+    const statusLabel = { 'not-filmed':'Not filmed','filmed':'Filmed ✓','editing':'Editing','done':'Done ✓','urgent':'⚡ Urgent' }[s.status] || s.status;
+    if (!s.checks || !s.checks.length) { s.checks = (ch === 'instagram' ? DEFAULT_CHECKS_IG : DEFAULT_CHECKS).map(c => ({...c})); save(); }
+    const checks = s.checks;
+    const checksDone = checks.filter(c => c.done).length;
+    const checksTotal = checks.length;
+    const dt = s.date ? new Date(s.date + 'T00:00:00') : null;
+    const dayLabel = dt ? days[dt.getDay()] : '';
+    const checklistHtml = checks.map(c => `
+      <li>
+        <div class="check-box ${c.done ? (ch==='youtube'?'done-yt':ch==='instagram'?'done-ig':'done') : ''}"
+          onclick="toggleWeeklyCheck('${ch}',${s.id},'${c.id}')">${c.done ? '✓' : ''}</div>
+        <span style="color:${c.done?'var(--slate)':'var(--walnut)'};text-decoration:${c.done?'line-through':'none'}">${c.label}</span>
+      </li>`).join('');
+    return `
+    <div class="script-card">
+      <div class="script-header" onclick="toggleWeeklyScript(${s.id},'${ch}')">
+        <div class="script-meta">
+          <div class="script-num">${dayLabel}${s.date ? ' · ' + formatDate(s.date) : ''}</div>
+          <div class="script-title">${s.title}</div>
+          ${checksTotal ? `<div class="script-date">체크리스트 ${checksDone}/${checksTotal}</div>` : ''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
+          ${buildStatusSelect(ch, s)}
+        </div>
+        <span class="script-chevron" id="wchev-${s.id}">▾</span>
+      </div>
+      <div class="script-body" id="wbody-${s.id}">
+        ${s.body ? `<div class="prod-title" style="margin-bottom:6px;">📝 SCRIPT</div><div class="script-content">${escHtml(s.body)}</div>` : ''}
+        ${s.notes ? `<div class="prod-section"><div class="prod-title">▶ Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
+        <div class="prod-section">
+          <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
+            <span>✅ Checklist</span>
+            <span style="color:var(--mid);font-size:11px;">${checksDone}/${checksTotal}</span>
+          </div>
+          <ul class="checklist">${checklistHtml}</ul>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleWeeklyScript(id, ch) {
+  const body = document.getElementById('wbody-' + id);
+  const chev = document.getElementById('wchev-' + id);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  state.scripts[ch].forEach(s => {
+    const b = document.getElementById('wbody-' + s.id);
+    const c = document.getElementById('wchev-' + s.id);
+    if (b) b.classList.remove('open');
+    if (c) c.classList.remove('open');
+  });
+  if (!isOpen) {
+    body.classList.add('open');
+    if (chev) chev.classList.add('open');
+  }
+}
+
+function toggleWeeklyCheck(ch, scriptId, checkId) {
+  const s = state.scripts[ch].find(x => x.id === scriptId);
+  if (!s) return;
+  if (!s.checks || !s.checks.length) s.checks = DEFAULT_CHECKS.map(c => ({...c}));
+  const c = s.checks.find(x => x.id === checkId);
+  if (c) { c.done = !c.done; save(); renderWeeklyPlan(ch); }
+}
+
+function goToScript(ch, scriptId) {
+  goToSection(ch, 'scripts');
+  setTimeout(() => {
+    const body = document.getElementById('body-' + scriptId);
+    const chev = document.getElementById('chev-' + scriptId);
+    state.scripts[ch].forEach(s => {
+      const b = document.getElementById('body-' + s.id);
+      const c = document.getElementById('chev-' + s.id);
+      if (b) b.classList.remove('open');
+      if (c) c.classList.remove('open');
+    });
+    if (body) { body.classList.add('open'); body.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (chev) chev.classList.add('open');
+  }, 150);
+}
+
+// ── SCRIPT REFERENCE ──
+function saveScriptRef(ch, id, field, val) {
+  const s = state.scripts[ch].find(x => x.id === id);
+  if (s) { s[field] = val; save(); }
+}
+
+function handleScriptImage(ch, id, input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  const s = state.scripts[ch].find(x => x.id === id);
+  if (!s) return;
+  if (!s.refImages) s.refImages = s.refImage ? [s.refImage] : [];
+
+  const remaining = 7 - s.refImages.length;
+  if (remaining <= 0) { showToast('이미지는 최대 7장까지 첨부 가능해요'); input.value = ''; return; }
+  const toProcess = files.slice(0, remaining);
+  if (files.length > remaining) showToast(remaining + '장만 추가됐어요 (최대 7장)');
+
+  let processed = 0;
+  toProcess.forEach(file => {
+    if (file.size > 10 * 1024 * 1024) { showToast('10MB 이하 이미지만 첨부 가능해요'); processed++; return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let w = img.width, h = img.height;
+        const MAX = 800;
+        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+        if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        s.refImages.push(canvas.toDataURL('image/jpeg', 0.65));
+        processed++;
+        if (processed === toProcess.length) {
+          save(); renderScripts(ch);
+          setTimeout(() => {
+            const b = document.getElementById('body-' + id);
+            const c = document.getElementById('chev-' + id);
+            if (b) b.classList.add('open');
+            if (c) c.classList.add('open');
+          }, 10);
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function deleteScriptImage(ch, id, idx) {
+  const s = state.scripts[ch].find(x => x.id === id);
+  if (!s) return;
+  if (!s.refImages) s.refImages = s.refImage ? [s.refImage] : [];
+  s.refImages.splice(idx, 1);
+  save(); renderScripts(ch);
+  setTimeout(() => {
+    const b = document.getElementById('body-' + id);
+    const c = document.getElementById('chev-' + id);
+    if (b) b.classList.add('open');
+    if (c) c.classList.add('open');
+  }, 10);
+}
+
+// ── MEMO IMAGE UPLOAD ──
+function handleMemoImage(ch, input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('10MB 이하 이미지만 첨부 가능해요'); input.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      const MAX = 800;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = canvas.toDataURL('image/jpeg', 0.65);
+      const preview = document.getElementById(ch + '-memo-img-preview');
+      const dataEl = document.getElementById(ch + '-memo-img-data');
+      if (preview) { preview.src = data; preview.style.display = 'block'; }
+      if (dataEl) dataEl.value = data;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── SCROLL REVEAL ──
+(function() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  function bindReveal() {
+    document.querySelectorAll('.reveal:not([data-observed])').forEach(el => {
+      el.dataset.observed = '1';
+      obs.observe(el);
+    });
+  }
+  bindReveal();
+  setTimeout(bindReveal, 800);
+  document.addEventListener('scroll', bindReveal, { passive: true, once: true });
+})();
+
+// ── CURSOR ──
+(function() {
+  const cur = document.getElementById('cursor');
+  if (!cur) return;
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top = e.clientY + 'px';
+    cur.classList.add('visible');
+  });
+  document.addEventListener('mouseleave', () => cur.classList.remove('visible'));
+  function bindCursorHover() {
+    document.querySelectorAll('a, button, input, textarea, label, .script-header, .cal-day').forEach(el => {
+      if (!el.dataset.cursorBound) {
+        el.dataset.cursorBound = '1';
+        el.addEventListener('mouseenter', () => cur.classList.add('expanded'));
+        el.addEventListener('mouseleave', () => cur.classList.remove('expanded'));
+      }
+    });
+  }
+  bindCursorHover();
+  document.addEventListener('DOMContentLoaded', bindCursorHover);
+  setTimeout(bindCursorHover, 1500);
+})();
+
+// ── HERO ANIMATIONS ──
+function triggerHeroAnim(ch) {
+  const p = ch === 'tiktok' ? 'tk' : ch === 'instagram' ? 'ig' : 'yt';
+  // Reset previous state for re-triggering on channel switch
+  ['hero-tag','hl1','hl2','hero-bottom','float-tags','scroll-hint'].forEach(key => {
+    const el = document.getElementById(p + '-' + key);
+    if (el) el.classList.remove('in');
+  });
+  const d = (id, ms) => {
+    const el = document.getElementById(id);
+    if (el) setTimeout(() => el.classList.add('in'), ms);
+  };
+  d(p + '-hero-tag', 80);
+  d(p + '-hl1', 320);
+  d(p + '-hl2', 520);
+  d(p + '-hero-bottom', 680);
+  d(p + '-float-tags', 880);
+  d(p + '-scroll-hint', 1050);
+}
+
+// ── INIT ──
+function init() {
+  // Firebase SDK 로드 대기 후 데이터 초기화
+  if (window.__firebaseReady) {
+    initData();
+  } else {
+    window.addEventListener('firebase-ready', initData, { once: true });
+    // 5초 안에 Firebase 준비 안 되면 로컬 데이터로만 진행 (네트워크 문제 대비)
+    setTimeout(() => {
+      if (!isLoaded) { loadFromLocalStorage(); normalizeState(); renderAll(); }
+    }, 5000);
+  }
+}
+
+// ── AI 모달 ──────────────────────────────────────────────────────────
+function openAIModal(ch) {
+  document.getElementById('ai-channel').value = ch;
+  document.getElementById('ai-keymsg').value = '';
+  document.getElementById('ai-episode').value = '';
+  document.getElementById('ai-date').value = '';
+  document.getElementById('ai-modal').classList.add('open');
+}
+function closeAIModal() {
+  document.getElementById('ai-modal').classList.remove('open');
+}
+
+async function generateAIScript() {
+  const ch = document.getElementById('ai-channel').value;
+  const pillar = document.getElementById('ai-pillar').value;
+  const keyMsg = document.getElementById('ai-keymsg').value.trim();
+  const episode = document.getElementById('ai-episode').value.trim();
+  const date = document.getElementById('ai-date').value;
+
+  if (!keyMsg) { showToast('핵심 한 줄을 입력해주세요'); return; }
+
+  const geminiKey = localStorage.getItem('gemini_api_key') || '';
+  if (!geminiKey) { showToast('Settings에서 Gemini API 키를 먼저 입력해주세요'); return; }
+
+  const btn = document.getElementById('ai-generate-btn');
+  btn.textContent = '생성 중...'; btn.disabled = true;
+
+  const pillarDescriptions = {
+    '1': '아이돌 커버 메이크업 — 실존 아이돌의 특정 이벤트/컴백/사진 속 메이크업을 따라하는 콘텐츠. 제목 패턴: "[아이돌명] [이벤트] 메이크업 따라해봄" 또는 "[아이돌명] [이벤트] 메이크업 튜토리얼 — [차별 포인트] 꿀팁". 차별화된 디테일 하나를 반드시 넣는다.',
+    '2': '변신/트랜지션 — 맨 얼굴→완성 메이크업의 극적 전환. 제목 패턴: "누구세요..? 딱 N초 만에 변신 완료". 0-2초 안에 강한 비주얼 대비 필수.',
+    '3': '제품 추천 — 특정 퍼스널컬러/상황에 맞춘 제품 추천. 제목 패턴: "[타겟 퍼스널컬러/상황] + 공감형 후킹 — [화자 포지셔닝]의 [카테고리] 추천 N가지". "아직도 이거 없음 유죄" 같은 겁주기/죄책감 표현 절대 금지. 대신 "한 번쯤 고민했을", "이런 거 찾고 있었다면" 같은 공감형 진입.'
+  };
+
+  const prompt = '너는 솜솜(@ssommos) 유튜브 쇼츠 채널의 전문 대본 작가야.\n\n'
+    + '포지셔닝: 퍼스널컬러 안 가리고 진짜 예쁜 메이크업을 같이 찾아가는 친구. 옆집 언니 / 같이 덕질하는 친구 톤.\n\n'
+    + '절대 금지: 가르치는 톤, "99%가 모르는", "무조건 해야 하는", 죄책감/겁주는 표현, 전문가처럼 거리두는 말투\n\n'
+    + '필라 유형: ' + pillarDescriptions[pillar] + '\n\n'
+    + '핵심 메시지: ' + keyMsg + '\n'
+    + (episode ? '경험/에피소드: ' + episode + '\n' : '')
+    + '\n아래 정확한 형식으로 대본 작성:\n\n'
+    + '제목: [제목]\n\n'
+    + 'HOOK (0-3초):\n[화면 묘사 + 대사]\n\n'
+    + '본문:\n[단계별 대사, 자연스러운 구어체]\n\n'
+    + '엔딩:\n[마무리 + 자연스러운 CTA]\n\n'
+    + '해시태그: [3-5개 #포함]';
+
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + geminiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.9, maxOutputTokens: 2048 }
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || 'API 오류');
+    const text = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) || '';
+    if (!text) throw new Error('응답 없음');
+
+    const titleMatch = text.match(/제목:\s*(.+)/);
+    const hookMatch = text.match(/HOOK[^:\n]*:\s*([\s\S]*?)(?=본문:|$)/i);
+    const bodyMatch = text.match(/본문:\s*([\s\S]*?)(?=엔딩:|$)/i);
+    const endingMatch = text.match(/엔딩:\s*([\s\S]*?)(?=해시태그:|$)/i);
+    const tagsMatch = text.match(/해시태그:\s*(.+)/);
+
+    const title = titleMatch ? titleMatch[1].trim() : keyMsg;
+    const body = [
+      hookMatch ? 'HOOK (0-3초)\n' + hookMatch[1].trim() : '',
+      bodyMatch ? '본문\n' + bodyMatch[1].trim() : '',
+      endingMatch ? '엔딩\n' + endingMatch[1].trim() : '',
+      tagsMatch ? '해시태그: ' + tagsMatch[1].trim() : ''
+    ].filter(Boolean).join('\n\n') || text;
+
+    const newScript = {
+      id: Date.now(),
+      title: title,
+      body: body,
+      notes: '✨ AI 생성 | 필라 ' + pillar,
+      date: date || '',
+      status: 'not-filmed',
+      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
+      memo: '',
+      refUrl: '',
+      refImages: [],
+      filmed: false
+    };
+
+    state.scripts[ch].unshift(newScript);
+    save();
+    renderScripts(ch);
+    closeAIModal();
+    showToast('AI 대본이 생성됐어요!');
+
+    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
+    if (scriptTabBtn) scriptTabBtn.click();
+    setTimeout(function() {
+      var b = document.getElementById('body-' + newScript.id);
+      var c = document.getElementById('chev-' + newScript.id);
+      if (b) { b.classList.add('open'); }
+      if (c) { c.classList.add('open'); }
+      var card = b ? b.closest('.script-card') : null;
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+
+  } catch(e) {
+    showToast('생성 실패: ' + (e.message || '다시 시도해주세요'));
+  } finally {
+    btn.textContent = '✨ 생성하기'; btn.disabled = false;
+  }
+}
+
+// ── 코웍 가져오기 모달 ───────────────────────────────────────────────
+function openCoworkModal(ch) {
+  document.getElementById('cowork-json').value = '';
+  document.getElementById('cowork-modal').setAttribute('data-ch', ch);
+  document.getElementById('cowork-modal').classList.add('open');
+}
+function closeCoworkModal() {
+  document.getElementById('cowork-modal').classList.remove('open');
+}
+
+function importCoworkScript() {
+  var raw = document.getElementById('cowork-json').value.trim();
+  var defaultCh = document.getElementById('cowork-modal').getAttribute('data-ch') || 'youtube';
+  try {
+    var jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('JSON 블록을 찾을 수 없어요');
+    var data = JSON.parse(jsonMatch[0]);
+    if (!data.title) throw new Error('title 필드가 없어요');
+    if (!data.body) throw new Error('body 필드가 없어요');
+
+    var ch = data.channel || defaultCh;
+    if (!state.scripts[ch]) ch = defaultCh;
+
+    var newScript = {
+      id: Date.now(),
+      title: data.title,
+      body: data.body,
+      notes: data.notes || '📋 cowork에서 가져오기',
+      date: data.date || '',
+      status: 'not-filmed',
+      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
+      memo: '',
+      refUrl: '',
+      refImages: [],
+      filmed: false
+    };
+
+    state.scripts[ch].unshift(newScript);
+    if (data.date) {
+      state.events[ch].push({ id: Date.now() + 1, title: data.title, date: data.date });
+    }
+    save();
+    renderScripts(ch);
+    closeCoworkModal();
+    showToast('코웍 대본을 가져왔어요!');
+
+    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
+    if (scriptTabBtn) scriptTabBtn.click();
+    setTimeout(function() {
+      var b = document.getElementById('body-' + newScript.id);
+      var c = document.getElementById('chev-' + newScript.id);
+      if (b) b.classList.add('open');
+      if (c) c.classList.add('open');
+      var card = b ? b.closest('.script-card') : null;
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+
+  } catch(e) {
+    showToast('가져오기 실패: ' + e.message);
+  }
+}
+
+// ── TikTok → Instagram 가져오기 ───────────────────────────────────────
+function openImportFromTiktokModal() {
+  const list = document.getElementById('import-tiktok-list');
+  const scripts = state.scripts.tiktok || [];
+  if (!scripts.length) {
+    list.innerHTML = '<div class="empty">TikTok 대본이 없어요.<br>먼저 TikTok 탭에서 대본을 추가해주세요.</div>';
+  } else {
+    list.innerHTML = scripts.map(s => `
+      <div class="today-alert-item" onclick="importFromTiktokScript(${s.id})" style="margin-bottom:6px;">
+        <span class="today-alert-title">${escHtml(s.title)}</span>
+        <span style="font-size:11px;color:var(--mid);flex-shrink:0;margin-left:8px;">${s.date ? formatDate(s.date) : ''}</span>
+        <span class="today-alert-arrow" style="color:#e1306c;">→</span>
+      </div>`).join('');
+  }
+  document.getElementById('import-tiktok-modal').classList.add('open');
+}
+
+function closeImportFromTiktokModal() {
+  document.getElementById('import-tiktok-modal').classList.remove('open');
+}
+
+function importFromTiktokScript(id) {
+  const src = state.scripts.tiktok.find(s => s.id === id);
+  if (!src) return;
+  const newScript = {
+    id: Date.now(),
+    title: src.title,
+    body: src.body || '',
+    notes: src.notes || '',
+    date: '',
+    status: 'not-filmed',
+    checks: DEFAULT_CHECKS_IG.map(c => ({...c})),
+    memo: '',
+    refUrl: '',
+    refImages: [],
+    filmed: false,
+    igCaption: '',
+    coverNote: '',
+  };
+  state.scripts.instagram.unshift(newScript);
+  save();
+  renderScripts('instagram');
+  closeImportFromTiktokModal();
+  showToast('TikTok 대본을 Instagram에 복사했어요 ✓');
+  if (state.currentChannel !== 'instagram') {
+    state.currentChannel = 'instagram';
+    document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-instagram').classList.add('active');
+    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-tiktok','active-youtube','active-instagram'));
+    const igBtn = document.querySelector('.ch-btn[onclick*="instagram"]');
+    if (igBtn) igBtn.classList.add('active-instagram');
+    triggerHeroAnim('instagram');
+  }
+  setTimeout(function() {
+    var ws = document.getElementById('workspace-instagram');
+    if (ws) ws.classList.add('visible');
+    var tabBtn = document.querySelector('#tabs-instagram .tab');
+    if (tabBtn) tabBtn.click();
+    setTimeout(function() {
+      var b = document.getElementById('body-' + newScript.id);
+      var c = document.getElementById('chev-' + newScript.id);
+      if (b) b.classList.add('open');
+      if (c) c.classList.add('open');
+      var card = b ? b.closest('.script-card') : null;
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+  }, 100);
+}
+
+// ── Gemini 키 설정 ────────────────────────────────────────────────────
+function saveGeminiKey(val) {
+  localStorage.setItem('gemini_api_key', val.trim());
+}
+function toggleGeminiKey(inputId) {
+  var el = document.getElementById(inputId);
+  if (!el) return;
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+function loadGeminiKey() {
+  var key = localStorage.getItem('gemini_api_key') || '';
+  var el = document.getElementById('youtube-gemini-key');
+  if (el) el.value = key;
+}
+
+init();
+loadGeminiKey();
+</script>
+</body>
+</html>
