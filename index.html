@@ -2083,12 +2083,18 @@
 <script>
 // ── LOCK ──
 const PW = "doong17";
+function unlockApp(ch) {
+  ch = ch || 'tiktok';
+  document.getElementById("lock-screen").classList.add("hidden");
+  var ws = document.getElementById('workspace-' + ch);
+  if (ws) ws.classList.add('visible');
+  setTimeout(() => triggerHeroAnim(ch), 100);
+}
 function checkPassword() {
   const val = document.getElementById("lock-input").value;
   if (val === PW) {
-    document.getElementById("lock-screen").classList.add("hidden");
     sessionStorage.setItem("unlocked","1");
-    setTimeout(() => triggerHeroAnim(state && state.currentChannel ? state.currentChannel : 'tiktok'), 100);
+    unlockApp(state && state.currentChannel ? state.currentChannel : 'tiktok');
   } else {
     document.getElementById("lock-error").textContent = "비밀번호가 틀렸어요";
     document.getElementById("lock-input").value = "";
@@ -2097,8 +2103,7 @@ function checkPassword() {
 }
 (function(){
   if (sessionStorage.getItem("unlocked") === "1") {
-    document.getElementById("lock-screen").classList.add("hidden");
-    setTimeout(() => triggerHeroAnim('tiktok'), 300);
+    unlockApp('tiktok');
   } else {
     setTimeout(() => document.getElementById("lock-input").focus(), 100);
   }
