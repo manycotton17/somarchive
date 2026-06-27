@@ -1230,6 +1230,7 @@
         <button class="add-btn" onclick="openScriptModal('tiktok')">+ 새 대본 추가</button>
         <button class="add-btn" onclick="openAIModal('tiktok')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn" onclick="openCoworkModal('tiktok')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
+        <button class="add-btn" onclick="exportScriptsJSON('tiktok')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
       </div>
     </div>
 
@@ -1509,6 +1510,7 @@
         <button class="add-btn yt" onclick="openScriptModal('youtube')">+ 새 대본 추가</button>
         <button class="add-btn yt" onclick="openAIModal('youtube')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn yt" onclick="openCoworkModal('youtube')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
+        <button class="add-btn yt" onclick="exportScriptsJSON('youtube')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
       </div>
     </div>
 
@@ -1794,6 +1796,7 @@
         <button class="add-btn" onclick="openImportFromTiktokModal()" style="background:var(--ink);color:#fff;border-color:var(--ink);">↗ TikTok에서 가져오기</button>
         <button class="add-btn" onclick="openAIModal('instagram')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn" onclick="openCoworkModal('instagram')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
+        <button class="add-btn" onclick="exportScriptsJSON('instagram')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
       </div>
     </div>
 
@@ -2337,10 +2340,19 @@ function saveScript() {
   const category = document.getElementById('modal-script-category').value.trim();
 
   if (state.editingId) {
-    const s = state.scripts[ch].find(x => x.id === state.editingId);
+    const editedId = state.editingId;
+    const s = state.scripts[ch].find(x => x.id === editedId);
     if (s) { s.title = title; s.date = date; s.status = status; s.body = body; s.notes = notes; s.category = category; }
     state.editingId = null;
     save(); renderScripts(ch); refreshCalendarIfActive(ch); closeModal();
+    setTimeout(() => {
+      const body2 = document.getElementById('body-' + editedId);
+      const chev  = document.getElementById('chev-' + editedId);
+      if (body2) { body2.classList.add('open'); }
+      if (chev)  { chev.classList.add('open'); }
+      const card = body2 ? body2.closest('.script-card') : null;
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
     showToast('수정됐어요 ✓');
     return;
   }
@@ -3726,6 +3738,33 @@ async function generateAIScript() {
 }
 
 // ── 코웍 가져오기 모달 ───────────────────────────────────────────────
+function exportScriptsJSON(ch) {
+  const scripts = (state.scripts[ch] || []).map(s => ({
+    id: s.id,
+    title: s.title || '',
+    date: s.date || '',
+    status: s.status || '',
+    category: s.category || '',
+    body: s.body || '',
+    notes: s.notes || '',
+    memo: s.memo || '',
+    refUrl: s.refUrl || '',
+    editingGuide: s.editingGuide || '',
+    thumbnailGuide: s.thumbnailGuide || '',
+    captions: s.captions || '',
+    igCaption: s.igCaption || '',
+    coverNote: s.coverNote || '',
+  }));
+  const blob = new Blob([JSON.stringify(scripts, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = ch + '_scripts_' + new Date().toISOString().split('T')[0] + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('JSON 내보내기 완료 ✓');
+}
+
 function openCoworkModal(ch) {
   document.getElementById('cowork-json').value = '';
   document.getElementById('cowork-modal').setAttribute('data-ch', ch);
