@@ -2140,46 +2140,63 @@ async function loadFromFirestore() {
   try {
     const ref = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-v2');
     const snap = await window.__firebaseGetDoc(ref);
-    if (snap.exists()) {
-      const data = snap.data();
-      const total = ['tiktok','youtube','instagram'].reduce((n, ch) => n + ((data.scripts || {})[ch] || []).length, 0);
-      // 메인 문서가 비어있으면 백업에서 복구 시도
-      if (total === 0) {
-        const backupRef = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-backup');
-        const backupSnap = await window.__firebaseGetDoc(backupRef);
-        if (backupSnap.exists()) {
-          const backupData = backupSnap.data();
-          const backupTotal = ['tiktok','youtube','instagram'].reduce((n, ch) => n + ((backupData.scripts || {})[ch] || []).length, 0);
-          if (backupTotal > 0) {
-            Object.assign(state, backupData);
-            // 복구된 데이터를 메인 문서에도 복원
+    const mainData = snap.exists() ? snap.data() : {};
+    const mainTotal = ['tiktok','youtube','instagram'].reduce((n, ch) => n + ((mainData.scripts || {})[ch] || []).length, 0);
+
+    if (mainTotal > 0) {
+      Object.assign(state, mainData);
+      return true;
+    }
+
+    // 메인 문서가 비어있으면 최근 30일 날짜별 백업에서 복구 시도
+    const base = new Date();
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(base); d.setDate(base.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      try {
+        const bRef = window.__firebaseDoc(window.__firebaseDb, 'hub', 'backup-' + dateStr);
+        const bSnap = await window.__firebaseGetDoc(bRef);
+        if (bSnap.exists()) {
+          const bData = bSnap.data();
+          const bTotal = ['tiktok','youtube','instagram'].reduce((n, ch) => n + ((bData.scripts || {})[ch] || []).length, 0);
+          if (bTotal > 0) {
+            Object.assign(state, bData);
+            // 복구된 데이터를 메인 문서에 복원
             await window.__firebaseSetDoc(ref, state);
-            console.log('백업에서 데이터 복구 완료');
+            console.log('백업 복구 완료 (' + dateStr + ')');
             return true;
           }
         }
-      }
-      Object.assign(state, data);
-      return true;
+      } catch(e2) {}
     }
+
+    if (snap.exists()) { Object.assign(state, mainData); return true; }
   } catch(e) { console.error('Firestore load error:', e); }
   return false;
 }
 
+function hasRealData() {
+  const s = ['tiktok','youtube','instagram'].reduce((n, ch) => n + (state.scripts[ch] || []).length, 0);
+  const e = ['tiktok','youtube','instagram'].reduce((n, ch) => n + (state.events[ch]  || []).length, 0);
+  return s + e > 0;
+}
+
 async function saveToFirestore() {
-  // 안전장치: 모든 채널 스크립트가 비어있으면 절대 저장하지 않음 (빈 데이터 덮어쓰기 방지)
-  const totalScripts = ['tiktok','youtube','instagram'].reduce((n, ch) => n + (state.scripts[ch] || []).length, 0);
-  const totalEvents  = ['tiktok','youtube','instagram'].reduce((n, ch) => n + (state.events[ch]  || []).length, 0);
-  if (!isLoaded && totalScripts === 0 && totalEvents === 0) return;
+  // 안전장치: Firebase 로드 전 + 데이터 없는 상태에서는 저장 금지
+  if (!isLoaded && !hasRealData()) return;
   try {
     const ref = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-v2');
     await window.__firebaseSetDoc(ref, state);
-    // 백업 문서에도 동시 저장 (복구용)
-    if (totalScripts > 0 || totalEvents > 0) {
-      const backupRef = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-backup');
-      window.__firebaseSetDoc(backupRef, { ...state, _backupTime: new Date().toISOString() }).catch(() => {});
-    }
   } catch(e) { console.error('Firestore save error:', e); }
+}
+
+async function saveDailyBackup() {
+  if (!hasRealData()) return;
+  try {
+    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+    const ref = window.__firebaseDoc(window.__firebaseDb, 'hub', 'backup-' + today);
+    await window.__firebaseSetDoc(ref, { ...state, _savedAt: new Date().toISOString() });
+  } catch(e) { console.error('Backup save error:', e); }
 }
 
 function save() {
@@ -2210,12 +2227,14 @@ function normalizeState() {
 }
 
 async function initData() {
-  loadFromLocalStorage(); // 일단 로컬 데이터로 즉시 렌더링 (빠른 표시)
+  loadFromLocalStorage();
   normalizeState();
   renderAll();
-  const got = await loadFromFirestore(); // Firestore에서 최신 데이터 가져오기
-  if (got) { normalizeState(); renderAll(); } // 최신 데이터로 다시 렌더링
+  const got = await loadFromFirestore();
+  if (got) { normalizeState(); renderAll(); }
   isLoaded = true;
+  // 데이터가 있을 때만 오늘 날짜 백업 저장 (하루 1회)
+  if (hasRealData()) saveDailyBackup();
 }
 
 function renderHeroTodayBar(ch) {
