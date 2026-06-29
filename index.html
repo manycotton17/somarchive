@@ -141,8 +141,7 @@
   }
 
   /* ── WORKSPACE ── */
-  .workspace { padding: 0 0 80px; display: none; }
-  .workspace.visible { display: block; }
+  .workspace { padding: 0 0 80px; display: block; }
 
   /* ── TABS ── */
   .tabs {
@@ -2142,7 +2141,25 @@ async function loadFromFirestore() {
     const ref = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-v2');
     const snap = await window.__firebaseGetDoc(ref);
     if (snap.exists()) {
-      Object.assign(state, snap.data());
+      const data = snap.data();
+      const total = ['tiktok','youtube','instagram'].reduce((n, ch) => n + ((data.scripts || {})[ch] || []).length, 0);
+      // 메인 문서가 비어있으면 백업에서 복구 시도
+      if (total === 0) {
+        const backupRef = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-backup');
+        const backupSnap = await window.__firebaseGetDoc(backupRef);
+        if (backupSnap.exists()) {
+          const backupData = backupSnap.data();
+          const backupTotal = ['tiktok','youtube','instagram'].reduce((n, ch) => n + ((backupData.scripts || {})[ch] || []).length, 0);
+          if (backupTotal > 0) {
+            Object.assign(state, backupData);
+            // 복구된 데이터를 메인 문서에도 복원
+            await window.__firebaseSetDoc(ref, state);
+            console.log('백업에서 데이터 복구 완료');
+            return true;
+          }
+        }
+      }
+      Object.assign(state, data);
       return true;
     }
   } catch(e) { console.error('Firestore load error:', e); }
@@ -2150,9 +2167,18 @@ async function loadFromFirestore() {
 }
 
 async function saveToFirestore() {
+  // 안전장치: 모든 채널 스크립트가 비어있으면 절대 저장하지 않음 (빈 데이터 덮어쓰기 방지)
+  const totalScripts = ['tiktok','youtube','instagram'].reduce((n, ch) => n + (state.scripts[ch] || []).length, 0);
+  const totalEvents  = ['tiktok','youtube','instagram'].reduce((n, ch) => n + (state.events[ch]  || []).length, 0);
+  if (!isLoaded && totalScripts === 0 && totalEvents === 0) return;
   try {
     const ref = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-v2');
     await window.__firebaseSetDoc(ref, state);
+    // 백업 문서에도 동시 저장 (복구용)
+    if (totalScripts > 0 || totalEvents > 0) {
+      const backupRef = window.__firebaseDoc(window.__firebaseDb, 'hub', 'content-hub-backup');
+      window.__firebaseSetDoc(backupRef, { ...state, _backupTime: new Date().toISOString() }).catch(() => {});
+    }
   } catch(e) { console.error('Firestore save error:', e); }
 }
 
@@ -2537,7 +2563,7 @@ function renderScripts(ch) {
       'done': 'Done ✓',
       'urgent': '⚡ Urgent',
     }[s.status] || s.status;
-    if (!s.checks || !s.checks.length) { s.checks = (ch === 'instagram' ? DEFAULT_CHECKS_IG : DEFAULT_CHECKS).map(c => ({...c})); save(); }
+    if (!s.checks || !s.checks.length) { s.checks = (ch === 'instagram' ? DEFAULT_CHECKS_IG : DEFAULT_CHECKS).map(c => ({...c})); if (isLoaded) save(); }
     const checks = s.checks;
     const checksDone = checks.filter(c => c.done).length;
     const checksTotal = checks.length;
@@ -3382,7 +3408,7 @@ function renderWeeklyPlan(ch) {
   container.innerHTML = weekScripts.map(s => {
     const statusClass = s.status === 'urgent' ? 'urgent' : '';
     const statusLabel = { 'not-filmed':'Not filmed','filmed':'Filmed ✓','editing':'Editing','done':'Done ✓','urgent':'⚡ Urgent' }[s.status] || s.status;
-    if (!s.checks || !s.checks.length) { s.checks = (ch === 'instagram' ? DEFAULT_CHECKS_IG : DEFAULT_CHECKS).map(c => ({...c})); save(); }
+    if (!s.checks || !s.checks.length) { s.checks = (ch === 'instagram' ? DEFAULT_CHECKS_IG : DEFAULT_CHECKS).map(c => ({...c})); if (isLoaded) save(); }
     const checks = s.checks;
     const checksDone = checks.filter(c => c.done).length;
     const checksTotal = checks.length;
