@@ -2233,6 +2233,15 @@ function normalizeState() {
     if (!state.calView[ch]) state.calView[ch] = 'date';
     if (state.calOffset[ch] === undefined) state.calOffset[ch] = 0;
     if (!('calFilter' in state) || state.calFilter[ch] === undefined) state.calFilter[ch] = null;
+    // ID 기준 중복 제거
+    ['scripts','events'].forEach(key => {
+      const ids = new Set();
+      state[key][ch] = (state[key][ch] || []).filter(item => {
+        if (!item || ids.has(item.id)) return false;
+        ids.add(item.id);
+        return true;
+      });
+    });
   });
 }
 
@@ -3887,163 +3896,4 @@ function importTikTokEvents(ch, input) {
         save(); renderCalendar(ch);
         showToast(`${imported}개 불러왔어요 ✓`);
       } else {
-        showToast('불러올 항목이 없어요 (중복 또는 날짜 없음)');
-      }
-    } catch(err) {
-      showToast('파싱 오류: ' + err.message);
-    }
-    input.value = '';
-  };
-  reader.readAsText(file);
-}
-
-function openCoworkModal(ch) {
-  document.getElementById('cowork-json').value = '';
-  document.getElementById('cowork-modal').setAttribute('data-ch', ch);
-  document.getElementById('cowork-modal').classList.add('open');
-}
-function closeCoworkModal() {
-  document.getElementById('cowork-modal').classList.remove('open');
-}
-
-function importCoworkScript() {
-  var raw = document.getElementById('cowork-json').value.trim();
-  var defaultCh = document.getElementById('cowork-modal').getAttribute('data-ch') || 'youtube';
-  try {
-    var jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('JSON 블록을 찾을 수 없어요');
-    var data = JSON.parse(jsonMatch[0]);
-    if (!data.title) throw new Error('title 필드가 없어요');
-    if (!data.body) throw new Error('body 필드가 없어요');
-
-    var ch = data.channel || defaultCh;
-    if (!state.scripts[ch]) ch = defaultCh;
-
-    var newScript = {
-      id: Date.now(),
-      title: data.title,
-      body: data.body,
-      notes: data.notes || '📋 cowork에서 가져오기',
-      date: data.date || '',
-      status: 'not-filmed',
-      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
-      memo: '',
-      refUrl: '',
-      refImages: [],
-      filmed: false
-    };
-
-    state.scripts[ch].unshift(newScript);
-    if (data.date) {
-      state.events[ch].push({ id: Date.now() + 1, title: data.title, date: data.date });
-    }
-    save();
-    renderScripts(ch);
-    closeCoworkModal();
-    showToast('코웍 대본을 가져왔어요!');
-
-    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
-    if (scriptTabBtn) scriptTabBtn.click();
-    setTimeout(function() {
-      var b = document.getElementById('body-' + newScript.id);
-      var c = document.getElementById('chev-' + newScript.id);
-      if (b) b.classList.add('open');
-      if (c) c.classList.add('open');
-      var card = b ? b.closest('.script-card') : null;
-      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-
-  } catch(e) {
-    showToast('가져오기 실패: ' + e.message);
-  }
-}
-
-// ── TikTok → Instagram 가져오기 ───────────────────────────────────────
-function openImportFromTiktokModal() {
-  const list = document.getElementById('import-tiktok-list');
-  const scripts = state.scripts.tiktok || [];
-  if (!scripts.length) {
-    list.innerHTML = '<div class="empty">TikTok 대본이 없어요.<br>먼저 TikTok 탭에서 대본을 추가해주세요.</div>';
-  } else {
-    list.innerHTML = scripts.map(s => `
-      <div class="today-alert-item" onclick="importFromTiktokScript(${s.id})" style="margin-bottom:6px;">
-        <span class="today-alert-title">${escHtml(s.title)}</span>
-        <span style="font-size:11px;color:var(--mid);flex-shrink:0;margin-left:8px;">${s.date ? formatDate(s.date) : ''}</span>
-        <span class="today-alert-arrow" style="color:#e1306c;">→</span>
-      </div>`).join('');
-  }
-  document.getElementById('import-tiktok-modal').classList.add('open');
-}
-
-function closeImportFromTiktokModal() {
-  document.getElementById('import-tiktok-modal').classList.remove('open');
-}
-
-function importFromTiktokScript(id) {
-  const src = state.scripts.tiktok.find(s => s.id === id);
-  if (!src) return;
-  const newScript = {
-    id: Date.now(),
-    title: src.title,
-    body: src.body || '',
-    notes: src.notes || '',
-    date: '',
-    status: 'not-filmed',
-    checks: DEFAULT_CHECKS_IG.map(c => ({...c})),
-    memo: '',
-    refUrl: '',
-    refImages: [],
-    filmed: false,
-    igCaption: '',
-    coverNote: '',
-  };
-  state.scripts.instagram.unshift(newScript);
-  save();
-  renderScripts('instagram');
-  closeImportFromTiktokModal();
-  showToast('TikTok 대본을 Instagram에 복사했어요 ✓');
-  if (state.currentChannel !== 'instagram') {
-    state.currentChannel = 'instagram';
-    document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-instagram').classList.add('active');
-    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-tiktok','active-youtube','active-instagram'));
-    const igBtn = document.querySelector('.ch-btn[onclick*="instagram"]');
-    if (igBtn) igBtn.classList.add('active-instagram');
-    triggerHeroAnim('instagram');
-  }
-  setTimeout(function() {
-    var ws = document.getElementById('workspace-instagram');
-    if (ws) ws.classList.add('visible');
-    var tabBtn = document.querySelector('#tabs-instagram .tab');
-    if (tabBtn) tabBtn.click();
-    setTimeout(function() {
-      var b = document.getElementById('body-' + newScript.id);
-      var c = document.getElementById('chev-' + newScript.id);
-      if (b) b.classList.add('open');
-      if (c) c.classList.add('open');
-      var card = b ? b.closest('.script-card') : null;
-      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-  }, 100);
-}
-
-// ── Gemini 키 설정 ────────────────────────────────────────────────────
-function saveGeminiKey(val) {
-  localStorage.setItem('gemini_api_key', val.trim());
-}
-function toggleGeminiKey(inputId) {
-  var el = document.getElementById(inputId);
-  if (!el) return;
-  el.type = el.type === 'password' ? 'text' : 'password';
-}
-function loadGeminiKey() {
-  var key = localStorage.getItem('gemini_api_key') || '';
-  var el = document.getElementById('youtube-gemini-key');
-  if (el) el.value = key;
-}
-
-init();
-loadGeminiKey();
-</script>
-</body>
-</html>
+        
