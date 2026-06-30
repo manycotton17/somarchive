@@ -50,7 +50,6 @@
     font-size: 14px;
     line-height: 1.6;
     min-height: 100vh;
-    cursor: none;
   }
 
   /* ── TOP NAV ── */
@@ -645,6 +644,7 @@
   /* only hide native cursor on real pointer devices (mouse/trackpad) */
   @media (pointer: fine) {
     *, *::before, *::after { cursor: none !important; }
+    #lock-screen, #lock-screen * { cursor: default !important; }
   }
   .cursor {
     position: fixed; width: 12px; height: 12px;
@@ -972,6 +972,8 @@
   .cp-view-toggle { display:flex; gap:3px; background:var(--soft-2); border-radius:10px; padding:3px; }
   .cp-vbtn { background:none; border:none; border-radius:8px; padding:5px 14px; font-size:11px; font-weight:600; color:var(--mid); cursor:pointer; transition:.12s; font-family:inherit; letter-spacing:.03em; }
   .cp-vbtn.active { background:var(--white); color:var(--ink); box-shadow:0 1px 4px rgba(0,0,0,.09); }
+  .cp-card-stats { display:flex; gap:8px; margin-top:4px; font-size:10px; color:var(--mid); flex-wrap:wrap; }
+  .cp-card-stats span { display:flex; align-items:center; gap:2px; }
   .cp-import-btn { display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:8px; background:var(--soft-2); color:var(--mid); font-size:11px; font-weight:600; cursor:pointer; border:1px solid var(--border); letter-spacing:.03em; transition:.12s; }
   .cp-import-btn:hover { background:var(--border); color:var(--ink); }
 
@@ -2073,6 +2075,12 @@
     <div class="cp-cat-suggestions" id="cp-cat-sugs"></div>
     <div class="modal-label">Post URL <span style="font-size:10px;color:var(--mid);font-weight:400;">(클릭 시 바로 연결)</span></div>
     <input type="url" class="modal-input" id="cp-modal-url" placeholder="https://www.instagram.com/reel/..." style="margin-bottom:12px;">
+    <div class="modal-label">Stats <span style="font-size:10px;color:var(--mid);font-weight:400;">(선택사항 — 업로드 후 입력)</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;">
+      <input type="number" class="modal-input" id="cp-modal-views" placeholder="Views" style="margin:0;text-align:center;">
+      <input type="number" class="modal-input" id="cp-modal-likes" placeholder="Likes" style="margin:0;text-align:center;">
+      <input type="number" class="modal-input" id="cp-modal-comments" placeholder="Comments" style="margin:0;text-align:center;">
+    </div>
     <div class="modal-label">Thumbnail</div>
     <div class="cp-img-upload" id="cp-img-upload-area" onclick="document.getElementById('cp-img-file').click()">
       <img id="cp-modal-preview" alt="">
@@ -3041,6 +3049,11 @@ function renderCpCard(item, ch) {
         ${item.category ? `<span class="cp-cat-pill" style="${catStyle}">${escHtml(item.category)}</span>` : ''}
       </div>
       <div class="cp-card-title">${escHtml(item.title || '')}</div>
+      ${(item.views || item.likes || item.comments) ? `<div class="cp-card-stats">
+        ${item.views ? `<span>👁 ${fmtNum(item.views)}</span>` : ''}
+        ${item.likes ? `<span>♥ ${fmtNum(item.likes)}</span>` : ''}
+        ${item.comments ? `<span>💬 ${fmtNum(item.comments)}</span>` : ''}
+      </div>` : ''}
     </div>
   </div>`;
 }
@@ -3187,6 +3200,9 @@ function openCpModal(ch, dateStr, editId) {
   document.getElementById('cp-modal-title-input').value = '';
   document.getElementById('cp-modal-cat').value = '';
   document.getElementById('cp-modal-url').value = '';
+  document.getElementById('cp-modal-views').value = '';
+  document.getElementById('cp-modal-likes').value = '';
+  document.getElementById('cp-modal-comments').value = '';
   const preview = document.getElementById('cp-modal-preview');
   preview.src = ''; preview.style.display = 'none';
   document.getElementById('cp-img-ph').style.display = 'block';
@@ -3198,6 +3214,9 @@ function openCpModal(ch, dateStr, editId) {
       document.getElementById('cp-modal-title-input').value = ex.title || '';
       document.getElementById('cp-modal-cat').value = ex.category || '';
       document.getElementById('cp-modal-url').value = ex.url || '';
+      document.getElementById('cp-modal-views').value = ex.views || '';
+      document.getElementById('cp-modal-likes').value = ex.likes || '';
+      document.getElementById('cp-modal-comments').value = ex.comments || '';
       cpModal.status = ex.status || 'draft';
       if (ex.image) { preview.src = ex.image; preview.style.display = 'block'; document.getElementById('cp-img-ph').style.display = 'none'; cpModal.image = ex.image; }
     }
@@ -3261,7 +3280,7 @@ function saveCpPost() {
   const date = document.getElementById('cp-modal-date').value;
   const title = document.getElementById('cp-modal-title-input').value.trim();
   if (!date || !title) { showToast('날짜와 제목을 입력해주세요'); return; }
-  const post = { id: editId || Date.now(), date, title, status: cpModal.status || 'draft', category: document.getElementById('cp-modal-cat').value.trim(), url: document.getElementById('cp-modal-url').value.trim() || null, image: cpModal.image || null, notes: '' };
+  const post = { id: editId || Date.now(), date, title, status: cpModal.status || 'draft', category: document.getElementById('cp-modal-cat').value.trim(), url: document.getElementById('cp-modal-url').value.trim() || null, image: cpModal.image || null, notes: '', views: Number(document.getElementById('cp-modal-views').value) || null, likes: Number(document.getElementById('cp-modal-likes').value) || null, comments: Number(document.getElementById('cp-modal-comments').value) || null };
   if (editId) {
     const idx = (state.events[ch] || []).findIndex(e => e.id === editId);
     if (idx !== -1) state.events[ch][idx] = post; else state.events[ch].push(post);
@@ -3848,52 +3867,4 @@ function importTikTokEvents(ch, input) {
       let imported = 0;
 
       // TikTok 공식 데이터 내보내기 형식: Video.Videos.VideoList
-      const tikList = data?.Video?.Videos?.VideoList || data?.video?.Videos?.VideoList || [];
-
-      // Instagram 공식 데이터 내보내기 형식: media/posts_1.json 배열 또는 media.videos
-      const igList = data?.media?.videos?.map?.(v => ({
-        _date: v.creation_timestamp, _title: v.title || '', _url: v.uri || ''
-      })) || [];
-
-      const rawList = tikList.length ? tikList : igList.length ? igList : (Array.isArray(data) ? data : []);
-
-      rawList.forEach((v, i) => {
-        // 날짜 추출
-        let dateStr = '';
-        if (v.Date) {
-          dateStr = v.Date.split(' ')[0]; // "2024-01-15 10:30:00 UTC" → "2024-01-15"
-        } else if (v._date) {
-          // Unix timestamp (Instagram)
-          dateStr = new Date(Number(v._date) * 1000).toISOString().split('T')[0];
-        } else if (v.date) {
-          dateStr = v.date; // 커스텀 포맷
-        }
-        if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return;
-
-        const url = v.Link || v.link || v._url || v.url || null;
-        if (url && existing.has(url)) return; // 중복 스킵
-        if (url) existing.add(url);
-
-        const title = v.Description || v.description || v.Caption || v.caption || v._title || v.title || (ch === 'instagram' ? 'IG 포스트 ' : '틱톡 영상 ') + (i + 1);
-
-        state.events[ch].push({
-          id: Date.now() + i,
-          date: dateStr,
-          title: String(title).substring(0, 100),
-          status: v.status || 'posted',
-          category: v.category || '',
-          url,
-          image: null,
-          notes: ''
-        });
-        imported++;
-      });
-
-      // 커스텀 심플 JSON 포맷: [{ date, title, url, category, status }]
-      // (위 rawList에서 Array.isArray(data) 분기로 이미 처리됨)
-
-      if (imported > 0) {
-        save(); renderCalendar(ch);
-        showToast(`${imported}개 불러왔어요 ✓`);
-      } else {
-        
+      const tikList = data?.Vid
