@@ -972,6 +972,8 @@
   .cp-view-toggle { display:flex; gap:3px; background:var(--soft-2); border-radius:10px; padding:3px; }
   .cp-vbtn { background:none; border:none; border-radius:8px; padding:5px 14px; font-size:11px; font-weight:600; color:var(--mid); cursor:pointer; transition:.12s; font-family:inherit; letter-spacing:.03em; }
   .cp-vbtn.active { background:var(--white); color:var(--ink); box-shadow:0 1px 4px rgba(0,0,0,.09); }
+  .cp-import-btn { display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:8px; background:var(--soft-2); color:var(--mid); font-size:11px; font-weight:600; cursor:pointer; border:1px solid var(--border); letter-spacing:.03em; transition:.12s; }
+  .cp-import-btn:hover { background:var(--border); color:var(--ink); }
 
   /* Date View */
   .cp-date-view { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; }
@@ -1285,6 +1287,10 @@
           <button class="cp-vbtn active" id="tiktok-vbtn-date" onclick="cpSetView('tiktok','date')">Date View</button>
           <button class="cp-vbtn" id="tiktok-vbtn-month" onclick="cpSetView('tiktok','month')">Month View</button>
         </div>
+        <label class="cp-import-btn" title="TikTok data export JSON 또는 커스텀 JSON 불러오기">
+          ↑ Import
+          <input type="file" accept=".json,application/json" style="display:none" onchange="importTikTokEvents('tiktok',this)">
+        </label>
       </div>
       <div id="tiktok-cp-content"></div>
     </div>
@@ -1851,6 +1857,10 @@
           <button class="cp-vbtn active" id="instagram-vbtn-date" onclick="cpSetView('instagram','date')">Date View</button>
           <button class="cp-vbtn" id="instagram-vbtn-month" onclick="cpSetView('instagram','month')">Month View</button>
         </div>
+        <label class="cp-import-btn" title="Instagram data export JSON 또는 커스텀 JSON 불러오기">
+          ↑ Import
+          <input type="file" accept=".json,application/json" style="display:none" onchange="importTikTokEvents('instagram',this)">
+        </label>
       </div>
       <div id="instagram-cp-content"></div>
     </div>
@@ -2945,8 +2955,10 @@ function cpDateStr(d) {
 function buildCpDateMap(ch) {
   const filter = state.calFilter && state.calFilter[ch];
   const map = {};
+  const seenEvents = new Set();
   (state.events[ch] || []).forEach(e => {
-    if (!e.date) return;
+    if (!e.date || seenEvents.has(e.id)) return;
+    seenEvents.add(e.id);
     if (filter && (e.category || '').toLowerCase() !== filter.toLowerCase()) return;
     if (!map[e.date]) map[e.date] = [];
     map[e.date].push({ ...e, isScript: false });
@@ -3813,6 +3825,76 @@ function exportScriptsJSON(ch) {
   a.click();
   URL.revokeObjectURL(url);
   showToast('JSON 내보내기 완료 ✓');
+}
+
+function importTikTokEvents(ch, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!state.events[ch]) state.events[ch] = [];
+      const existing = new Set((state.events[ch]).map(ev => ev.url).filter(Boolean));
+      let imported = 0;
+
+      // TikTok 공식 데이터 내보내기 형식: Video.Videos.VideoList
+      const tikList = data?.Video?.Videos?.VideoList || data?.video?.Videos?.VideoList || [];
+
+      // Instagram 공식 데이터 내보내기 형식: media/posts_1.json 배열 또는 media.videos
+      const igList = data?.media?.videos?.map?.(v => ({
+        _date: v.creation_timestamp, _title: v.title || '', _url: v.uri || ''
+      })) || [];
+
+      const rawList = tikList.length ? tikList : igList.length ? igList : (Array.isArray(data) ? data : []);
+
+      rawList.forEach((v, i) => {
+        // 날짜 추출
+        let dateStr = '';
+        if (v.Date) {
+          dateStr = v.Date.split(' ')[0]; // "2024-01-15 10:30:00 UTC" → "2024-01-15"
+        } else if (v._date) {
+          // Unix timestamp (Instagram)
+          dateStr = new Date(Number(v._date) * 1000).toISOString().split('T')[0];
+        } else if (v.date) {
+          dateStr = v.date; // 커스텀 포맷
+        }
+        if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return;
+
+        const url = v.Link || v.link || v._url || v.url || null;
+        if (url && existing.has(url)) return; // 중복 스킵
+        if (url) existing.add(url);
+
+        const title = v.Description || v.description || v.Caption || v.caption || v._title || v.title || (ch === 'instagram' ? 'IG 포스트 ' : '틱톡 영상 ') + (i + 1);
+
+        state.events[ch].push({
+          id: Date.now() + i,
+          date: dateStr,
+          title: String(title).substring(0, 100),
+          status: v.status || 'posted',
+          category: v.category || '',
+          url,
+          image: null,
+          notes: ''
+        });
+        imported++;
+      });
+
+      // 커스텀 심플 JSON 포맷: [{ date, title, url, category, status }]
+      // (위 rawList에서 Array.isArray(data) 분기로 이미 처리됨)
+
+      if (imported > 0) {
+        save(); renderCalendar(ch);
+        showToast(`${imported}개 불러왔어요 ✓`);
+      } else {
+        showToast('불러올 항목이 없어요 (중복 또는 날짜 없음)');
+      }
+    } catch(err) {
+      showToast('파싱 오류: ' + err.message);
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
 }
 
 function openCoworkModal(ch) {
