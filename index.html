@@ -346,6 +346,27 @@
   .perf-item-stat .num { font-size: 14px; font-weight: 600; }
   .perf-item-stat .lbl { font-size: 10px; color: var(--mid); }
   .add-perf-form { background: var(--soft); border: 1px solid rgba(0,0,0,0.07); border-radius: 16px; padding: 16px; margin-top: 12px; }
+  /* ── PERFORMANCE v2 ── */
+  .perf-summary { grid-template-columns: repeat(4, 1fr) !important; }
+  .perf-card { background: var(--white); border: 1px solid rgba(0,0,0,0.08); border-radius: 16px; margin-bottom: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .perf-card-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; user-select: none; }
+  .perf-card-meta { flex: 1; min-width: 0; }
+  .perf-card-title { font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .perf-card-date { font-size: 11px; color: var(--mid); margin-top: 2px; }
+  .perf-card-nums { display: flex; gap: 14px; flex-shrink: 0; }
+  .perf-card-num .n { font-size: 14px; font-weight: 600; display: block; }
+  .perf-card-num .l { font-size: 10px; color: var(--mid); display: block; text-align: right; }
+  .perf-eng-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 9999px; background: #e8f7ed; color: #2d7a4e; flex-shrink: 0; }
+  .perf-trend { font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .perf-card-body { display: none; border-top: 1px solid rgba(0,0,0,0.06); padding: 14px 16px; }
+  .perf-card-body.open { display: block; }
+  .perf-hist-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 12px; }
+  .perf-hist-date { width: 72px; flex-shrink: 0; color: var(--mid); font-size: 11px; }
+  .perf-hist-stats { display: flex; gap: 10px; flex: 1; flex-wrap: wrap; }
+  .perf-hist-stat .v { font-weight: 600; color: var(--ink); }
+  .perf-hist-stat .k { color: var(--mid); font-size: 10px; margin-left: 2px; }
+  .perf-update-form { background: var(--soft); border-radius: 10px; padding: 10px; margin-top: 12px; }
+  .perf-form-label { font-size: 11px; color: var(--mid); margin-bottom: 6px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
   .form-row { display: flex; gap: 8px; margin-bottom: 8px; }
   .form-input {
     flex: 1; background: var(--white); border: 1px solid rgba(0,0,0,0.08);
@@ -1301,29 +1322,35 @@
     <div class="section" id="tiktok-performance">
       <div class="section-title">조회수 & 통계</div>
       <div class="perf-summary">
-        <div class="perf-stat">
-          <div class="perf-stat-num" id="tiktok-total-posts">0</div>
-          <div class="perf-stat-label">Posts</div>
-        </div>
-        <div class="perf-stat">
-          <div class="perf-stat-num" id="tiktok-avg-views">0</div>
-          <div class="perf-stat-label">Avg Views</div>
-        </div>
-        <div class="perf-stat">
-          <div class="perf-stat-num" id="tiktok-avg-likes">0</div>
-          <div class="perf-stat-label">Avg Likes</div>
-        </div>
+        <div class="perf-stat"><div class="perf-stat-num" id="tiktok-total-posts">0</div><div class="perf-stat-label">Videos</div></div>
+        <div class="perf-stat"><div class="perf-stat-num" id="tiktok-avg-views">—</div><div class="perf-stat-label">Avg Views</div></div>
+        <div class="perf-stat"><div class="perf-stat-num" id="tiktok-avg-eng">—</div><div class="perf-stat-label">Avg Eng.</div></div>
+        <div class="perf-stat"><div class="perf-stat-num" id="tiktok-best-views">—</div><div class="perf-stat-label">Best Video</div></div>
       </div>
       <div id="tiktok-perf-list"></div>
       <div class="add-perf-form">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div class="perf-form-label" style="margin-bottom:0;">+ 새 영상 추가</div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:var(--soft);border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--ink);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            TikTok Studio CSV 가져오기
+            <input type="file" accept=".csv" style="display:none;" onchange="importTikTokCSV(event)">
+          </label>
+        </div>
         <div class="form-row">
-          <input class="form-input" id="tiktok-perf-title" placeholder="영상 제목">
+          <input class="form-input" id="tiktok-perf-title" placeholder="영상 제목 *">
+          <input class="form-input" id="tiktok-perf-date" type="date" style="max-width:150px;">
+        </div>
+        <div class="form-row">
+          <input class="form-input" id="tiktok-perf-url" placeholder="영상 URL (선택)">
         </div>
         <div class="form-row">
           <input class="form-input" id="tiktok-perf-views" placeholder="조회수" type="number">
           <input class="form-input" id="tiktok-perf-likes" placeholder="좋아요" type="number">
+          <input class="form-input" id="tiktok-perf-comments" placeholder="댓글" type="number">
+          <input class="form-input" id="tiktok-perf-shares" placeholder="공유" type="number">
         </div>
-        <button class="form-submit" onclick="addPerf('tiktok')">+ Add Post</button>
+        <button class="form-submit" onclick="addPerf('tiktok')">추가</button>
       </div>
     </div>
 
@@ -1583,29 +1610,28 @@
     <div class="section" id="youtube-performance">
       <div class="section-title">조회수 & 통계</div>
       <div class="perf-summary">
-        <div class="perf-stat">
-          <div class="perf-stat-num" id="youtube-total-posts">0</div>
-          <div class="perf-stat-label">Posts</div>
-        </div>
-        <div class="perf-stat">
-          <div class="perf-stat-num" id="youtube-avg-views">0</div>
-          <div class="perf-stat-label">Avg Views</div>
-        </div>
-        <div class="perf-stat">
-          <div class="perf-stat-num" id="youtube-avg-likes">0</div>
-          <div class="perf-stat-label">Avg Likes</div>
-        </div>
+        <div class="perf-stat"><div class="perf-stat-num" id="youtube-total-posts">0</div><div class="perf-stat-label">Videos</div></div>
+        <div class="perf-stat"><div class="perf-stat-num" id="youtube-avg-views">—</div><div class="perf-stat-label">Avg Views</div></div>
+        <div class="perf-stat"><div class="perf-stat-num" id="youtube-avg-eng">—</div><div class="perf-stat-label">Avg Eng.</div></div>
+        <div class="perf-stat"><div class="perf-stat-num" id="youtube-best-views">—</div><div class="perf-stat-label">Best Video</div></div>
       </div>
       <div id="youtube-perf-list"></div>
       <div class="add-perf-form">
+        <div class="perf-form-label" style="margin-bottom:10px;">+ 새 영상 추가</div>
         <div class="form-row">
-          <input class="form-input yt" id="youtube-perf-title" placeholder="영상 제목">
+          <input class="form-input yt" id="youtube-perf-title" placeholder="영상 제목 *">
+          <input class="form-input yt" id="youtube-perf-date" type="date" style="max-width:150px;">
+        </div>
+        <div class="form-row">
+          <input class="form-input yt" id="youtube-perf-url" placeholder="영상 URL (선택)">
         </div>
         <div class="form-row">
           <input class="form-input yt" id="youtube-perf-views" placeholder="조회수" type="number">
           <input class="form-input yt" id="youtube-perf-likes" placeholder="좋아요" type="number">
+          <input class="form-input yt" id="youtube-perf-comments" placeholder="댓글" type="number">
+          <input class="form-input yt" id="youtube-perf-saves" placeholder="저장" type="number">
         </div>
-        <button class="form-submit yt" onclick="addPerf('youtube')">+ Add Post</button>
+        <button class="form-submit yt" onclick="addPerf('youtube')">추가</button>
       </div>
     </div>
 
@@ -3315,59 +3341,283 @@ function deleteEvent(ch, id) {
 }
 
 // ── PERFORMANCE ──
+function getLatestStat(p) {
+  if (p.stats && p.stats.length) return p.stats[p.stats.length - 1];
+  return { date: p.uploadDate || '', views: p.views||0, likes: p.likes||0, comments: 0, shares: 0 };
+}
+
+function engRate(stat) {
+  if (!stat.views) return 0;
+  return (((stat.likes||0) + (stat.comments||0)) / stat.views * 100);
+}
+
+function buildSparkline(statsArr, ch) {
+  if (statsArr.length < 2) return '';
+  const maxV = Math.max(...statsArr.map(s => s.views||0));
+  if (!maxV) return '';
+  const color = ch === 'youtube' ? 'var(--youtube)' : 'var(--ink)';
+  const pts = statsArr.map((s, i) => {
+    const x = (i / (statsArr.length - 1)) * 220;
+    const y = 28 - ((s.views||0) / maxV) * 24;
+    return x + ',' + y;
+  }).join(' ');
+  var dots = statsArr.map(function(s, i) {
+    var x = (i / (statsArr.length - 1)) * 220;
+    var y = 28 - ((s.views||0) / maxV) * 24;
+    var isLast = i === statsArr.length - 1;
+    return '<circle cx="' + x + '" cy="' + y + '" r="' + (isLast ? 3.5 : 2) + '" fill="' + (isLast ? color : 'rgba(0,0,0,0.18)') + '"/>';
+  }).join('');
+  return '<svg viewBox="0 0 220 32" width="100%" height="32" style="margin:6px 0 10px;display:block;">'
+    + '<polyline fill="none" stroke="' + color + '" stroke-width="1.5" opacity="0.4" points="' + pts + '"/>'
+    + dots + '</svg>';
+}
+
 function renderPerf(ch) {
-  const list = document.getElementById(ch + '-perf-list');
-  const posts = state.perfs[ch];
-  if (!posts) return;
-  const totalEl = document.getElementById(ch + '-total-posts');
+  var posts = state.perfs[ch] || [];
+  var list = document.getElementById(ch + '-perf-list');
+  var totalEl = document.getElementById(ch + '-total-posts');
+  var avgVEl = document.getElementById(ch + '-avg-views');
+  var avgEngEl = document.getElementById(ch + '-avg-eng');
+  var bestEl = document.getElementById(ch + '-best-views');
   if (totalEl) totalEl.textContent = posts.length;
   if (posts.length) {
-    const avgV = Math.round(posts.reduce((s,p) => s + (p.views||0), 0) / posts.length);
-    const avgL = Math.round(posts.reduce((s,p) => s + (p.likes||0), 0) / posts.length);
-    const avgVEl = document.getElementById(ch + '-avg-views');
-    const avgLEl = document.getElementById(ch + '-avg-likes');
+    var latests = posts.map(getLatestStat);
+    var avgV = Math.round(latests.reduce(function(s,l){ return s+(l.views||0); },0) / posts.length);
+    var avgEng = (latests.reduce(function(s,l){ return s+engRate(l); },0) / posts.length).toFixed(1);
+    var best = latests.reduce(function(a,b){ return (a.views||0)>(b.views||0)?a:b; }, latests[0]);
     if (avgVEl) avgVEl.textContent = fmtNum(avgV);
-    if (avgLEl) avgLEl.textContent = fmtNum(avgL);
-    if (ch === 'instagram') {
-      const avgS = Math.round(posts.reduce((s,p) => s + (p.saves||0), 0) / posts.length);
-      const avgSEl = document.getElementById('instagram-avg-saves');
-      if (avgSEl) avgSEl.textContent = fmtNum(avgS);
-    }
+    if (avgEngEl) avgEngEl.textContent = avgEng + '%';
+    if (bestEl) bestEl.textContent = fmtNum(best.views||0);
+  } else {
+    if (avgVEl) avgVEl.textContent = '—';
+    if (avgEngEl) avgEngEl.textContent = '—';
+    if (bestEl) bestEl.textContent = '—';
   }
   if (!list) return;
-  list.innerHTML = posts.length ? posts.map(p => `
-    <div class="perf-item">
-      <div class="perf-item-title">${escHtml(p.title)}</div>
-      <div class="perf-item-stats">
-        <div class="perf-item-stat"><span class="num">${fmtNum(p.views)}</span><span class="lbl">views</span></div>
-        <div class="perf-item-stat"><span class="num">${fmtNum(p.likes)}</span><span class="lbl">likes</span></div>
-        ${ch === 'instagram' ? `<div class="perf-item-stat"><span class="num">${fmtNum(p.saves||0)}</span><span class="lbl">saves</span></div>` : ''}
-      </div>
-      <span class="memo-del" onclick="deletePerf('${ch}',${p.id})">×</span>
-    </div>`).join('') : '<div class="empty">데이터 없음</div>';
+  if (!posts.length) { list.innerHTML = '<div class="empty">등록된 영상 없음. 아래에서 추가해보세요.</div>'; return; }
+  var today = new Date().toISOString().split('T')[0];
+  list.innerHTML = posts.map(function(p) {
+    var statsArr = (p.stats && p.stats.length) ? p.stats : [{ date: p.uploadDate||today, views: p.views||0, likes: p.likes||0, comments: p.comments||0, shares: p.shares||0 }];
+    var latest = statsArr[statsArr.length - 1];
+    var eng = engRate(latest).toFixed(1);
+    var first = statsArr[0];
+    var trendHtml = '';
+    if (statsArr.length > 1 && (first.views||0) > 0) {
+      var growth = Math.round(((latest.views||0) - (first.views||0)) / (first.views||0) * 100);
+      trendHtml = '<span class="perf-trend" style="color:' + (growth>=0?'#2d7a4e':'#c0392b') + ';">' + (growth>=0?'↑':'↓') + Math.abs(growth) + '%</span>';
+    }
+    var histHtml = statsArr.map(function(s, i) {
+      var extraKey = ch === 'youtube' ? '저장' : '공유';
+      var extraVal = ch === 'youtube' ? (s.saves||s.shares||0) : (s.shares||0);
+      return '<div class="perf-hist-row">'
+        + '<span class="perf-hist-date">' + (s.date ? formatDate(s.date) : '') + '</span>'
+        + '<div class="perf-hist-stats">'
+        + '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.views||0) + '</span><span class="k">뷰</span></span>'
+        + '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.likes||0) + '</span><span class="k">좋아요</span></span>'
+        + (s.comments ? '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.comments) + '</span><span class="k">댓글</span></span>' : '')
+        + (extraVal ? '<span class="perf-hist-stat"><span class="v">' + fmtNum(extraVal) + '</span><span class="k">' + extraKey + '</span></span>' : '')
+        + '</div>'
+        + '<span class="memo-del" onclick="deletePerfStat(\'' + ch + '\',' + p.id + ',' + i + ')" style="font-size:11px;line-height:1;">×</span>'
+        + '</div>';
+    }).join('');
+    var urlHtml = p.url ? '<a href="' + escHtml(p.url) + '" target="_blank" style="font-size:11px;color:var(--blue);text-decoration:none;display:inline-block;margin-bottom:8px;">↗ 영상 보기</a>' : '';
+    var sparkHtml = buildSparkline(statsArr, ch);
+    var saveLabel = ch === 'youtube' ? '저장' : '공유';
+    var saveId = ch === 'youtube' ? 'pu-saves-' : 'pu-shares-';
+    return '<div class="perf-card">'
+      + '<div class="perf-card-header" onclick="togglePerfCard(' + p.id + ',\'' + ch + '\')">'
+      + '<div class="perf-card-meta"><div class="perf-card-title">' + escHtml(p.title) + '</div><div class="perf-card-date">' + (p.uploadDate ? formatDate(p.uploadDate) : '') + '</div></div>'
+      + '<div class="perf-card-nums">'
+      + '<div class="perf-card-num"><span class="n">' + fmtNum(latest.views||0) + '</span><span class="l">views</span></div>'
+      + '<div class="perf-card-num"><span class="n">' + fmtNum(latest.likes||0) + '</span><span class="l">likes</span></div>'
+      + '</div>'
+      + '<span class="perf-eng-badge">' + eng + '%</span>'
+      + trendHtml
+      + '<span style="color:var(--mid);font-size:12px;" id="perf-chev-' + p.id + '">▾</span>'
+      + '</div>'
+      + '<div class="perf-card-body" id="perf-body-' + p.id + '">'
+      + urlHtml
+      + sparkHtml
+      + '<div style="margin-bottom:10px;">' + histHtml + '</div>'
+      + '<div class="perf-update-form">'
+      + '<div class="perf-form-label">스탯 업데이트</div>'
+      + '<div class="form-row">'
+      + '<input class="form-input" id="pu-date-' + p.id + '" type="date" value="' + today + '" style="max-width:140px;">'
+      + '<input class="form-input" id="pu-views-' + p.id + '" placeholder="조회수" type="number">'
+      + '<input class="form-input" id="pu-likes-' + p.id + '" placeholder="좋아요" type="number">'
+      + '<input class="form-input" id="pu-comments-' + p.id + '" placeholder="댓글" type="number">'
+      + '<input class="form-input" id="' + saveId + p.id + '" placeholder="' + saveLabel + '" type="number">'
+      + '</div>'
+      + '<button class="form-submit" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);" onclick="addPerfStat(\'' + ch + '\',' + p.id + ')">+ 업데이트</button>'
+      + '</div>'
+      + '<div style="margin-top:8px;text-align:right;">'
+      + '<button onclick="deletePerf(\'' + ch + '\',' + p.id + ')" style="background:none;border:none;color:var(--mid);font-size:11px;cursor:pointer;">영상 삭제</button>'
+      + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function togglePerfCard(id, ch) {
+  var body = document.getElementById('perf-body-' + id);
+  var chev = document.getElementById('perf-chev-' + id);
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (chev) chev.textContent = isOpen ? '▾' : '▴';
 }
 
 function addPerf(ch) {
-  const title = document.getElementById(ch + '-perf-title').value.trim();
-  const views = parseInt(document.getElementById(ch + '-perf-views').value) || 0;
-  const likes = parseInt(document.getElementById(ch + '-perf-likes').value) || 0;
+  var title = document.getElementById(ch + '-perf-title').value.trim();
   if (!title) { showToast('제목을 입력해주세요'); return; }
-  const perfObj = { id: Date.now(), title, views, likes };
-  if (ch === 'instagram') {
-    perfObj.saves = parseInt(document.getElementById('instagram-perf-saves').value) || 0;
-  }
-  state.perfs[ch].unshift(perfObj);
-  document.getElementById(ch + '-perf-title').value = '';
-  document.getElementById(ch + '-perf-views').value = '';
-  document.getElementById(ch + '-perf-likes').value = '';
-  if (ch === 'instagram') document.getElementById('instagram-perf-saves').value = '';
+  var date = document.getElementById(ch + '-perf-date').value || new Date().toISOString().split('T')[0];
+  var url = document.getElementById(ch + '-perf-url').value.trim();
+  var views = parseInt(document.getElementById(ch + '-perf-views').value) || 0;
+  var likes = parseInt(document.getElementById(ch + '-perf-likes').value) || 0;
+  var comments = parseInt(document.getElementById(ch + '-perf-comments').value) || 0;
+  var savesEl = document.getElementById(ch + '-perf-saves');
+  var sharesEl = document.getElementById(ch + '-perf-shares');
+  var extra = savesEl ? (parseInt(savesEl.value)||0) : (sharesEl ? (parseInt(sharesEl.value)||0) : 0);
+  var stat = { date: date, views: views, likes: likes, comments: comments };
+  if (ch === 'youtube') stat.saves = extra; else stat.shares = extra;
+  state.perfs[ch].unshift({ id: Date.now(), title: title, url: url, uploadDate: date, stats: [stat] });
+  ['title','url','views','likes','comments','saves','shares'].forEach(function(f) {
+    var el = document.getElementById(ch + '-perf-' + f);
+    if (el) el.value = '';
+  });
+  var dateEl = document.getElementById(ch + '-perf-date');
+  if (dateEl) dateEl.value = new Date().toISOString().split('T')[0];
   save(); renderPerf(ch);
   showToast('등록됐어요 ✓');
 }
 
-function deletePerf(ch, id) {
-  state.perfs[ch] = state.perfs[ch].filter(p => p.id !== id);
+function addPerfStat(ch, id) {
+  var p = (state.perfs[ch] || []).find(function(x){ return x.id === id; });
+  if (!p) return;
+  if (!p.stats) p.stats = [];
+  var date = document.getElementById('pu-date-' + id).value || new Date().toISOString().split('T')[0];
+  var views = parseInt(document.getElementById('pu-views-' + id).value) || 0;
+  var likes = parseInt(document.getElementById('pu-likes-' + id).value) || 0;
+  var comments = parseInt(document.getElementById('pu-comments-' + id).value) || 0;
+  var savesEl = document.getElementById('pu-saves-' + id);
+  var sharesEl = document.getElementById('pu-shares-' + id);
+  var extra = savesEl ? (parseInt(savesEl.value)||0) : (sharesEl ? (parseInt(sharesEl.value)||0) : 0);
+  var stat = { date: date, views: views, likes: likes, comments: comments };
+  if (ch === 'youtube') stat.saves = extra; else stat.shares = extra;
+  p.stats.push(stat);
+  p.stats.sort(function(a,b){ return a.date > b.date ? 1 : -1; });
   save(); renderPerf(ch);
+  setTimeout(function() {
+    var body = document.getElementById('perf-body-' + id);
+    if (body) body.classList.add('open');
+  }, 10);
+  showToast('업데이트됐어요 ✓');
+}
+
+function deletePerfStat(ch, id, idx) {
+  var p = (state.perfs[ch] || []).find(function(x){ return x.id === id; });
+  if (!p || !p.stats) return;
+  p.stats.splice(idx, 1);
+  save(); renderPerf(ch);
+  setTimeout(function() {
+    var body = document.getElementById('perf-body-' + id);
+    if (body) body.classList.add('open');
+  }, 10);
+}
+
+function deletePerf(ch, id) {
+  state.perfs[ch] = state.perfs[ch].filter(function(p){ return p.id !== id; });
+  save(); renderPerf(ch);
+}
+
+function importTikTokCSV(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var text = e.target.result;
+    // BOM 제거
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
+    if (lines.length < 2) { showToast('CSV 파일이 비어 있어요'); return; }
+
+    // 헤더 파싱 — 틱톡 스튜디오 CSV는 큰따옴표 포함 가능
+    function parseRow(row) {
+      var result = [];
+      var cur = ''; var inQ = false;
+      for (var i = 0; i < row.length; i++) {
+        var c = row[i];
+        if (c === '"') { inQ = !inQ; }
+        else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+        else { cur += c; }
+      }
+      result.push(cur.trim());
+      return result;
+    }
+
+    var headers = parseRow(lines[0]).map(function(h){ return h.toLowerCase().replace(/\s+/g,''); });
+
+    // 컬럼 인덱스 찾기 (영어/한국어 모두 대응)
+    function col(keys) {
+      for (var k = 0; k < keys.length; k++) {
+        var idx = headers.indexOf(keys[k].toLowerCase().replace(/\s+/g,''));
+        if (idx !== -1) return idx;
+      }
+      return -1;
+    }
+    var iTitle   = col(['videotitle','video title','영상제목','제목','video name']);
+    var iDate    = col(['createtime','create time','게시시간','게시일','date','업로드날짜','publishtime']);
+    var iViews   = col(['videoviews','video views','조회수','views','viewcount']);
+    var iLikes   = col(['likes','좋아요','likecount']);
+    var iComments= col(['comments','댓글','commentcount']);
+    var iShares  = col(['shares','공유','sharecount']);
+    var iUrl     = col(['videolink','video link','영상링크','url','link']);
+
+    if (iTitle === -1) { showToast('제목 컬럼을 찾지 못했어요. CSV 파일을 확인해주세요.'); return; }
+
+    var today = new Date().toISOString().split('T')[0];
+    var added = 0; var updated = 0;
+
+    for (var i = 1; i < lines.length; i++) {
+      var cols = parseRow(lines[i]);
+      var title = iTitle !== -1 ? cols[iTitle] : '';
+      if (!title) continue;
+
+      var rawDate = iDate !== -1 ? cols[iDate] : '';
+      // "2024-03-15 14:30:00" → "2024-03-15"
+      var dateStr = rawDate ? rawDate.split(' ')[0].split('T')[0] : today;
+      // 날짜 형식 보정 (틱톡이 "2024/03/15" 형식으로 줄 수도 있음)
+      dateStr = dateStr.replace(/\//g, '-');
+
+      var stat = {
+        date:     dateStr,
+        views:    iViews    !== -1 ? (parseInt(cols[iViews])||0)    : 0,
+        likes:    iLikes    !== -1 ? (parseInt(cols[iLikes])||0)    : 0,
+        comments: iComments !== -1 ? (parseInt(cols[iComments])||0) : 0,
+        shares:   iShares   !== -1 ? (parseInt(cols[iShares])||0)   : 0
+      };
+      var url = iUrl !== -1 ? cols[iUrl] : '';
+
+      // 기존 영상이면 스탯 업데이트, 새 영상이면 추가
+      var existing = state.perfs.tiktok.find(function(p){
+        return p.title === title || (url && p.url === url);
+      });
+      if (existing) {
+        if (!existing.stats) existing.stats = [];
+        var dupDate = existing.stats.find(function(s){ return s.date === dateStr; });
+        if (!dupDate) { existing.stats.push(stat); existing.stats.sort(function(a,b){ return a.date>b.date?1:-1; }); }
+        updated++;
+      } else {
+        state.perfs.tiktok.unshift({ id: Date.now() + i, title: title, url: url, uploadDate: dateStr, stats: [stat] });
+        added++;
+      }
+    }
+
+    event.target.value = '';
+    save(); renderPerf('tiktok');
+    showToast('가져오기 완료 — 신규 ' + added + '개, 업데이트 ' + updated + '개');
+  };
+  reader.readAsText(file, 'UTF-8');
 }
 
 function fmtNum(n) {
@@ -3480,391 +3730,4 @@ function renderWeeklyPlan(ch) {
         <span style="color:${c.done?'var(--slate)':'var(--walnut)'};text-decoration:${c.done?'line-through':'none'}">${c.label}</span>
       </li>`).join('');
     return `
-    <div class="script-card">
-      <div class="script-header" onclick="toggleWeeklyScript(${s.id},'${ch}')">
-        <div class="script-meta">
-          <div class="script-num">${dayLabel}${s.date ? ' · ' + formatDate(s.date) : ''}</div>
-          <div class="script-title">${s.title}</div>
-          ${checksTotal ? `<div class="script-date">체크리스트 ${checksDone}/${checksTotal}</div>` : ''}
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;" onclick="event.stopPropagation()">
-          ${buildStatusSelect(ch, s)}
-        </div>
-        <span class="script-chevron" id="wchev-${s.id}">▾</span>
-      </div>
-      <div class="script-body" id="wbody-${s.id}">
-        ${s.body ? `<div class="prod-title" style="margin-bottom:6px;">📝 SCRIPT</div><div class="script-content">${escHtml(s.body)}</div>` : ''}
-        ${s.notes ? `<div class="prod-section"><div class="prod-title">▶ Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
-        <div class="prod-section">
-          <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
-            <span>✅ Checklist</span>
-            <span style="color:var(--mid);font-size:11px;">${checksDone}/${checksTotal}</span>
-          </div>
-          <ul class="checklist">${checklistHtml}</ul>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function toggleWeeklyScript(id, ch) {
-  const body = document.getElementById('wbody-' + id);
-  const chev = document.getElementById('wchev-' + id);
-  if (!body) return;
-  const isOpen = body.classList.contains('open');
-  state.scripts[ch].forEach(s => {
-    const b = document.getElementById('wbody-' + s.id);
-    const c = document.getElementById('wchev-' + s.id);
-    if (b) b.classList.remove('open');
-    if (c) c.classList.remove('open');
-  });
-  if (!isOpen) {
-    body.classList.add('open');
-    if (chev) chev.classList.add('open');
-  }
-}
-
-function toggleWeeklyCheck(ch, scriptId, checkId) {
-  const s = state.scripts[ch].find(x => x.id === scriptId);
-  if (!s) return;
-  if (!s.checks || !s.checks.length) s.checks = DEFAULT_CHECKS.map(c => ({...c}));
-  const c = s.checks.find(x => x.id === checkId);
-  if (c) { c.done = !c.done; save(); renderWeeklyPlan(ch); }
-}
-
-function goToScript(ch, scriptId) {
-  goToSection(ch, 'scripts');
-  setTimeout(() => {
-    const body = document.getElementById('body-' + scriptId);
-    const chev = document.getElementById('chev-' + scriptId);
-    state.scripts[ch].forEach(s => {
-      const b = document.getElementById('body-' + s.id);
-      const c = document.getElementById('chev-' + s.id);
-      if (b) b.classList.remove('open');
-      if (c) c.classList.remove('open');
-    });
-    if (body) { body.classList.add('open'); body.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    if (chev) chev.classList.add('open');
-  }, 150);
-}
-
-// ── SCRIPT REFERENCE ──
-function saveScriptRef(ch, id, field, val) {
-  const s = state.scripts[ch].find(x => x.id === id);
-  if (s) { s[field] = val; save(); }
-}
-
-function handleScriptImage(ch, id, input) {
-  const files = Array.from(input.files);
-  if (!files.length) return;
-  const s = state.scripts[ch].find(x => x.id === id);
-  if (!s) return;
-  if (!s.refImages) s.refImages = s.refImage ? [s.refImage] : [];
-
-  const remaining = 7 - s.refImages.length;
-  if (remaining <= 0) { showToast('이미지는 최대 7장까지 첨부 가능해요'); input.value = ''; return; }
-  const toProcess = files.slice(0, remaining);
-  if (files.length > remaining) showToast(remaining + '장만 추가됐어요 (최대 7장)');
-
-  let processed = 0;
-  toProcess.forEach(file => {
-    if (file.size > 10 * 1024 * 1024) { showToast('10MB 이하 이미지만 첨부 가능해요'); processed++; return; }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let w = img.width, h = img.height;
-        const MAX = 800;
-        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-        if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        s.refImages.push(canvas.toDataURL('image/jpeg', 0.65));
-        processed++;
-        if (processed === toProcess.length) {
-          save(); renderScripts(ch);
-          setTimeout(() => {
-            const b = document.getElementById('body-' + id);
-            const c = document.getElementById('chev-' + id);
-            if (b) b.classList.add('open');
-            if (c) c.classList.add('open');
-          }, 10);
-        }
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function deleteScriptImage(ch, id, idx) {
-  const s = state.scripts[ch].find(x => x.id === id);
-  if (!s) return;
-  if (!s.refImages) s.refImages = s.refImage ? [s.refImage] : [];
-  s.refImages.splice(idx, 1);
-  save(); renderScripts(ch);
-  setTimeout(() => {
-    const b = document.getElementById('body-' + id);
-    const c = document.getElementById('chev-' + id);
-    if (b) b.classList.add('open');
-    if (c) c.classList.add('open');
-  }, 10);
-}
-
-// ── MEMO IMAGE UPLOAD ──
-function handleMemoImage(ch, input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 10 * 1024 * 1024) { showToast('10MB 이하 이미지만 첨부 가능해요'); input.value = ''; return; }
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      let w = img.width, h = img.height;
-      const MAX = 800;
-      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-      if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const data = canvas.toDataURL('image/jpeg', 0.65);
-      const preview = document.getElementById(ch + '-memo-img-preview');
-      const dataEl = document.getElementById(ch + '-memo-img-data');
-      if (preview) { preview.src = data; preview.style.display = 'block'; }
-      if (dataEl) dataEl.value = data;
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-// ── SCROLL REVEAL ──
-(function() {
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
-    });
-  }, { threshold: 0.1 });
-  function bindReveal() {
-    document.querySelectorAll('.reveal:not([data-observed])').forEach(el => {
-      el.dataset.observed = '1';
-      obs.observe(el);
-    });
-  }
-  bindReveal();
-  setTimeout(bindReveal, 800);
-  document.addEventListener('scroll', bindReveal, { passive: true, once: true });
-})();
-
-// ── CURSOR ──
-(function() {
-  const cur = document.getElementById('cursor');
-  if (!cur) return;
-  document.addEventListener('mousemove', e => {
-    cur.style.left = e.clientX + 'px';
-    cur.style.top = e.clientY + 'px';
-    cur.classList.add('visible');
-  });
-  document.addEventListener('mouseleave', () => cur.classList.remove('visible'));
-  function bindCursorHover() {
-    document.querySelectorAll('a, button, input, textarea, label, .script-header, .cal-day').forEach(el => {
-      if (!el.dataset.cursorBound) {
-        el.dataset.cursorBound = '1';
-        el.addEventListener('mouseenter', () => cur.classList.add('expanded'));
-        el.addEventListener('mouseleave', () => cur.classList.remove('expanded'));
-      }
-    });
-  }
-  bindCursorHover();
-  document.addEventListener('DOMContentLoaded', bindCursorHover);
-  setTimeout(bindCursorHover, 1500);
-})();
-
-// ── HERO ANIMATIONS ──
-function triggerHeroAnim(ch) {
-  const p = ch === 'tiktok' ? 'tk' : ch === 'instagram' ? 'ig' : 'yt';
-  // Reset previous state for re-triggering on channel switch
-  ['hero-tag','hl1','hl2','hero-bottom','float-tags','scroll-hint'].forEach(key => {
-    const el = document.getElementById(p + '-' + key);
-    if (el) el.classList.remove('in');
-  });
-  const d = (id, ms) => {
-    const el = document.getElementById(id);
-    if (el) setTimeout(() => el.classList.add('in'), ms);
-  };
-  d(p + '-hero-tag', 80);
-  d(p + '-hl1', 320);
-  d(p + '-hl2', 520);
-  d(p + '-hero-bottom', 680);
-  d(p + '-float-tags', 880);
-  d(p + '-scroll-hint', 1050);
-}
-
-// ── INIT ──
-function init() {
-  // Firebase SDK 로드 대기 후 데이터 초기화
-  if (window.__firebaseReady) {
-    initData();
-  } else {
-    window.addEventListener('firebase-ready', initData, { once: true });
-    // 5초 안에 Firebase 준비 안 되면 로컬 데이터로만 진행 (네트워크 문제 대비)
-    setTimeout(() => {
-      if (!isLoaded) { loadFromLocalStorage(); normalizeState(); renderAll(); }
-    }, 5000);
-  }
-}
-
-// ── AI 모달 ──────────────────────────────────────────────────────────
-function openAIModal(ch) {
-  document.getElementById('ai-channel').value = ch;
-  document.getElementById('ai-keymsg').value = '';
-  document.getElementById('ai-episode').value = '';
-  document.getElementById('ai-date').value = '';
-  document.getElementById('ai-modal').classList.add('open');
-}
-function closeAIModal() {
-  document.getElementById('ai-modal').classList.remove('open');
-}
-
-async function generateAIScript() {
-  const ch = document.getElementById('ai-channel').value;
-  const pillar = document.getElementById('ai-pillar').value;
-  const keyMsg = document.getElementById('ai-keymsg').value.trim();
-  const episode = document.getElementById('ai-episode').value.trim();
-  const date = document.getElementById('ai-date').value;
-
-  if (!keyMsg) { showToast('핵심 한 줄을 입력해주세요'); return; }
-
-  const geminiKey = localStorage.getItem('gemini_api_key') || '';
-  if (!geminiKey) { showToast('Settings에서 Gemini API 키를 먼저 입력해주세요'); return; }
-
-  const btn = document.getElementById('ai-generate-btn');
-  btn.textContent = '생성 중...'; btn.disabled = true;
-
-  const pillarDescriptions = {
-    '1': '아이돌 커버 메이크업 — 실존 아이돌의 특정 이벤트/컴백/사진 속 메이크업을 따라하는 콘텐츠. 제목 패턴: "[아이돌명] [이벤트] 메이크업 따라해봄" 또는 "[아이돌명] [이벤트] 메이크업 튜토리얼 — [차별 포인트] 꿀팁". 차별화된 디테일 하나를 반드시 넣는다.',
-    '2': '변신/트랜지션 — 맨 얼굴→완성 메이크업의 극적 전환. 제목 패턴: "누구세요..? 딱 N초 만에 변신 완료". 0-2초 안에 강한 비주얼 대비 필수.',
-    '3': '제품 추천 — 특정 퍼스널컬러/상황에 맞춘 제품 추천. 제목 패턴: "[타겟 퍼스널컬러/상황] + 공감형 후킹 — [화자 포지셔닝]의 [카테고리] 추천 N가지". "아직도 이거 없음 유죄" 같은 겁주기/죄책감 표현 절대 금지. 대신 "한 번쯤 고민했을", "이런 거 찾고 있었다면" 같은 공감형 진입.'
-  };
-
-  const prompt = '너는 솜솜(@ssommos) 유튜브 쇼츠 채널의 전문 대본 작가야.\n\n'
-    + '포지셔닝: 퍼스널컬러 안 가리고 진짜 예쁜 메이크업을 같이 찾아가는 친구. 옆집 언니 / 같이 덕질하는 친구 톤.\n\n'
-    + '절대 금지: 가르치는 톤, "99%가 모르는", "무조건 해야 하는", 죄책감/겁주는 표현, 전문가처럼 거리두는 말투\n\n'
-    + '필라 유형: ' + pillarDescriptions[pillar] + '\n\n'
-    + '핵심 메시지: ' + keyMsg + '\n'
-    + (episode ? '경험/에피소드: ' + episode + '\n' : '')
-    + '\n아래 정확한 형식으로 대본 작성:\n\n'
-    + '제목: [제목]\n\n'
-    + 'HOOK (0-3초):\n[화면 묘사 + 대사]\n\n'
-    + '본문:\n[단계별 대사, 자연스러운 구어체]\n\n'
-    + '엔딩:\n[마무리 + 자연스러운 CTA]\n\n'
-    + '해시태그: [3-5개 #포함]';
-
-  try {
-    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + geminiKey, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.9, maxOutputTokens: 2048 }
-      })
-    });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message || 'API 오류');
-    const text = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) || '';
-    if (!text) throw new Error('응답 없음');
-
-    const titleMatch = text.match(/제목:\s*(.+)/);
-    const hookMatch = text.match(/HOOK[^:\n]*:\s*([\s\S]*?)(?=본문:|$)/i);
-    const bodyMatch = text.match(/본문:\s*([\s\S]*?)(?=엔딩:|$)/i);
-    const endingMatch = text.match(/엔딩:\s*([\s\S]*?)(?=해시태그:|$)/i);
-    const tagsMatch = text.match(/해시태그:\s*(.+)/);
-
-    const title = titleMatch ? titleMatch[1].trim() : keyMsg;
-    const body = [
-      hookMatch ? 'HOOK (0-3초)\n' + hookMatch[1].trim() : '',
-      bodyMatch ? '본문\n' + bodyMatch[1].trim() : '',
-      endingMatch ? '엔딩\n' + endingMatch[1].trim() : '',
-      tagsMatch ? '해시태그: ' + tagsMatch[1].trim() : ''
-    ].filter(Boolean).join('\n\n') || text;
-
-    const newScript = {
-      id: Date.now(),
-      title: title,
-      body: body,
-      notes: '✨ AI 생성 | 필라 ' + pillar,
-      date: date || '',
-      status: 'not-filmed',
-      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
-      memo: '',
-      refUrl: '',
-      refImages: [],
-      filmed: false
-    };
-
-    state.scripts[ch].unshift(newScript);
-    save();
-    renderScripts(ch);
-    closeAIModal();
-    showToast('AI 대본이 생성됐어요!');
-
-    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
-    if (scriptTabBtn) scriptTabBtn.click();
-    setTimeout(function() {
-      var b = document.getElementById('body-' + newScript.id);
-      var c = document.getElementById('chev-' + newScript.id);
-      if (b) { b.classList.add('open'); }
-      if (c) { c.classList.add('open'); }
-      var card = b ? b.closest('.script-card') : null;
-      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-
-  } catch(e) {
-    showToast('생성 실패: ' + (e.message || '다시 시도해주세요'));
-  } finally {
-    btn.textContent = '✨ 생성하기'; btn.disabled = false;
-  }
-}
-
-// ── 코웍 가져오기 모달 ───────────────────────────────────────────────
-function exportScriptsJSON(ch) {
-  const scripts = (state.scripts[ch] || []).map(s => ({
-    id: s.id,
-    title: s.title || '',
-    date: s.date || '',
-    status: s.status || '',
-    category: s.category || '',
-    body: s.body || '',
-    notes: s.notes || '',
-    memo: s.memo || '',
-    refUrl: s.refUrl || '',
-    editingGuide: s.editingGuide || '',
-    thumbnailGuide: s.thumbnailGuide || '',
-    captions: s.captions || '',
-    igCaption: s.igCaption || '',
-    coverNote: s.coverNote || '',
-  }));
-  const blob = new Blob([JSON.stringify(scripts, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = ch + '_scripts_' + new Date().toISOString().split('T')[0] + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('JSON 내보내기 완료 ✓');
-}
-
-function importTikTokEvents(ch, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!state.events[ch]) state.events[ch] = [];
-      const existing = new Set((state.events[ch]).map(ev => ev.url).filter(Boolean));
-      let imported = 0;
-
-      // TikTok 공식 데이터 내보내기 형식: Video.Videos.VideoList
-      const tikList = data?.Vid
+    <div class="scr
