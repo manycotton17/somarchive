@@ -1267,6 +1267,7 @@
         <button class="add-btn" onclick="openAIModal('tiktok')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn" onclick="openCoworkModal('tiktok')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
         <button class="add-btn" onclick="exportScriptsJSON('tiktok')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
+        <label class="add-btn" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">⬆ JSON 가져오기<input type="file" accept="application/json" style="display:none;" onchange="importScriptsJSON('tiktok', this)"></label>
       </div>
     </div>
 
@@ -1557,6 +1558,7 @@
         <button class="add-btn yt" onclick="openAIModal('youtube')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn yt" onclick="openCoworkModal('youtube')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
         <button class="add-btn yt" onclick="exportScriptsJSON('youtube')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
+        <label class="add-btn yt" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">⬆ JSON 가져오기<input type="file" accept="application/json" style="display:none;" onchange="importScriptsJSON('youtube', this)"></label>
       </div>
     </div>
 
@@ -1842,6 +1844,7 @@
         <button class="add-btn" onclick="openAIModal('instagram')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn" onclick="openCoworkModal('instagram')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
         <button class="add-btn" onclick="exportScriptsJSON('instagram')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
+        <label class="add-btn" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">⬆ JSON 가져오기<input type="file" accept="application/json" style="display:none;" onchange="importScriptsJSON('instagram', this)"></label>
       </div>
     </div>
 
@@ -3560,69 +3563,91 @@ function importTikTokCSV(event) {
   var reader = new FileReader();
   reader.onload = function(e) {
     var text = e.target.result;
-    // BOM 제거
     if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
-    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
-    if (lines.length < 2) { showToast('CSV 파일이 비어 있어요'); return; }
 
-    // 헤더 파싱 — 틱톡 스튜디오 CSV는 큰따옴표 포함 가능
+    // 구분자 자동 감지 (쉼표 vs 세미콜론)
+    var delim = (text.split('\n')[0] || '').indexOf(';') > (text.split('\n')[0] || '').indexOf(',') ? ';' : ',';
+
     function parseRow(row) {
-      var result = [];
-      var cur = ''; var inQ = false;
+      var result = []; var cur = ''; var inQ = false;
       for (var i = 0; i < row.length; i++) {
         var c = row[i];
         if (c === '"') { inQ = !inQ; }
-        else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+        else if (c === delim && !inQ) { result.push(cur.trim()); cur = ''; }
         else { cur += c; }
       }
       result.push(cur.trim());
       return result;
     }
 
-    var headers = parseRow(lines[0]).map(function(h){ return h.toLowerCase().replace(/\s+/g,''); });
+    function parseNum(s) {
+      if (!s) return 0;
+      return parseInt(String(s).replace(/[,\s]/g, '')) || 0;
+    }
 
-    // 컬럼 인덱스 찾기 (영어/한국어 모두 대응)
+    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
+    if (lines.length < 2) { showToast('CSV 파일이 비어 있어요'); return; }
+
+    // 헤더 행 찾기 — 빈 행이나 메타데이터 행 건너뜀
+    var headerIdx = 0;
+    var rawHeaders = [];
+    for (var h = 0; h < Math.min(5, lines.length); h++) {
+      rawHeaders = parseRow(lines[h]);
+      if (rawHeaders.length >= 2 && rawHeaders.some(function(c){ return c.trim(); })) {
+        headerIdx = h; break;
+      }
+    }
+    var headers = rawHeaders.map(function(h){ return h.toLowerCase().replace(/[\s_\-]/g,''); });
+
     function col(keys) {
       for (var k = 0; k < keys.length; k++) {
-        var idx = headers.indexOf(keys[k].toLowerCase().replace(/\s+/g,''));
+        var needle = keys[k].toLowerCase().replace(/[\s_\-]/g,'');
+        // 완전 일치
+        var idx = headers.indexOf(needle);
         if (idx !== -1) return idx;
+        // 부분 일치 (헤더가 키워드를 포함)
+        for (var j = 0; j < headers.length; j++) {
+          if (headers[j].includes(needle) || needle.includes(headers[j])) return j;
+        }
       }
       return -1;
     }
-    var iTitle   = col(['videotitle','video title','영상제목','제목','video name']);
-    var iDate    = col(['createtime','create time','게시시간','게시일','date','업로드날짜','publishtime']);
-    var iViews   = col(['videoviews','video views','조회수','views','viewcount']);
-    var iLikes   = col(['likes','좋아요','likecount']);
-    var iComments= col(['comments','댓글','commentcount']);
-    var iShares  = col(['shares','공유','sharecount']);
-    var iUrl     = col(['videolink','video link','영상링크','url','link']);
 
-    if (iTitle === -1) { showToast('제목 컬럼을 찾지 못했어요. CSV 파일을 확인해주세요.'); return; }
+    var iTitle   = col(['videotitle','video title','영상제목','제목','title','콘텐츠','video','영상']);
+    var iDate    = col(['createtime','create time','게시시간','게시일','date','업로드날짜','publishtime','게시날짜','업로드일']);
+    var iViews   = col(['videoviews','video views','동영상조회수','조회수','views','viewcount','재생수','play']);
+    var iLikes   = col(['likes','좋아요수','좋아요','likecount','like']);
+    var iComments= col(['comments','댓글수','댓글','commentcount','comment']);
+    var iShares  = col(['shares','공유수','공유','sharecount','share']);
+    var iUrl     = col(['videolink','video link','영상링크','url','link','링크']);
+
+    if (iTitle === -1) {
+      showToast('제목 컬럼 없음. 헤더: ' + headers.slice(0,5).join(' / '));
+      return;
+    }
 
     var today = new Date().toISOString().split('T')[0];
     var added = 0; var updated = 0;
 
-    for (var i = 1; i < lines.length; i++) {
+    for (var i = headerIdx + 1; i < lines.length; i++) {
       var cols = parseRow(lines[i]);
-      var title = iTitle !== -1 ? cols[iTitle] : '';
+      var title = cols[iTitle] || '';
       if (!title) continue;
 
-      var rawDate = iDate !== -1 ? cols[iDate] : '';
-      // "2024-03-15 14:30:00" → "2024-03-15"
-      var dateStr = rawDate ? rawDate.split(' ')[0].split('T')[0] : today;
-      // 날짜 형식 보정 (틱톡이 "2024/03/15" 형식으로 줄 수도 있음)
-      dateStr = dateStr.replace(/\//g, '-');
+      var rawDate = iDate !== -1 ? (cols[iDate] || '') : '';
+      var dateStr = rawDate ? rawDate.split(' ')[0].split('T')[0].replace(/\//g, '-') : today;
+      // 날짜 유효성 간단 검사
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) dateStr = today;
 
       var stat = {
         date:     dateStr,
-        views:    iViews    !== -1 ? (parseInt(cols[iViews])||0)    : 0,
-        likes:    iLikes    !== -1 ? (parseInt(cols[iLikes])||0)    : 0,
-        comments: iComments !== -1 ? (parseInt(cols[iComments])||0) : 0,
-        shares:   iShares   !== -1 ? (parseInt(cols[iShares])||0)   : 0
+        views:    parseNum(iViews    !== -1 ? cols[iViews]    : ''),
+        likes:    parseNum(iLikes    !== -1 ? cols[iLikes]    : ''),
+        comments: parseNum(iComments !== -1 ? cols[iComments] : ''),
+        shares:   parseNum(iShares   !== -1 ? cols[iShares]   : '')
       };
-      var url = iUrl !== -1 ? cols[iUrl] : '';
+      var url = (iUrl !== -1 ? cols[iUrl] : '') || '';
 
-      // 기존 영상이면 스탯 업데이트, 새 영상이면 추가
       var existing = state.perfs.tiktok.find(function(p){
         return p.title === title || (url && p.url === url);
       });
@@ -3639,7 +3664,7 @@ function importTikTokCSV(event) {
 
     event.target.value = '';
     save(); renderPerf('tiktok');
-    showToast('가져오기 완료 — 신규 ' + added + '개, 업데이트 ' + updated + '개');
+    showToast('완료 — 신규 ' + added + '개, 업데이트 ' + updated + '개');
   };
   reader.readAsText(file, 'UTF-8');
 }
@@ -4127,6 +4152,68 @@ function exportScriptsJSON(ch) {
   a.click();
   URL.revokeObjectURL(url);
   showToast('JSON 내보내기 완료 ✓');
+}
+
+// ── Scripts JSON 파일 업로드 → 병합 (id 기준 중복 제거) ──────────────
+// exportScriptsJSON()으로 내보낸 배열 JSON, 스크립트 객체 1개짜리 JSON,
+// 또는 content/ref/scriptMemo 같은 대체 필드명을 쓰는 JSON도 허용.
+function importScriptsJSON(ch, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const list = Array.isArray(data) ? data : [data];
+      if (!state.scripts[ch]) state.scripts[ch] = [];
+      const existingIds = new Set(state.scripts[ch].map(s => s.id));
+      let imported = 0, skipped = 0;
+
+      list.forEach((item, i) => {
+        if (!item || !item.title) { skipped++; return; }
+
+        let id = item.id;
+        if (id && existingIds.has(id)) { skipped++; return; } // 중복 id는 건너뜀 (id 기준 중복 제거)
+        if (!id) id = Date.now() + i;
+
+        const newScript = {
+          id: id,
+          title: item.title || '',
+          date: item.date || '',
+          status: item.status || 'not-filmed',
+          category: item.category || '',
+          body: item.body || item.content || '',
+          notes: item.notes || '',
+          memo: item.memo || item.scriptMemo || '',
+          refUrl: item.refUrl || item.ref || '',
+          refImages: item.refImages || [],
+          editingGuide: item.editingGuide || '',
+          thumbnailGuide: item.thumbnailGuide || '',
+          captions: item.captions || '',
+          igCaption: item.igCaption || '',
+          coverNote: item.coverNote || '',
+          checks: Array.isArray(item.checks) && item.checks.length ? item.checks : [],
+          filmed: false,
+        };
+        state.scripts[ch].unshift(newScript);
+        existingIds.add(id);
+        imported++;
+      });
+
+      if (imported > 0) {
+        save();
+        renderScripts(ch);
+        refreshCalendarIfActive(ch);
+        showToast(`${imported}개 가져왔어요` + (skipped ? ` (중복/누락 ${skipped}개 스킵)` : '') + ' ✓');
+      } else {
+        showToast('가져올 항목이 없어요 (중복이거나 title 없음)');
+      }
+    } catch (err) {
+      showToast('파싱 오류: ' + err.message);
+    }
+    input.value = '';
+  };
+  reader.readAsText(file);
 }
 
 function importTikTokEvents(ch, input) {
