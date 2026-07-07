@@ -4467,3 +4467,125 @@ function importCoworkScript() {
       (byCh[ch] = byCh[ch] || []).push(item);
     });
 
+    var totalImported = 0, totalSkipped = 0, focusCh = defaultCh, focusId = null;
+    Object.keys(byCh).forEach(function(ch) {
+      var r = mergeScriptsIntoChannel(ch, byCh[ch]);
+      totalImported += r.imported;
+      totalSkipped += r.skipped;
+      if (focusId === null && r.firstId !== null) { focusCh = ch; focusId = r.firstId; }
+      renderScripts(ch);
+      refreshCalendarIfActive(ch);
+    });
+
+    if (!totalImported) { showToast('가져올 항목이 없어요 (중복이거나 title 없음)'); return; }
+
+    save();
+    closeCoworkModal();
+    showToast(totalImported + '개 가져왔어요' + (totalSkipped ? ' (중복/누락 ' + totalSkipped + '개 스킵)' : '') + ' ✓');
+
+    var scriptTabBtn = document.querySelector('#tabs-' + focusCh + ' .tab');
+    if (scriptTabBtn) scriptTabBtn.click();
+    setTimeout(function() {
+      var b = document.getElementById('body-' + focusId);
+      var c = document.getElementById('chev-' + focusId);
+      if (b) b.classList.add('open');
+      if (c) c.classList.add('open');
+      var card = b ? b.closest('.script-card') : null;
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+
+  } catch(e) {
+    showToast('가져오기 실패: ' + e.message);
+  }
+}
+
+// ── TikTok → Instagram 가져오기 ───────────────────────────────────────
+function openImportFromTiktokModal() {
+  const list = document.getElementById('import-tiktok-list');
+  const scripts = state.scripts.tiktok || [];
+  if (!scripts.length) {
+    list.innerHTML = '<div class="empty">TikTok 대본이 없어요.<br>먼저 TikTok 탭에서 대본을 추가해주세요.</div>';
+  } else {
+    list.innerHTML = scripts.map(s => `
+      <div class="today-alert-item" onclick="importFromTiktokScript(${s.id})" style="margin-bottom:6px;">
+        <span class="today-alert-title">${escHtml(s.title)}</span>
+        <span style="font-size:11px;color:var(--mid);flex-shrink:0;margin-left:8px;">${s.date ? formatDate(s.date) : ''}</span>
+        <span class="today-alert-arrow" style="color:#e1306c;">→</span>
+      </div>`).join('');
+  }
+  document.getElementById('import-tiktok-modal').classList.add('open');
+}
+
+function closeImportFromTiktokModal() {
+  document.getElementById('import-tiktok-modal').classList.remove('open');
+}
+
+function importFromTiktokScript(id) {
+  const src = state.scripts.tiktok.find(s => s.id === id);
+  if (!src) return;
+  const newScript = {
+    id: Date.now(),
+    title: src.title,
+    body: src.body || '',
+    notes: src.notes || '',
+    date: '',
+    status: 'not-filmed',
+    checks: DEFAULT_CHECKS_IG.map(c => ({...c})),
+    memo: '',
+    refUrl: '',
+    refImages: [],
+    filmed: false,
+    igCaption: '',
+    coverNote: '',
+  };
+  state.scripts.instagram.unshift(newScript);
+  save();
+  renderScripts('instagram');
+  closeImportFromTiktokModal();
+  showToast('TikTok 대본을 Instagram에 복사했어요 ✓');
+  if (state.currentChannel !== 'instagram') {
+    state.currentChannel = 'instagram';
+    document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-instagram').classList.add('active');
+    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-tiktok','active-youtube','active-instagram'));
+    const igBtn = document.querySelector('.ch-btn[onclick*="instagram"]');
+    if (igBtn) igBtn.classList.add('active-instagram');
+    triggerHeroAnim('instagram');
+  }
+  setTimeout(function() {
+    var ws = document.getElementById('workspace-instagram');
+    if (ws) ws.classList.add('visible');
+    var tabBtn = document.querySelector('#tabs-instagram .tab');
+    if (tabBtn) tabBtn.click();
+    setTimeout(function() {
+      var b = document.getElementById('body-' + newScript.id);
+      var c = document.getElementById('chev-' + newScript.id);
+      if (b) b.classList.add('open');
+      if (c) c.classList.add('open');
+      var card = b ? b.closest('.script-card') : null;
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+  }, 100);
+}
+
+// ── Gemini 키 설정 ────────────────────────────────────────────────────
+function saveGeminiKey(val) {
+  localStorage.setItem('gemini_api_key', val.trim());
+}
+function toggleGeminiKey(inputId) {
+  var el = document.getElementById(inputId);
+  if (!el) return;
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+function loadGeminiKey() {
+  var key = localStorage.getItem('gemini_api_key') || '';
+  var el = document.getElementById('youtube-gemini-key');
+  if (el) el.value = key;
+}
+
+init();
+loadGeminiKey();
+loadYoutubeKey();
+</script>
+</body>
+</html>
