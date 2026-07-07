@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1099,6 +1100,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDjneUcloIKFYLwlnqvIxhd0-4ThrMBBAM",
@@ -1111,12 +1113,19 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
+  // 로그인 상태를 브라우저에 유지 (한 번 로그인하면 계속 유지)
+  setPersistence(auth, browserLocalPersistence).catch(() => {});
 
   // 전역에서 쓸 수 있게 window에 등록
   window.__firebaseDb = db;
   window.__firebaseDoc = doc;
   window.__firebaseGetDoc = getDoc;
   window.__firebaseSetDoc = setDoc;
+  window.__fbAuth = auth;
+  window.__fbSignIn = (email, pw) => signInWithEmailAndPassword(auth, email, pw);
+  window.__fbSignOut = () => signOut(auth);
+  window.__fbOnAuth = (cb) => onAuthStateChanged(auth, cb);
   window.__firebaseReady = true;
   window.dispatchEvent(new Event('firebase-ready'));
 </script>
@@ -1127,8 +1136,9 @@
 <div class="lock-screen" id="lock-screen">
   <div class="lock-logo">content hub</div>
   <div class="lock-title">Private workspace</div>
-  <div class="lock-sub">비밀번호를 입력해주세요</div>
+  <div class="lock-sub">로그인해주세요</div>
   <form id="lock-form" style="width:100%;max-width:280px;display:flex;flex-direction:column;align-items:center;">
+    <input class="lock-input" id="lock-email" type="email" placeholder="email" autocomplete="username" style="width:100%;box-sizing:border-box;margin-bottom:8px;">
     <input class="lock-input" id="lock-input" type="password" placeholder="password" autocomplete="current-password" style="width:100%;box-sizing:border-box;">
     <button class="lock-btn" type="submit">Enter</button>
   </form>
@@ -2139,8 +2149,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── LOCK ──
-const PW = "doong17";
+// ── AUTH (Firebase 이메일 로그인) ──
 function unlockApp(ch) {
   ch = ch || 'tiktok';
   document.getElementById("lock-screen").classList.add("hidden");
@@ -2148,28 +2157,61 @@ function unlockApp(ch) {
   if (ws) ws.classList.add('visible');
   setTimeout(() => triggerHeroAnim(ch), 100);
 }
-function checkPassword() {
-  const val = document.getElementById("lock-input").value;
-  if (val === PW) {
-    sessionStorage.setItem("unlocked","1");
-    unlockApp(state && state.currentChannel ? state.currentChannel : 'tiktok');
-  } else {
-    document.getElementById("lock-error").textContent = "비밀번호가 틀렸어요";
+
+// 로그인 성공 후에만 Firestore(클라우드) 데이터를 불러온다 — 보안 규칙 통과에 필요
+async function loadCloudData() {
+  if (isLoaded) return;
+  const got = await loadFromFirestore();
+  if (got) { normalizeState(); renderAll(); }
+  isLoaded = true;
+  if (hasRealData()) saveDailyBackup();
+}
+
+let authWired = false;
+function wireAuth() {
+  if (authWired || !window.__fbOnAuth) return;
+  authWired = true;
+  window.__fbOnAuth(function(user) {
+    if (user) {
+      document.getElementById("lock-error").textContent = "";
+      unlockApp(state && state.currentChannel ? state.currentChannel : 'tiktok');
+      loadCloudData();
+    } else {
+      document.getElementById("lock-screen").classList.remove("hidden");
+      setTimeout(() => { var e = document.getElementById("lock-email"); if (e) e.focus(); }, 100);
+    }
+  });
+}
+
+async function checkPassword() {
+  const email = document.getElementById("lock-email").value.trim();
+  const pw = document.getElementById("lock-input").value;
+  const errEl = document.getElementById("lock-error");
+  if (!email || !pw) { errEl.textContent = "이메일과 비밀번호를 입력해주세요"; return; }
+  if (!window.__fbSignIn) { errEl.textContent = "연결 중이에요. 잠시 후 다시 시도해주세요"; return; }
+  errEl.textContent = "확인 중...";
+  try {
+    await window.__fbSignIn(email, pw);
+    // 성공 시 onAuthStateChanged가 unlockApp을 처리
+  } catch (e) {
+    const code = (e && e.code) || '';
+    let msg = "로그인 실패";
+    if (code.includes('invalid-credential') || code.includes('wrong-password')) msg = "이메일 또는 비밀번호가 틀렸어요";
+    else if (code.includes('user-not-found')) msg = "등록되지 않은 계정이에요";
+    else if (code.includes('too-many-requests')) msg = "시도가 너무 많아요. 잠시 후 다시 시도해주세요";
+    else if (code.includes('invalid-email')) msg = "이메일 형식이 올바르지 않아요";
+    else if (code.includes('network')) msg = "네트워크 오류예요. 연결을 확인해주세요";
+    errEl.textContent = msg;
     document.getElementById("lock-input").value = "";
-    setTimeout(() => document.getElementById("lock-error").textContent = "", 2000);
   }
 }
 document.getElementById("lock-form").addEventListener("submit", function(e) {
   e.preventDefault();
   checkPassword();
 });
-(function(){
-  if (sessionStorage.getItem("unlocked") === "1") {
-    unlockApp('tiktok');
-  } else {
-    setTimeout(() => document.getElementById("lock-input").focus(), 100);
-  }
-})();
+// Firebase 준비되면 로그인 상태 감시 시작
+if (window.__firebaseReady) wireAuth();
+else window.addEventListener('firebase-ready', wireAuth, { once: true });
 // ── STATE ──
 let state = {
   currentChannel: 'tiktok',
@@ -2306,16 +2348,7 @@ function normalizeState() {
   });
 }
 
-async function initData() {
-  loadFromLocalStorage();
-  normalizeState();
-  renderAll();
-  const got = await loadFromFirestore();
-  if (got) { normalizeState(); renderAll(); }
-  isLoaded = true;
-  // 데이터가 있을 때만 오늘 날짜 백업 저장 (하루 1회)
-  if (hasRealData()) saveDailyBackup();
-}
+// (구 initData는 loadCloudData로 대체됨 — 로그인 후에만 Firestore 접근)
 
 function renderHeroTodayBar(ch) {
   const el = document.getElementById(ch + '-hero-today');
@@ -4002,16 +4035,11 @@ function triggerHeroAnim(ch) {
 
 // ── INIT ──
 function init() {
-  // Firebase SDK 로드 대기 후 데이터 초기화
-  if (window.__firebaseReady) {
-    initData();
-  } else {
-    window.addEventListener('firebase-ready', initData, { once: true });
-    // 5초 안에 Firebase 준비 안 되면 로컬 데이터로만 진행 (네트워크 문제 대비)
-    setTimeout(() => {
-      if (!isLoaded) { loadFromLocalStorage(); normalizeState(); renderAll(); }
-    }, 5000);
-  }
+  // 로컬 데이터는 즉시 렌더 (로그인 화면 뒤에 준비해둠).
+  // 클라우드(Firestore) 데이터는 로그인 성공 후 loadCloudData()에서 불러온다.
+  loadFromLocalStorage();
+  normalizeState();
+  renderAll();
 }
 
 // ── AI 모달 ──────────────────────────────────────────────────────────
