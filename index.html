@@ -1057,6 +1057,7 @@
   .cp-dcol-head.today-dc .dow, .cp-dcol-head.today-dc .dom { color:var(--white); }
   .cp-dcol-head.today-dc-ig { background:linear-gradient(135deg,#f77737,#e1306c); }
   .cp-dcol-head.today-dc-ig .dow, .cp-dcol-head.today-dc-ig .dom { color:#fff; }
+  .cp-week-cell { border:1px solid var(--border); padding:6px; display:flex; flex-direction:column; gap:6px; min-height:130px; flex:1; }
   .cp-add-slot { border:1.5px dashed rgba(0,0,0,.1); border-radius:10px; padding:8px 4px; text-align:center; font-size:18px; color:var(--mid); cursor:pointer; transition:.12s; line-height:1; }
   .cp-add-slot:hover { border-color:rgba(0,0,0,.3); background:var(--soft); color:var(--ink); }
 
@@ -1358,7 +1359,7 @@
           <button class="cp-nav-btn" onclick="cpNavigate('tiktok',1)">›</button>
         </div>
         <div class="cp-view-toggle">
-          <button class="cp-vbtn active" id="tiktok-vbtn-date" onclick="cpSetView('tiktok','date')">Date View</button>
+          <button class="cp-vbtn active" id="tiktok-vbtn-date" onclick="cpSetView('tiktok','date')">Weekly View</button>
           <button class="cp-vbtn" id="tiktok-vbtn-month" onclick="cpSetView('tiktok','month')">Month View</button>
         </div>
         <label class="cp-import-btn" title="TikTok data export JSON 또는 커스텀 JSON 불러오기">
@@ -1642,7 +1643,7 @@
           <button class="cp-nav-btn" onclick="cpNavigate('youtube',1)">›</button>
         </div>
         <div class="cp-view-toggle">
-          <button class="cp-vbtn active" id="youtube-vbtn-date" onclick="cpSetView('youtube','date')">Date View</button>
+          <button class="cp-vbtn active" id="youtube-vbtn-date" onclick="cpSetView('youtube','date')">Weekly View</button>
           <button class="cp-vbtn" id="youtube-vbtn-month" onclick="cpSetView('youtube','month')">Month View</button>
         </div>
       </div>
@@ -1930,7 +1931,7 @@
           <button class="cp-nav-btn" onclick="cpNavigate('instagram',1)">›</button>
         </div>
         <div class="cp-view-toggle">
-          <button class="cp-vbtn active" id="instagram-vbtn-date" onclick="cpSetView('instagram','date')">Date View</button>
+          <button class="cp-vbtn active" id="instagram-vbtn-date" onclick="cpSetView('instagram','date')">Weekly View</button>
           <button class="cp-vbtn" id="instagram-vbtn-month" onclick="cpSetView('instagram','month')">Month View</button>
         </div>
         <label class="cp-import-btn" title="Instagram data export JSON 또는 커스텀 JSON 불러오기">
@@ -2064,7 +2065,11 @@
     <input class="modal-input" id="modal-script-category" placeholder="예: Review, Haul, Tutorial..." style="margin-bottom:6px;">
     <div id="modal-script-cat-sugs" class="cp-cat-suggestions"></div>
     <div class="modal-label">대본</div>
-    <textarea class="modal-input" id="modal-script-body" placeholder="대본 내용 입력..." style="height:200px;"></textarea>
+    <div style="font-size:11px;color:var(--mid);margin-bottom:6px;line-height:1.7;background:var(--soft);padding:8px 10px;">
+      이 형식으로 쓰면 자동으로 예쁘게 정리돼요:<br>
+      <b>(후킹 0-3초)</b> 섹션 구분 &nbsp;·&nbsp; <b>"대사"</b> 따옴표는 크게 강조 &nbsp;·&nbsp; <b>화면: / CTA: / -</b> 지시문은 회색
+    </div>
+    <textarea class="modal-input" id="modal-script-body" placeholder="(후킹 0-3초)&#10;&quot;올리브영에서 이거 안 사면 손해예요&quot;&#10;화면: 제품 클로즈업&#10;&#10;(본론 3-20초)&#10;1. 제품명&#10;- 발색 시연" style="height:200px;"></textarea>
     <div class="modal-label">촬영 노트 (선택)</div>
     <textarea class="modal-input" id="modal-script-notes" placeholder="Shot types, lighting, cuts 등..." style="height:100px;"></textarea>
     <div class="modal-btns">
@@ -2395,6 +2400,22 @@ function normalizeState() {
         ids.add(item.id);
         return true;
       });
+    });
+    // Perf 스탯 정리: 같은 날짜는 필드별 최대값으로 병합, 전부 0인 줄은 제거
+    (state.perfs[ch] || []).forEach(p => {
+      if (!p.stats || p.stats.length < 2) return;
+      const byDate = {};
+      p.stats.forEach(s => {
+        const d = s.date || '';
+        if (!byDate[d]) { byDate[d] = { ...s }; return; }
+        ['views','likes','comments','shares','saves'].forEach(k => {
+          byDate[d][k] = Math.max(byDate[d][k] || 0, s[k] || 0);
+        });
+      });
+      let merged = Object.values(byDate);
+      const nonZero = merged.filter(s => (s.views||0) + (s.likes||0) + (s.comments||0) + (s.shares||0) + (s.saves||0) > 0);
+      if (nonZero.length) merged = nonZero;
+      p.stats = merged.sort((a, b) => a.date > b.date ? 1 : -1);
     });
   });
 }
@@ -2788,14 +2809,14 @@ function renderScripts(ch) {
         </div>
 
         <div class="sd-pane" id="sdp-${s.id}-1" style="display:none;">
-          ${s.notes ? `<div class="prod-section" style="margin-top:0;"><div class="prod-title">Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
-          <div class="prod-section" style="${s.notes ? '' : 'margin-top:0;'}">
+          <div class="prod-section" style="margin-top:0;">
             <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
               <span>Checklist</span>
               <span style="color:var(--mid);font-size:11px;">${checksDone}/${checksTotal}</span>
             </div>
             <ul class="checklist">${checklistHtml}</ul>
           </div>
+          ${prodTA(ch, s, 'notes', 'Production notes', 'Shot types, 조명, 컷, B-roll...')}
           ${prodTA(ch, s, 'memo', '메모', '촬영 메모, 수정사항, 아이디어...')}
           <div class="prod-section${s.refUrl || (s.refImages && s.refImages.length) ? '' : ' sd-hidden'}" id="ps-${s.id}-ref">
             <div class="prod-title">레퍼런스</div>
@@ -2806,6 +2827,8 @@ function renderScripts(ch) {
             ${buildImgSection(s, ch)}
           </div>
           <div class="sd-addrow">
+            ${s.notes ? '' : `<button onclick="expandProdField('ps-${s.id}-notes',this)">+ 촬영 노트</button>`}
+            ${s.memo ? '' : `<button onclick="expandProdField('ps-${s.id}-memo',this)">+ 메모</button>`}
             ${s.refUrl || (s.refImages && s.refImages.length) ? '' : `<button onclick="expandProdField('ps-${s.id}-ref',this)">+ 레퍼런스</button>`}
           </div>
         </div>
@@ -2813,6 +2836,7 @@ function renderScripts(ch) {
         <div class="sd-pane" id="sdp-${s.id}-2" style="display:none;">
           ${ch === 'instagram' ? prodTA(ch, s, 'igCaption', 'IG 캡션 (첫 125자가 핵심)', '첫 125자에 핵심 — 더보기 이후는 해시태그...') + prodTA(ch, s, 'coverNote', '커버 프레임', '커버로 쓸 프레임 — 예: 3.2초 정지 프레임...') : ''}
           ${prodTA(ch, s, 'editingGuide', 'Editing guide', '컷 순서, 트랜지션, 음악, 효과음...')}
+          ${prodTA(ch, s, 'soundEffect', 'Sound effect', '효과음, BGM, 트렌딩 사운드...')}
           ${prodTA(ch, s, 'thumbnailGuide', 'Thumbnail guide', '썸네일 텍스트, 컨셉, 색상...')}
           ${prodTA(ch, s, 'captions', 'Captions', '캡션, 해시태그, 첫 댓글...')}
           <div class="sd-addrow">${prodTAChips(ch, s)}</div>
@@ -2895,8 +2919,8 @@ function prodTA(ch, s, field, title, placeholder) {
 
 function prodTAChips(ch, s) {
   var fields = ch === 'instagram'
-    ? [['igCaption','IG 캡션'],['coverNote','커버 프레임'],['editingGuide','편집 가이드'],['thumbnailGuide','썸네일 가이드'],['captions','캡션']]
-    : [['editingGuide','편집 가이드'],['thumbnailGuide','썸네일 가이드'],['captions','캡션']];
+    ? [['igCaption','IG 캡션'],['coverNote','커버 프레임'],['editingGuide','편집 가이드'],['soundEffect','사운드'],['thumbnailGuide','썸네일 가이드'],['captions','캡션']]
+    : [['editingGuide','편집 가이드'],['soundEffect','사운드'],['thumbnailGuide','썸네일 가이드'],['captions','캡션']];
   return fields
     .filter(function(f) { return !(s[f[0]] || ''); })
     .map(function(f) { return '<button onclick="expandProdField(\'ps-' + s.id + '-' + f[0] + '\',this)">+ ' + f[1] + '</button>'; })
@@ -3262,7 +3286,7 @@ function renderCpCard(item, ch) {
   </div>`;
 }
 
-// ── DATE VIEW ──
+// ── WEEKLY VIEW (월간 뷰와 같은 셀/컬러 카드 스타일) ──
 function renderCpDateView(ch) {
   const el = document.getElementById(ch + '-cp-content');
   if (!el) return;
@@ -3275,16 +3299,34 @@ function renderCpDateView(ch) {
   const dows = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
   const todayStr = cpDateStr(today);
   const dateMap = buildCpDateMap(ch);
+  const statusColors = { posted:'#22c55e', filming:'#60a5fa', 'needs-idea':'#f472b6', draft:'#facc15', editing:'#fb923c', urgent:'#ef4444', script:'#a78bfa' };
+  const statusLabels = { posted:'Posted', filming:'Filming', 'needs-idea':'Needs idea', draft:'Draft', editing:'Editing', urgent:'Urgent' };
+  const cats = ch === 'instagram' ? CP_CATS_IG : CP_CATS_TK;
   let html = renderCpFilterBar(ch) + '<div class="cp-date-view">';
   days.forEach((d, i) => {
     const ds = cpDateStr(d);
     const isToday = ds === todayStr;
     const todayCls = isToday ? (ch === 'instagram' ? 'today-dc-ig' : 'today-dc') : '';
     const items = dateMap[ds] || [];
+    const chips = items.map(item => {
+      const catEntry = cats.find(ct => ct.name.toLowerCase() === (item.category || '').toLowerCase());
+      const c = catEntry ? catEntry.color : (statusColors[item.isScript ? (item.status || 'script') : (item.status || 'draft')] || '#999');
+      const clickFn = item.isScript ? `openScript(${item.id},'${ch}')` : `openCpModal('${ch}','${ds}',${item.id})`;
+      const statsLine = (item.views || item.likes)
+        ? `<div style="font-size:10px;color:var(--mid);margin-top:4px;">👁 ${fmtNum(item.views||0)} · ♥ ${fmtNum(item.likes||0)}</div>` : '';
+      return `<div onclick="${clickFn}" style="border:1.5px solid ${c}66;background:${c}18;padding:8px 9px;cursor:pointer;">
+        ${item.image ? `<img src="${item.image}" style="width:100%;height:72px;object-fit:cover;display:block;margin-bottom:6px;">` : ''}
+        <div style="font-size:9.5px;color:${c};letter-spacing:.05em;text-transform:uppercase;font-weight:600;">${statusLabels[item.status] || ''}${item.category ? (statusLabels[item.status] ? ' · ' : '') + escHtml(item.category) : ''}</div>
+        <div style="font-size:11.5px;color:var(--ink);font-weight:500;margin-top:3px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${escHtml(item.title || '')}</div>
+        ${statsLine}
+      </div>`;
+    }).join('');
     html += `<div class="cp-date-col">
       <div class="cp-dcol-head ${todayCls}"><div class="dow">${dows[i]}</div><div class="dom">${d.getDate()}</div></div>
-      ${items.map(item => renderCpCard(item, ch)).join('')}
-      <div class="cp-add-slot" onclick="openCpModal('${ch}','${ds}',null)">+</div>
+      <div class="cp-week-cell">
+        ${chips}
+        <div class="cp-add-slot" onclick="openCpModal('${ch}','${ds}',null)">+</div>
+      </div>
     </div>`;
   });
   html += '</div>';
@@ -3739,9 +3781,19 @@ function addPerfStat(ch, id) {
   var savesEl = document.getElementById('pu-saves-' + id);
   var sharesEl = document.getElementById('pu-shares-' + id);
   var extra = savesEl ? (parseInt(savesEl.value)||0) : (sharesEl ? (parseInt(sharesEl.value)||0) : 0);
-  var stat = { date: date, views: views, likes: likes, comments: comments };
-  if (ch === 'youtube') stat.saves = extra; else stat.shares = extra;
-  p.stats.push(stat);
+  if (!views && !likes && !comments && !extra) { showToast('수치를 하나 이상 입력해주세요'); return; }
+  // 같은 날짜가 이미 있으면 새 줄을 만들지 않고 입력한 값만 갱신
+  var ex = p.stats.find(function(s){ return s.date === date; });
+  if (ex) {
+    if (views) ex.views = views;
+    if (likes) ex.likes = likes;
+    if (comments) ex.comments = comments;
+    if (extra) { if (ch === 'youtube') ex.saves = extra; else ex.shares = extra; }
+  } else {
+    var stat = { date: date, views: views, likes: likes, comments: comments };
+    if (ch === 'youtube') stat.saves = extra; else stat.shares = extra;
+    p.stats.push(stat);
+  }
   p.stats.sort(function(a,b){ return a.date > b.date ? 1 : -1; });
   save(); renderPerf(ch);
   if (perfDetailCur.id === id) renderPerfDetailContent();
@@ -3774,6 +3826,14 @@ function mergePerfSnapshot(ch, key, info) {
   var stat = { date: perfTodayStr(), views: info.views || 0, likes: info.likes || 0, comments: info.comments || 0 };
   if (ch === 'youtube') stat.saves = info.extra || 0; else stat.shares = info.extra || 0;
   var p = state.perfs[ch].find(function(x) { return (x.url || '').indexOf(key) !== -1; });
+  if (!p) {
+    // CSV/수동 등록으로 URL이 없는 기존 영상은 제목 앞부분으로 매칭 (중복 생성 방지 + 썸네일 부착)
+    var ti = (info.title || '').toLowerCase().slice(0, 30);
+    if (ti.length >= 8) {
+      p = state.perfs[ch].find(function(x) { return !x.url && (x.title || '').toLowerCase().slice(0, 30) === ti; });
+      if (p) p.url = info.url;
+    }
+  }
   if (p) {
     if (!p.stats) p.stats = [];
     var ex = p.stats.find(function(s) { return s.date === stat.date; });
@@ -4456,6 +4516,7 @@ function exportScriptsJSON(ch) {
     memo: s.memo || '',
     refUrl: s.refUrl || '',
     editingGuide: s.editingGuide || '',
+    soundEffect: s.soundEffect || '',
     thumbnailGuide: s.thumbnailGuide || '',
     captions: s.captions || '',
     igCaption: s.igCaption || '',
@@ -4498,6 +4559,7 @@ function mergeScriptsIntoChannel(ch, list) {
       refUrl: item.refUrl || item.ref || '',
       refImages: item.refImages || [],
       editingGuide: item.editingGuide || '',
+      soundEffect: item.soundEffect || item.sound || '',
       thumbnailGuide: item.thumbnailGuide || '',
       captions: item.captions || '',
       igCaption: item.igCaption || '',
