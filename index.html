@@ -14,31 +14,67 @@
   @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+KR:wght@400;500&display=swap');
   @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
   :root {
-    /* Reference palette */
-    --ink: #383838;
-    --soft: #f9f6f3;
-    --soft-2: #f1ece7;
-    --blush: #f2cfc4;
-    --sage: #c8d8c0;
-    --lavender: #d4cfe8;
-    --butter: #f5e9c4;
-    --mid: #888888;
+    /* B/W minimal palette — 핑크는 커서/포인트 전용 */
+    --ink: #111111;
+    --soft: #f6f6f6;
+    --soft-2: #ededed;
+    --blush: #ffe3ee;
+    --sage: #ececec;
+    --lavender: #e6e6e6;
+    --butter: #f1f1f1;
+    --mid: #7a7a7a;
     --white: #ffffff;
+    --accent: #ff4d8d;
 
     /* Legacy aliases so existing HTML/JS needs no changes */
     --linen: var(--soft);
     --linen-2: var(--soft-2);
     --walnut: var(--ink);
-    --charcoal: #333333;
+    --charcoal: #111111;
     --slate: var(--mid);
     --black: var(--white);
     --cream: var(--soft-2);
-    --border: rgba(0,0,0,0.09);
+    --border: rgba(0,0,0,0.12);
     --card: var(--soft);
 
     /* Channel accents */
     --tiktok: #111111;
-    --youtube: #b85c3a;
+    --youtube: #111111;
+  }
+  ::selection { background: var(--accent); color: #fff; }
+  #pink-cursor {
+    position: fixed; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent); pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%); left: -20px; top: -20px;
+    transition: width .18s, height .18s, opacity .3s; opacity: 0;
+  }
+  #pink-cursor.big { width: 26px; height: 26px; opacity: .55; }
+  @media (hover: none) { #pink-cursor { display: none; } }
+  .ref-section { display: none; }
+  .ref-section.open { display: block; }
+  .add-perf-form.collapsed > :not(:first-child) { display: none; }
+  .add-perf-form .perf-form-label { cursor: pointer; }
+  /* 대본 상세 서브탭 */
+  .sd-tab {
+    background: none; border: none; border-bottom: 2px solid transparent;
+    padding: 8px 14px; font-size: 12px; color: var(--mid); cursor: pointer;
+    letter-spacing: .02em; font-family: inherit;
+  }
+  .sd-tab.active { color: var(--ink); border-bottom-color: var(--ink); font-weight: 500; }
+  .sd-hidden { display: none; }
+  .sd-addrow { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .sd-addrow button {
+    background: none; border: 1px dashed var(--border); color: var(--mid);
+    font-size: 11px; padding: 5px 12px; cursor: pointer;
+  }
+  .sd-addrow button:hover { color: var(--ink); border-color: var(--mid); }
+  .script-fmt { padding: 4px 2px; }
+  /* 모바일 탭바 — 잘리는 쪽 페이드로 스크롤 힌트 */
+  @media (max-width: 768px) {
+    .tabs {
+      -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+      mask-image: linear-gradient(90deg, #000 88%, transparent);
+    }
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   input, textarea, select, button {
@@ -749,10 +785,10 @@
     font-weight: 500; letter-spacing: .04em;
     border: 1px solid rgba(0,0,0,0.08); white-space: nowrap;
   }
-  .hero-float-tag:nth-child(1) { background: #f2cfc4; animation: floatTag 4s ease-in-out infinite; }
-  .hero-float-tag:nth-child(2) { background: #c8d8c0; animation: floatTag 4s ease-in-out infinite; animation-delay: 0.6s; }
-  .hero-float-tag:nth-child(3) { background: #d4cfe8; animation: floatTag 4s ease-in-out infinite; animation-delay: 1.2s; }
-  .hero-float-tag:nth-child(4) { background: #f5e9c4; animation: floatTag 4s ease-in-out infinite; animation-delay: 1.8s; }
+  .hero-float-tag:nth-child(1) { background: var(--soft-2); border: 1px solid var(--border); animation: floatTag 4s ease-in-out infinite; }
+  .hero-float-tag:nth-child(2) { background: var(--soft-2); border: 1px solid var(--border); animation: floatTag 4s ease-in-out infinite; animation-delay: 0.6s; }
+  .hero-float-tag:nth-child(3) { background: var(--soft-2); border: 1px solid var(--border); animation: floatTag 4s ease-in-out infinite; animation-delay: 1.2s; }
+  .hero-float-tag:nth-child(4) { background: var(--soft-2); border: 1px solid var(--border); animation: floatTag 4s ease-in-out infinite; animation-delay: 1.8s; }
   @keyframes floatTag {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
@@ -819,11 +855,11 @@
   }
   .feature-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.1); }
   .feature-card:active { transform: scale(0.97); transition-duration: 0.1s; }
-  .feature-card:nth-child(1) .feature-bg { background: #f2cfc4; }
-  .feature-card:nth-child(2) .feature-bg { background: #d4cfe8; }
-  .feature-card:nth-child(3) .feature-bg { background: #c8d8c0; }
-  .feature-card:nth-child(4) .feature-bg { background: #f5e9c4; }
-  .feature-card:nth-child(5) .feature-bg { background: #e8e4f0; }
+  .feature-card:nth-child(1) .feature-bg { background: var(--soft-2); }
+  .feature-card:nth-child(2) .feature-bg { background: var(--soft-2); }
+  .feature-card:nth-child(3) .feature-bg { background: var(--soft-2); }
+  .feature-card:nth-child(4) .feature-bg { background: var(--soft-2); }
+  .feature-card:nth-child(5) .feature-bg { background: var(--soft-2); }
   .feature-bg { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s ease; }
   .feature-card:hover .feature-bg { opacity: 1; }
   .feature-icon { font-size: 22px; margin-bottom: 12px; position: relative; z-index: 1; }
@@ -883,9 +919,9 @@
 
   /* ── TODAY ALERT ── */
   .today-alert {
-    background: linear-gradient(135deg, #fff5f9 0%, #fde8f0 100%);
-    border: 1px solid rgba(255,77,141,0.18);
-    border-radius: 16px; padding: 14px 16px; margin-bottom: 16px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 0; padding: 14px 16px; margin-bottom: 16px;
   }
   .today-alert-label {
     font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
@@ -1244,16 +1280,6 @@
         <span class="feature-arrow">→</span>
       </div>
     </div>
-    <div class="marquee-wrap reveal">
-      <div class="marquee-track">
-        <span class="marquee-item">Glass Skin</span><span class="marquee-item">K-beauty</span>
-        <span class="marquee-item">Daily Routine</span><span class="marquee-item">Dewy Finish</span>
-        <span class="marquee-item">Seoul Insider</span><span class="marquee-item">Skincare First</span>
-        <span class="marquee-item">Glass Skin</span><span class="marquee-item">K-beauty</span>
-        <span class="marquee-item">Daily Routine</span><span class="marquee-item">Dewy Finish</span>
-        <span class="marquee-item">Seoul Insider</span><span class="marquee-item">Skincare First</span>
-      </div>
-    </div>
     <div class="hero-today-bar" id="tiktok-hero-today"></div>
   </div>
 
@@ -1317,6 +1343,7 @@
           <option value="buy">🛒 Buy</option>
           <option value="general">📝 General</option>
         </select>
+        <button onclick="this.closest('.section').querySelector('.ref-section').classList.toggle('open')" style="background:none;border:1px solid var(--border);padding:6px 10px;font-size:12px;color:var(--mid);cursor:pointer;">+ 링크·사진</button>
         <button class="memo-save" onclick="saveMemo('tiktok')">Save</button>
       </div>
       <div class="memo-list" id="tiktok-memo-list"></div>
@@ -1537,16 +1564,6 @@
         <span class="feature-arrow">→</span>
       </div>
     </div>
-    <div class="marquee-wrap reveal">
-      <div class="marquee-track">
-        <span class="marquee-item">유리피부</span><span class="marquee-item">케이뷰티</span>
-        <span class="marquee-item">데일리 루틴</span><span class="marquee-item">듀이 피니시</span>
-        <span class="marquee-item">스킨케어</span><span class="marquee-item">솔직 후기</span>
-        <span class="marquee-item">유리피부</span><span class="marquee-item">케이뷰티</span>
-        <span class="marquee-item">데일리 루틴</span><span class="marquee-item">듀이 피니시</span>
-        <span class="marquee-item">스킨케어</span><span class="marquee-item">솔직 후기</span>
-      </div>
-    </div>
     <div class="hero-today-bar" id="youtube-hero-today"></div>
   </div>
 
@@ -1610,6 +1627,7 @@
           <option value="buy">🛒 Buy</option>
           <option value="general">📝 General</option>
         </select>
+        <button onclick="this.closest('.section').querySelector('.ref-section').classList.toggle('open')" style="background:none;border:1px solid var(--border);padding:6px 10px;font-size:12px;color:var(--mid);cursor:pointer;">+ 링크·사진</button>
         <button class="memo-save yt" onclick="saveMemo('youtube')">Save</button>
       </div>
       <div class="memo-list" id="youtube-memo-list"></div>
@@ -1833,16 +1851,6 @@
         <span class="feature-arrow">→</span>
       </div>
     </div>
-    <div class="marquee-wrap reveal">
-      <div class="marquee-track">
-        <span class="marquee-item">Fashion</span><span class="marquee-item">Aesthetic</span>
-        <span class="marquee-item">K-beauty</span><span class="marquee-item">Seoul Style</span>
-        <span class="marquee-item">Minimal</span><span class="marquee-item">Clean Beauty</span>
-        <span class="marquee-item">Fashion</span><span class="marquee-item">Aesthetic</span>
-        <span class="marquee-item">K-beauty</span><span class="marquee-item">Seoul Style</span>
-        <span class="marquee-item">Minimal</span><span class="marquee-item">Clean Beauty</span>
-      </div>
-    </div>
     <div class="hero-today-bar" id="instagram-hero-today"></div>
   </div>
 
@@ -1907,6 +1915,7 @@
           <option value="buy">🛒 Buy</option>
           <option value="general">📝 General</option>
         </select>
+        <button onclick="this.closest('.section').querySelector('.ref-section').classList.toggle('open')" style="background:none;border:1px solid var(--border);padding:6px 10px;font-size:12px;color:var(--mid);cursor:pointer;">+ 링크·사진</button>
         <button class="memo-save ig" onclick="saveMemo('instagram')">Save</button>
       </div>
       <div class="memo-list" id="instagram-memo-list"></div>
@@ -2107,6 +2116,16 @@
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeCoworkModal()">취소</button>
       <button class="modal-save" onclick="importCoworkScript()">가져오기</button>
+    </div>
+  </div>
+</div>
+
+<!-- Perf 상세 모달 -->
+<div class="modal-overlay" id="perf-detail-modal">
+  <div class="modal" style="max-width:520px;">
+    <div id="perf-detail-body" style="max-height:70vh;overflow-y:auto;"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closePerfDetail()">닫기</button>
     </div>
   </div>
 </div>
@@ -2753,62 +2772,145 @@ function renderScripts(ch) {
         <span class="script-chevron" id="chev-${s.id}">▾</span>
       </div>
       <div class="script-body" id="body-${s.id}">
-        ${s.body ? `<div class="prod-title" style="margin-bottom:6px;">📝 SCRIPT</div><div class="script-content">${escHtml(s.body)}</div>` : ''}
-        ${s.notes ? `<div class="prod-section"><div class="prod-title">▶ Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
-        ${ch === 'instagram' ? `<div class="prod-section">
-          <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;"><span>📲 IG 캡션</span><span style="font-size:10px;color:var(--mid);font-weight:normal;">첫 125자가 핵심</span></div>
-          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'igCaption',this.value);autoResizeTA(this)" style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;" placeholder="첫 125자에 핵심 — 더보기 이후는 해시태그...">${escHtml(s.igCaption||'')}</textarea>
+        <div class="sd-tabs" style="display:flex;gap:2px;margin-bottom:14px;border-bottom:1px solid var(--border);">
+          <button class="sd-tab active" onclick="switchScriptPane(${s.id},0,this)">대본</button>
+          <button class="sd-tab" onclick="switchScriptPane(${s.id},1,this)">제작 <span style="color:var(--mid);">${checksDone}/${checksTotal}</span></button>
+          <button class="sd-tab" onclick="switchScriptPane(${s.id},2,this)">편집·업로드</button>
         </div>
-        <div class="prod-section">
-          <div class="prod-title">🖼 커버 프레임</div>
-          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'coverNote',this.value);autoResizeTA(this)" style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:60px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;" placeholder="커버로 쓸 프레임 — 예: 3.2초 정지 프레임, 핑크 배경...">${escHtml(s.coverNote||'')}</textarea>
-        </div>` : ''}
-        <div class="prod-section">
-          <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
-            <span>✅ Checklist</span>
-            <span style="color:var(--mid);font-size:11px;">${checksDone}/${checksTotal}</span>
+
+        <div class="sd-pane" id="sdp-${s.id}-0">
+          ${s.body ? `
+          <div class="script-fmt" id="fmt-${s.id}">${formatScriptBody(s.body)}</div>
+          <div class="script-content" id="raw-${s.id}" style="display:none;">${escHtml(s.body)}</div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+            <button onclick="toggleRawScript(${s.id},this)" style="background:none;border:1px solid var(--border);color:var(--mid);font-size:11px;padding:4px 12px;cursor:pointer;">원문 보기</button>
+          </div>` : '<div class="empty" style="padding:20px 0;">대본이 비어 있어요. 수정 버튼으로 작성하세요.</div>'}
+        </div>
+
+        <div class="sd-pane" id="sdp-${s.id}-1" style="display:none;">
+          ${s.notes ? `<div class="prod-section" style="margin-top:0;"><div class="prod-title">Production Notes</div><div class="script-content" style="font-size:12px;white-space:pre-wrap;">${escHtml(s.notes)}</div></div>` : ''}
+          <div class="prod-section" style="${s.notes ? '' : 'margin-top:0;'}">
+            <div class="prod-title" style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Checklist</span>
+              <span style="color:var(--mid);font-size:11px;">${checksDone}/${checksTotal}</span>
+            </div>
+            <ul class="checklist">${checklistHtml}</ul>
           </div>
-          <ul class="checklist">${checklistHtml}</ul>
+          ${prodTA(ch, s, 'memo', '메모', '촬영 메모, 수정사항, 아이디어...')}
+          <div class="prod-section${s.refUrl || (s.refImages && s.refImages.length) ? '' : ' sd-hidden'}" id="ps-${s.id}-ref">
+            <div class="prod-title">레퍼런스</div>
+            <input type="url" value="${escHtml(s.refUrl||'')}"
+              onchange="saveScriptRef('${ch}',${s.id},'refUrl',this.value)"
+              style="width:100%;background:var(--soft);border:1px solid var(--border);border-radius:0;padding:8px 10px;color:var(--ink);font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;"
+              placeholder="https://">
+            ${buildImgSection(s, ch)}
+          </div>
+          <div class="sd-addrow">
+            ${s.refUrl || (s.refImages && s.refImages.length) ? '' : `<button onclick="expandProdField('ps-${s.id}-ref',this)">+ 레퍼런스</button>`}
+          </div>
         </div>
-        <div class="prod-section">
-          <div class="prod-title">💬 메모</div>
-          <textarea id="smemo-${s.id}" oninput="saveScriptMemo('${ch}',${s.id},this.value)"
-            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:vertical;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;"
-            placeholder="촬영 메모, 수정사항, 아이디어...">${escHtml(memoVal)}</textarea>
+
+        <div class="sd-pane" id="sdp-${s.id}-2" style="display:none;">
+          ${ch === 'instagram' ? prodTA(ch, s, 'igCaption', 'IG 캡션 (첫 125자가 핵심)', '첫 125자에 핵심 — 더보기 이후는 해시태그...') + prodTA(ch, s, 'coverNote', '커버 프레임', '커버로 쓸 프레임 — 예: 3.2초 정지 프레임...') : ''}
+          ${prodTA(ch, s, 'editingGuide', 'Editing guide', '컷 순서, 트랜지션, 음악, 효과음...')}
+          ${prodTA(ch, s, 'thumbnailGuide', 'Thumbnail guide', '썸네일 텍스트, 컨셉, 색상...')}
+          ${prodTA(ch, s, 'captions', 'Captions', '캡션, 해시태그, 첫 댓글...')}
+          <div class="sd-addrow">${prodTAChips(ch, s)}</div>
         </div>
-        <div class="prod-section">
-          <div class="prod-title">📎 레퍼런스</div>
-          <input type="url" value="${escHtml(s.refUrl||'')}"
-            onchange="saveScriptRef('${ch}',${s.id},'refUrl',this.value)"
-            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 10px;color:var(--ink);font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;"
-            placeholder="https://">
-          ${buildImgSection(s, ch)}
-        </div>
-        <div class="prod-section">
-          <div class="prod-title">✂️ EDITING GUIDE</div>
-          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'editingGuide',this.value);autoResizeTA(this)"
-            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;"
-            placeholder="컷 순서, 트랜지션, 음악, 효과음...">${escHtml(s.editingGuide||'')}</textarea>
-        </div>
-        <div class="prod-section">
-          <div class="prod-title">🖼 THUMBNAIL GUIDE</div>
-          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'thumbnailGuide',this.value);autoResizeTA(this)"
-            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;"
-            placeholder="썸네일 텍스트, 컨셉, 색상...">${escHtml(s.thumbnailGuide||'')}</textarea>
-        </div>
-        <div class="prod-section">
-          <div class="prod-title">💬 CAPTIONS</div>
-          <textarea class="auto-resize-ta" oninput="saveScriptRef('${ch}',${s.id},'captions',this.value);autoResizeTA(this)"
-            style="width:100%;background:var(--soft);border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:72px;font-family:'DM Sans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;outline:none;line-height:1.6;overflow:hidden;"
-            placeholder="캡션, 해시태그, 첫 댓글...">${escHtml(s.captions||'')}</textarea>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:12px;">
-          <button onclick="deleteScript('${ch}',${s.id})" style="background:none;border:1px solid rgba(0,0,0,0.12);border-radius:9999px;color:var(--mid);font-size:11px;padding:5px 14px;cursor:pointer;">삭제</button>
+
+        <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end;">
+          <button onclick="deleteScript('${ch}',${s.id})" style="background:none;border:1px solid var(--border);border-radius:0;color:var(--mid);font-size:11px;padding:5px 14px;cursor:pointer;">삭제</button>
         </div>
       </div>
     </div>`;
   }).join('');
   setTimeout(initAutoResize, 0);
+}
+
+/* ── 대본 상세: 서브탭 / 서식 / 빈 필드 접기 ── */
+function switchScriptPane(id, n, btn) {
+  for (var i = 0; i < 3; i++) {
+    var p = document.getElementById('sdp-' + id + '-' + i);
+    if (p) p.style.display = i === n ? 'block' : 'none';
+  }
+  btn.parentNode.querySelectorAll('.sd-tab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  setTimeout(initAutoResize, 0);
+}
+
+function toggleRawScript(id, btn) {
+  var fmt = document.getElementById('fmt-' + id);
+  var raw = document.getElementById('raw-' + id);
+  var showRaw = raw.style.display === 'none';
+  raw.style.display = showRaw ? 'block' : 'none';
+  fmt.style.display = showRaw ? 'none' : 'block';
+  btn.textContent = showRaw ? '서식 보기' : '원문 보기';
+}
+
+// (섹션 시간초) / "대사" / 지시문(화면: 등)을 구분해 표시용 서식 생성
+function formatScriptBody(raw) {
+  var html = '';
+  (raw || '').split('\n').forEach(function(line) {
+    var t = line.trim();
+    if (!t) { html += '<div style="height:10px;"></div>'; return; }
+    var secM = t.match(/^[\(\[](.+?)[\)\]]$/);
+    if (secM) {
+      var inner = secM[1];
+      var tm = inner.match(/^(.*?)\s*([\d]+\s*[~\-–.]?\s*[\d]*\s*초)$/);
+      var label = tm && tm[1].trim() ? tm[1].trim() : inner;
+      var time = tm ? tm[2].trim() : '';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin:18px 0 8px;">'
+        + '<span style="background:var(--ink);color:#fff;font-size:10px;letter-spacing:.08em;padding:3px 10px;text-transform:uppercase;">' + escHtml(label) + '</span>'
+        + (time && label !== inner ? '<span style="font-size:11px;color:var(--mid);">' + escHtml(time) + '</span>' : '')
+        + '<div style="flex:1;height:1px;background:var(--border);"></div></div>';
+      return;
+    }
+    if (/^["“].*["”]$/.test(t)) {
+      html += '<p style="font-size:15px;font-weight:500;color:var(--ink);line-height:1.7;margin:2px 0 6px;">' + escHtml(t) + '</p>';
+      return;
+    }
+    if (/^(화면|CTA|자막|음악|컷|B-?roll|효과음|장면|배경|의상|조명)\s*:/i.test(t) || /^[-·•]/.test(t)) {
+      html += '<p style="font-size:12px;color:var(--mid);line-height:1.6;margin:0 0 4px;">' + escHtml(t) + '</p>';
+      return;
+    }
+    if (/^\d+[.)]/.test(t)) {
+      html += '<p style="font-size:14px;font-weight:500;color:var(--ink);margin:10px 0 3px;">' + escHtml(t) + '</p>';
+      return;
+    }
+    html += '<p style="font-size:13px;color:var(--charcoal);line-height:1.7;margin:0 0 4px;">' + escHtml(t) + '</p>';
+  });
+  return html;
+}
+
+// 값이 비어 있으면 접힌 상태(sd-hidden)로 렌더 — sd-addrow의 칩으로 펼침
+function prodTA(ch, s, field, title, placeholder) {
+  var val = s[field] || '';
+  var hidden = val ? '' : ' sd-hidden';
+  return '<div class="prod-section' + hidden + '" id="ps-' + s.id + '-' + field + '" style="margin-top:12px;">'
+    + '<div class="prod-title">' + title + '</div>'
+    + '<textarea class="auto-resize-ta" oninput="saveScriptRef(\'' + ch + '\',' + s.id + ',\'' + field + '\',this.value);autoResizeTA(this)"'
+    + ' style="width:100%;background:var(--soft);border:1px solid var(--border);border-radius:0;padding:10px 12px;color:var(--ink);font-size:12px;resize:none;min-height:64px;font-family:\'DM Sans\',\'Noto Sans KR\',\'Malgun Gothic\',\'Apple SD Gothic Neo\',sans-serif;outline:none;line-height:1.6;overflow:hidden;"'
+    + ' placeholder="' + placeholder + '">' + escHtml(val) + '</textarea></div>';
+}
+
+function prodTAChips(ch, s) {
+  var fields = ch === 'instagram'
+    ? [['igCaption','IG 캡션'],['coverNote','커버 프레임'],['editingGuide','편집 가이드'],['thumbnailGuide','썸네일 가이드'],['captions','캡션']]
+    : [['editingGuide','편집 가이드'],['thumbnailGuide','썸네일 가이드'],['captions','캡션']];
+  return fields
+    .filter(function(f) { return !(s[f[0]] || ''); })
+    .map(function(f) { return '<button onclick="expandProdField(\'ps-' + s.id + '-' + f[0] + '\',this)">+ ' + f[1] + '</button>'; })
+    .join('');
+}
+
+function expandProdField(secId, btn) {
+  var sec = document.getElementById(secId);
+  if (sec) {
+    sec.classList.remove('sd-hidden');
+    var ta = sec.querySelector('textarea, input');
+    if (ta) setTimeout(function() { ta.focus(); }, 0);
+  }
+  btn.remove();
 }
 
 function toggleScript(id, ch) {
@@ -2963,7 +3065,7 @@ function saveMemo(ch) {
   const imgDataEl = document.getElementById(ch + '-memo-img-data');
   const refUrl = refUrlEl ? refUrlEl.value.trim() : '';
   const refImage = imgDataEl ? imgDataEl.value : '';
-  state.memos[ch].unshift({ id: Date.now(), text, type, refUrl, refImage });
+  state.memos[ch].unshift({ id: Date.now(), text, type, refUrl, refImage, done: false });
   document.getElementById(ch + '-memo-input').value = '';
   if (refUrlEl) refUrlEl.value = '';
   if (imgDataEl) imgDataEl.value = '';
@@ -2987,21 +3089,40 @@ function renderMemos(ch) {
   const list = document.getElementById(ch + '-memo-list');
   if (!list) return;
   const f = state.memoFilter[ch] || 'all';
-  const items = f === 'all' ? state.memos[ch] : state.memos[ch].filter(m => m.type === f);
+  let items = f === 'all' ? state.memos[ch] : state.memos[ch].filter(m => m.type === f);
+  items = [...items].sort((a, b) => (a.done === b.done) ? 0 : (a.done ? 1 : -1)); // 완료는 아래로
   if (!items.length) { list.innerHTML = '<div class="empty">메모 없음</div>'; return; }
-  const labels = { idea:'💡', ref:'🔗', todo:'✅', general:'📝', buy:'🛒' };
-  list.innerHTML = items.map(m => `
-    <div class="memo-item" style="flex-direction:column;align-items:flex-start;gap:6px;">
+  const labels = { idea:'Idea', ref:'Ref', todo:'To do', general:'General', buy:'Buy' };
+  const colors = { idea:'#c07a00', ref:'#2563eb', todo:'#16803c', buy:'#8b3fc9', general:'#8a8a8a' };
+  list.innerHTML = items.map(m => {
+    const c = colors[m.type] || colors.general;
+    const checkable = m.type === 'todo' || m.type === 'buy';
+    const dateStr = formatDate(new Date(m.createdAt || m.id).toISOString().split('T')[0]);
+    return `
+    <div class="memo-item" style="flex-direction:column;align-items:flex-start;gap:6px;border-left:3px solid ${c};border-radius:0;${m.done ? 'opacity:.45;' : ''}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;width:100%;">
-        <div class="memo-item-text">${escHtml(m.text)}</div>
-        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
-          <span class="memo-item-tag">${labels[m.type] || '📝'}</span>
+        <div style="display:flex;align-items:flex-start;gap:8px;flex:1;min-width:0;">
+          ${checkable ? `<div onclick="toggleMemoDone('${ch}',${m.id})" style="width:16px;height:16px;border:1.5px solid ${m.done ? c : 'var(--mid)'};background:${m.done ? c : 'transparent'};color:#fff;font-size:11px;line-height:14px;text-align:center;cursor:pointer;flex-shrink:0;margin-top:2px;">${m.done ? '✓' : ''}</div>` : ''}
+          <div class="memo-item-text" style="${m.done ? 'text-decoration:line-through;' : ''}">${escHtml(m.text)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+          <span style="font-size:10px;color:${c};letter-spacing:.04em;text-transform:uppercase;">${labels[m.type] || 'Memo'}</span>
+          <span style="font-size:10px;color:var(--mid);">${dateStr}</span>
           <span class="memo-del" onclick="deleteMemo('${ch}',${m.id})">×</span>
         </div>
       </div>
       ${m.refUrl ? `<a href="${escHtml(m.refUrl)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--slate);text-decoration:none;word-break:break-all;border-bottom:1px solid var(--slate);padding-bottom:1px;">🔗 ${escHtml(m.refUrl)}</a>` : ''}
       ${m.refImage ? `<img src="${m.refImage}" style="width:100%;max-height:280px;object-fit:contain;background:var(--linen-2);display:block;" loading="lazy">` : ''}
-    </div>`).join('');
+    </div>`;
+  }).join('');
+}
+
+function toggleMemoDone(ch, id) {
+  const m = state.memos[ch].find(x => x.id === id);
+  if (!m) return;
+  m.done = !m.done;
+  save();
+  renderMemos(ch);
 }
 
 function deleteMemo(ch, id) {
@@ -3120,7 +3241,7 @@ function renderCpCard(item, ch) {
   const catStyle = getCpCatStyle(ch, item.category);
   const imgHtml = item.image
     ? `<img class="cp-card-img" src="${item.image}" alt="" loading="lazy">`
-    : `<div class="cp-card-img-ph">📷</div>`;
+    : '';
   const clickFn = item.isScript ? `openScript(${item.id},'${ch}')` : `openCpModal('${ch}','${item.date}',${item.id})`;
   const delFn   = item.isScript ? `event.stopPropagation();openScript(${item.id},'${ch}')` : `event.stopPropagation();deleteCpPost('${ch}',${item.id})`;
   return `<div class="cp-card" onclick="${clickFn}">
@@ -3425,7 +3546,7 @@ function buildSparkline(statsArr, ch) {
   if (statsArr.length < 2) return '';
   const maxV = Math.max(...statsArr.map(s => s.views||0));
   if (!maxV) return '';
-  const color = ch === 'youtube' ? 'var(--youtube)' : 'var(--ink)';
+  const color = 'var(--accent)';
   const pts = statsArr.map((s, i) => {
     const x = (i / (statsArr.length - 1)) * 220;
     const y = 28 - ((s.views||0) / maxV) * 24;
@@ -3438,7 +3559,7 @@ function buildSparkline(statsArr, ch) {
     return '<circle cx="' + x + '" cy="' + y + '" r="' + (isLast ? 3.5 : 2) + '" fill="' + (isLast ? color : 'rgba(0,0,0,0.18)') + '"/>';
   }).join('');
   return '<svg viewBox="0 0 220 32" width="100%" height="32" style="margin:6px 0 10px;display:block;">'
-    + '<polyline fill="none" stroke="' + color + '" stroke-width="1.5" opacity="0.4" points="' + pts + '"/>'
+    + '<polyline fill="none" stroke="' + color + '" stroke-width="1.5" opacity="0.85" points="' + pts + '"/>'
     + dots + '</svg>';
 }
 
@@ -3464,78 +3585,124 @@ function renderPerf(ch) {
     if (bestEl) bestEl.textContent = '—';
   }
   if (!list) return;
-  if (!posts.length) { list.innerHTML = '<div class="empty">등록된 영상 없음. 아래에서 추가해보세요.</div>'; return; }
-  var today = new Date().toISOString().split('T')[0];
-  list.innerHTML = posts.map(function(p) {
-    var statsArr = (p.stats && p.stats.length) ? p.stats : [{ date: p.uploadDate||today, views: p.views||0, likes: p.likes||0, comments: p.comments||0, shares: p.shares||0 }];
-    var latest = statsArr[statsArr.length - 1];
-    var eng = engRate(latest).toFixed(1);
-    var first = statsArr[0];
-    var trendHtml = '';
-    if (statsArr.length > 1 && (first.views||0) > 0) {
-      var growth = Math.round(((latest.views||0) - (first.views||0)) / (first.views||0) * 100);
-      trendHtml = '<span class="perf-trend" style="color:' + (growth>=0?'#2d7a4e':'#c0392b') + ';">' + (growth>=0?'↑':'↓') + Math.abs(growth) + '%</span>';
-    }
-    var histHtml = statsArr.map(function(s, i) {
-      var extraKey = ch === 'youtube' ? '저장' : '공유';
-      var extraVal = ch === 'youtube' ? (s.saves||s.shares||0) : (s.shares||0);
-      return '<div class="perf-hist-row">'
-        + '<span class="perf-hist-date">' + (s.date ? formatDate(s.date) : '') + '</span>'
-        + '<div class="perf-hist-stats">'
-        + '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.views||0) + '</span><span class="k">뷰</span></span>'
-        + '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.likes||0) + '</span><span class="k">좋아요</span></span>'
-        + (s.comments ? '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.comments) + '</span><span class="k">댓글</span></span>' : '')
-        + (extraVal ? '<span class="perf-hist-stat"><span class="v">' + fmtNum(extraVal) + '</span><span class="k">' + extraKey + '</span></span>' : '')
+  if (!posts.length) { list.innerHTML = '<div class="empty">등록된 영상 없음. 자동 수집 버튼이나 아래에서 추가해보세요.</div>'; return; }
+
+  // 정렬
+  var sortBy = (state.perfSort && state.perfSort[ch]) || 'date';
+  var sorted = posts.slice();
+  if (sortBy === 'views') sorted.sort(function(a,b){ return (getLatestStat(b).views||0) - (getLatestStat(a).views||0); });
+  else if (sortBy === 'eng') sorted.sort(function(a,b){ return engRate(getLatestStat(b)) - engRate(getLatestStat(a)); });
+  else sorted.sort(function(a,b){ return (b.uploadDate||'') > (a.uploadDate||'') ? 1 : -1; });
+
+  var controls = '<div style="display:flex;justify-content:flex-end;align-items:center;margin-bottom:14px;">'
+    + '<select onchange="setPerfSort(\'' + ch + '\',this.value)" style="background:none;border:1px solid var(--border);padding:6px 10px;font-size:12px;color:var(--ink);">'
+    + '<option value="date"' + (sortBy==='date'?' selected':'') + '>최신순</option>'
+    + '<option value="views"' + (sortBy==='views'?' selected':'') + '>조회수순</option>'
+    + '<option value="eng"' + (sortBy==='eng'?' selected':'') + '>참여율순</option>'
+    + '</select></div>';
+
+  // k95풍 썸네일 그리드 갤러리
+  var grid = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:20px 12px;">'
+    + sorted.map(function(p) {
+      var latest = getLatestStat(p);
+      var eng = engRate(latest).toFixed(1);
+      var t = perfDisplayTitle(p.title);
+      var img = p.thumb
+        ? '<img src="' + escHtml(p.thumb) + '" onerror="this.remove()" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">'
+        : '';
+      return '<div onclick="openPerfDetail(\'' + ch + '\',' + p.id + ')" style="cursor:pointer;">'
+        + '<div style="aspect-ratio:9/16;background:var(--soft-2);overflow:hidden;position:relative;">'
+        + '<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;font-size:11px;color:var(--mid);text-align:center;line-height:1.5;">' + escHtml(t.slice(0, 44)) + '</span>'
+        + img
         + '</div>'
-        + '<span class="memo-del" onclick="deletePerfStat(\'' + ch + '\',' + p.id + ',' + i + ')" style="font-size:11px;line-height:1;">×</span>'
+        + '<div style="margin-top:7px;font-size:11px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escHtml(t) + '</div>'
+        + '<div style="font-size:10px;color:var(--mid);margin-top:2px;letter-spacing:.04em;text-transform:uppercase;">' + fmtNum(latest.views||0) + ' views · ' + fmtNum(latest.likes||0) + ' likes · ' + eng + '%</div>'
         + '</div>';
-    }).join('');
-    var urlHtml = p.url ? '<a href="' + escHtml(p.url) + '" target="_blank" style="font-size:11px;color:var(--blue);text-decoration:none;display:inline-block;margin-bottom:8px;">↗ 영상 보기</a>' : '';
-    var sparkHtml = buildSparkline(statsArr, ch);
-    var saveLabel = ch === 'youtube' ? '저장' : '공유';
-    var saveId = ch === 'youtube' ? 'pu-saves-' : 'pu-shares-';
-    return '<div class="perf-card">'
-      + '<div class="perf-card-header" onclick="togglePerfCard(' + p.id + ',\'' + ch + '\')">'
-      + '<div class="perf-card-meta"><div class="perf-card-title">' + escHtml(p.title) + '</div><div class="perf-card-date">' + (p.uploadDate ? formatDate(p.uploadDate) : '') + '</div></div>'
-      + '<div class="perf-card-nums">'
-      + '<div class="perf-card-num"><span class="n">' + fmtNum(latest.views||0) + '</span><span class="l">views</span></div>'
-      + '<div class="perf-card-num"><span class="n">' + fmtNum(latest.likes||0) + '</span><span class="l">likes</span></div>'
-      + '</div>'
-      + '<span class="perf-eng-badge">' + eng + '%</span>'
-      + trendHtml
-      + '<span style="color:var(--mid);font-size:12px;" id="perf-chev-' + p.id + '">▾</span>'
-      + '</div>'
-      + '<div class="perf-card-body" id="perf-body-' + p.id + '">'
-      + urlHtml
-      + sparkHtml
-      + '<div style="margin-bottom:10px;">' + histHtml + '</div>'
-      + '<div class="perf-update-form">'
-      + '<div class="perf-form-label">스탯 업데이트</div>'
-      + '<div class="form-row">'
-      + '<input class="form-input" id="pu-date-' + p.id + '" type="date" value="' + today + '" style="max-width:140px;">'
-      + '<input class="form-input" id="pu-views-' + p.id + '" placeholder="조회수" type="number">'
-      + '<input class="form-input" id="pu-likes-' + p.id + '" placeholder="좋아요" type="number">'
-      + '<input class="form-input" id="pu-comments-' + p.id + '" placeholder="댓글" type="number">'
-      + '<input class="form-input" id="' + saveId + p.id + '" placeholder="' + saveLabel + '" type="number">'
-      + '</div>'
-      + '<button class="form-submit" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);" onclick="addPerfStat(\'' + ch + '\',' + p.id + ')">+ 업데이트</button>'
-      + '</div>'
-      + '<div style="margin-top:8px;text-align:right;">'
-      + '<button onclick="deletePerf(\'' + ch + '\',' + p.id + ')" style="background:none;border:none;color:var(--mid);font-size:11px;cursor:pointer;">영상 삭제</button>'
-      + '</div>'
-      + '</div>'
-      + '</div>';
-  }).join('');
+    }).join('') + '</div>';
+
+  list.innerHTML = controls + grid;
 }
 
-function togglePerfCard(id, ch) {
-  var body = document.getElementById('perf-body-' + id);
-  var chev = document.getElementById('perf-chev-' + id);
-  if (!body) return;
-  var isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  if (chev) chev.textContent = isOpen ? '▾' : '▴';
+function perfDisplayTitle(t) {
+  var s = (t || '').replace(/#[^\s#]+/g, '').replace(/\s+/g, ' ').trim();
+  return s || (t || '(제목 없음)');
 }
+
+function setPerfSort(ch, v) {
+  if (!state.perfSort) state.perfSort = {};
+  state.perfSort[ch] = v;
+  renderPerf(ch);
+}
+
+// ── Perf 상세 모달 (그래프 + 히스토리 + 스탯 업데이트) ──
+var perfDetailCur = { ch: null, id: null };
+
+function openPerfDetail(ch, id) {
+  perfDetailCur = { ch: ch, id: id };
+  renderPerfDetailContent();
+  document.getElementById('perf-detail-modal').classList.add('open');
+}
+function closePerfDetail() {
+  perfDetailCur = { ch: null, id: null };
+  document.getElementById('perf-detail-modal').classList.remove('open');
+}
+
+function renderPerfDetailContent() {
+  var ch = perfDetailCur.ch, id = perfDetailCur.id;
+  var p = (state.perfs[ch] || []).find(function(x){ return x.id === id; });
+  if (!p) { closePerfDetail(); return; }
+  var today = new Date().toISOString().split('T')[0];
+  var statsArr = (p.stats && p.stats.length) ? p.stats : [{ date: p.uploadDate||today, views: p.views||0, likes: p.likes||0, comments: p.comments||0, shares: p.shares||0 }];
+  var latest = statsArr[statsArr.length - 1];
+  var eng = engRate(latest).toFixed(1);
+  var first = statsArr[0];
+  var trendHtml = '';
+  if (statsArr.length > 1 && (first.views||0) > 0) {
+    var growth = Math.round(((latest.views||0) - (first.views||0)) / (first.views||0) * 100);
+    trendHtml = '<span style="font-size:12px;color:' + (growth>=0?'#2d7a4e':'#c0392b') + ';">' + (growth>=0?'↑':'↓') + Math.abs(growth) + '%</span>';
+  }
+  var histHtml = statsArr.map(function(s, i) {
+    var extraKey = ch === 'youtube' ? '저장' : '공유';
+    var extraVal = ch === 'youtube' ? (s.saves||s.shares||0) : (s.shares||0);
+    return '<div class="perf-hist-row">'
+      + '<span class="perf-hist-date">' + (s.date ? formatDate(s.date) : '') + '</span>'
+      + '<div class="perf-hist-stats">'
+      + '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.views||0) + '</span><span class="k">뷰</span></span>'
+      + '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.likes||0) + '</span><span class="k">좋아요</span></span>'
+      + (s.comments ? '<span class="perf-hist-stat"><span class="v">' + fmtNum(s.comments) + '</span><span class="k">댓글</span></span>' : '')
+      + (extraVal ? '<span class="perf-hist-stat"><span class="v">' + fmtNum(extraVal) + '</span><span class="k">' + extraKey + '</span></span>' : '')
+      + '</div>'
+      + '<span class="memo-del" onclick="deletePerfStat(\'' + ch + '\',' + p.id + ',' + i + ')" style="font-size:11px;line-height:1;">×</span>'
+      + '</div>';
+  }).join('');
+  var saveLabel = ch === 'youtube' ? '저장' : '공유';
+  var saveId = ch === 'youtube' ? 'pu-saves-' : 'pu-shares-';
+  document.getElementById('perf-detail-body').innerHTML =
+    '<div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;">'
+    + (p.thumb ? '<img src="' + escHtml(p.thumb) + '" onerror="this.remove()" style="width:72px;aspect-ratio:9/16;object-fit:cover;flex-shrink:0;background:var(--soft-2);">' : '')
+    + '<div style="flex:1;min-width:0;">'
+    + '<div style="font-size:14px;font-weight:500;color:var(--ink);line-height:1.5;">' + escHtml(perfDisplayTitle(p.title)) + '</div>'
+    + '<div style="font-size:11px;color:var(--mid);margin-top:4px;">' + (p.uploadDate ? formatDate(p.uploadDate) : '') + ' · ' + fmtNum(latest.views||0) + ' views · ' + fmtNum(latest.likes||0) + ' likes · ' + eng + '% ' + trendHtml + '</div>'
+    + (p.url ? '<a href="' + escHtml(p.url) + '" target="_blank" style="font-size:11px;color:var(--ink);text-decoration:underline;display:inline-block;margin-top:6px;">↗ 영상 보기</a>' : '')
+    + '</div></div>'
+    + buildSparkline(statsArr, ch)
+    + '<div style="margin-bottom:10px;">' + histHtml + '</div>'
+    + '<div class="perf-update-form">'
+    + '<div class="perf-form-label">스탯 업데이트</div>'
+    + '<div class="form-row">'
+    + '<input class="form-input" id="pu-date-' + p.id + '" type="date" value="' + today + '" style="max-width:140px;">'
+    + '<input class="form-input" id="pu-views-' + p.id + '" placeholder="조회수" type="number">'
+    + '<input class="form-input" id="pu-likes-' + p.id + '" placeholder="좋아요" type="number">'
+    + '<input class="form-input" id="pu-comments-' + p.id + '" placeholder="댓글" type="number">'
+    + '<input class="form-input" id="' + saveId + p.id + '" placeholder="' + saveLabel + '" type="number">'
+    + '</div>'
+    + '<button class="form-submit" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);" onclick="addPerfStat(\'' + ch + '\',' + p.id + ')">+ 업데이트</button>'
+    + '</div>'
+    + '<div style="margin-top:8px;text-align:right;">'
+    + '<button onclick="deletePerf(\'' + ch + '\',' + p.id + ');closePerfDetail();" style="background:none;border:none;color:var(--mid);font-size:11px;cursor:pointer;">영상 삭제</button>'
+    + '</div>';
+}
+
 
 function addPerf(ch) {
   var title = document.getElementById(ch + '-perf-title').value.trim();
@@ -3577,10 +3744,7 @@ function addPerfStat(ch, id) {
   p.stats.push(stat);
   p.stats.sort(function(a,b){ return a.date > b.date ? 1 : -1; });
   save(); renderPerf(ch);
-  setTimeout(function() {
-    var body = document.getElementById('perf-body-' + id);
-    if (body) body.classList.add('open');
-  }, 10);
+  if (perfDetailCur.id === id) renderPerfDetailContent();
   showToast('업데이트됐어요 ✓');
 }
 
@@ -3589,10 +3753,7 @@ function deletePerfStat(ch, id, idx) {
   if (!p || !p.stats) return;
   p.stats.splice(idx, 1);
   save(); renderPerf(ch);
-  setTimeout(function() {
-    var body = document.getElementById('perf-body-' + id);
-    if (body) body.classList.add('open');
-  }, 10);
+  if (perfDetailCur.id === id) renderPerfDetailContent();
 }
 
 function deletePerf(ch, id) {
@@ -3618,11 +3779,13 @@ function mergePerfSnapshot(ch, key, info) {
     var ex = p.stats.find(function(s) { return s.date === stat.date; });
     if (ex) Object.assign(ex, stat); else p.stats.push(stat);
     p.stats.sort(function(a, b) { return a.date > b.date ? 1 : -1; });
+    if (info.thumb) p.thumb = info.thumb; // 틱톡 커버 URL은 만료되므로 수집 때마다 갱신
     return 'updated';
   }
   state.perfs[ch].push({
     id: Date.now() + Math.floor(Math.random() * 10000),
     title: info.title, url: info.url, uploadDate: info.uploadDate || perfTodayStr(),
+    thumb: info.thumb || '',
     stats: [stat]
   });
   return 'created';
@@ -3642,6 +3805,7 @@ async function autoFetchTiktokPerf() {
         title: (v.title || '(제목 없음)').slice(0, 80),
         url: 'https://www.tiktok.com/@' + TIKTOK_HANDLE + '/video/' + v.video_id,
         uploadDate: v.create_time ? new Date(v.create_time * 1000).toISOString().split('T')[0] : '',
+        thumb: v.cover || v.origin_cover || '',
         views: parseInt(v.play_count || 0),
         likes: parseInt(v.digg_count || 0),
         comments: parseInt(v.comment_count || 0),
@@ -3689,6 +3853,7 @@ async function autoFetchYoutubePerf() {
         title: (v.snippet.title || '').slice(0, 80),
         url: 'https://www.youtube.com/watch?v=' + v.id,
         uploadDate: (v.snippet.publishedAt || '').split('T')[0],
+        thumb: 'https://i.ytimg.com/vi/' + v.id + '/mqdefault.jpg',
         views: parseInt(v.statistics.viewCount || 0),
         likes: parseInt(v.statistics.likeCount || 0),
         comments: parseInt(v.statistics.commentCount || 0),
@@ -4590,6 +4755,30 @@ function loadGeminiKey() {
 init();
 loadGeminiKey();
 loadYoutubeKey();
+
+// ── 수동 추가 폼 기본 접기 (헤더 클릭으로 펼침) ──
+document.querySelectorAll('.add-perf-form').forEach(function(f) {
+  f.classList.add('collapsed');
+  var label = f.querySelector('.perf-form-label');
+  if (label) label.addEventListener('click', function() { f.classList.toggle('collapsed'); });
+});
+
+// ── 핑크 포인트 커서 ──
+(function() {
+  if (matchMedia('(hover: none)').matches) return;
+  var dot = document.createElement('div');
+  dot.id = 'pink-cursor';
+  document.body.appendChild(dot);
+  document.addEventListener('mousemove', function(e) {
+    dot.style.left = e.clientX + 'px';
+    dot.style.top = e.clientY + 'px';
+    dot.style.opacity = '1';
+    var t = e.target;
+    var clickable = t.closest && t.closest('a,button,.tab,.nav-tab,[onclick],label,select');
+    dot.classList.toggle('big', !!clickable);
+  });
+  document.documentElement.addEventListener('mouseleave', function() { dot.style.opacity = '0'; });
+})();
 </script>
 </body>
 </html>
