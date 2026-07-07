@@ -1036,6 +1036,8 @@
   .cp-s-draft { background:#fff3cd; color:#7a5c00; }
   .cp-s-filming { background:#dce8ff; color:#1a4a8a; }
   .cp-s-needs-idea { background:#ffe4f0; color:#9a1a4a; }
+  .cp-s-editing { background:#ffe8d4; color:#8a4a1a; }
+  .cp-s-urgent { background:#ffd9d4; color:#9a2a1a; }
   .cp-s-script { background:var(--soft-2); color:var(--ink); }
   .cp-cat-pill { font-size:9px; font-weight:600; padding:2px 6px; border-radius:20px; }
   .cp-card-title { font-size:10px; color:var(--ink); font-weight:500; line-height:1.35; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
@@ -1277,7 +1279,6 @@
         <button class="add-btn" onclick="openAIModal('tiktok')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn" onclick="openCoworkModal('tiktok')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
         <button class="add-btn" onclick="exportScriptsJSON('tiktok')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
-        <label class="add-btn" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">⬆ JSON 가져오기<input type="file" accept="application/json" style="display:none;" onchange="importScriptsJSON('tiktok', this)"></label>
       </div>
     </div>
 
@@ -1343,7 +1344,10 @@
 
     <!-- PERFORMANCE -->
     <div class="section" id="tiktok-performance">
-      <div class="section-title">조회수 & 통계</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div class="section-title">조회수 & 통계</div>
+        <button class="add-btn" id="tiktok-autofetch-btn" onclick="autoFetchTiktokPerf()" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⚡ @somarchive 자동 수집</button>
+      </div>
       <div class="perf-summary">
         <div class="perf-stat"><div class="perf-stat-num" id="tiktok-total-posts">0</div><div class="perf-stat-label">Videos</div></div>
         <div class="perf-stat"><div class="perf-stat-num" id="tiktok-avg-views">—</div><div class="perf-stat-label">Avg Views</div></div>
@@ -1568,7 +1572,6 @@
         <button class="add-btn yt" onclick="openAIModal('youtube')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn yt" onclick="openCoworkModal('youtube')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
         <button class="add-btn yt" onclick="exportScriptsJSON('youtube')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
-        <label class="add-btn yt" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">⬆ JSON 가져오기<input type="file" accept="application/json" style="display:none;" onchange="importScriptsJSON('youtube', this)"></label>
       </div>
     </div>
 
@@ -1614,25 +1617,26 @@
 
     <!-- CALENDAR -->
     <div class="section" id="youtube-calendar">
-      <div class="section-title">업로드 일정</div>
-      <div class="cal-week">
-        <div class="cal-day-label">SUN</div><div class="cal-day-label">MON</div>
-        <div class="cal-day-label">TUE</div><div class="cal-day-label">WED</div>
-        <div class="cal-day-label">THU</div><div class="cal-day-label">FRI</div>
-        <div class="cal-day-label">SAT</div>
+      <div class="cp-header">
+        <div class="cp-nav">
+          <button class="cp-nav-btn" onclick="cpNavigate('youtube',-1)">‹</button>
+          <span class="cp-nav-label" id="youtube-cp-label"></span>
+          <button class="cp-nav-btn" onclick="cpNavigate('youtube',1)">›</button>
+        </div>
+        <div class="cp-view-toggle">
+          <button class="cp-vbtn active" id="youtube-vbtn-date" onclick="cpSetView('youtube','date')">Date View</button>
+          <button class="cp-vbtn" id="youtube-vbtn-month" onclick="cpSetView('youtube','month')">Month View</button>
+        </div>
       </div>
-      <div class="cal-week" id="youtube-cal-grid"></div>
-      <div class="cal-events" id="youtube-cal-events"></div>
-      <div class="add-event-row">
-        <input class="add-event-input yt" id="youtube-event-title" placeholder="영상 제목">
-        <input class="add-event-input yt" id="youtube-event-date" type="date" style="max-width:130px;">
-        <button class="add-event-btn yt" onclick="addEvent('youtube')">+ Add</button>
-      </div>
+      <div id="youtube-cp-content"></div>
     </div>
 
     <!-- PERFORMANCE -->
     <div class="section" id="youtube-performance">
-      <div class="section-title">조회수 & 통계</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div class="section-title">조회수 & 통계</div>
+        <button class="add-btn yt" id="youtube-autofetch-btn" onclick="autoFetchYoutubePerf()" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⚡ 솜솜 채널 자동 수집</button>
+      </div>
       <div class="perf-summary">
         <div class="perf-stat"><div class="perf-stat-num" id="youtube-total-posts">0</div><div class="perf-stat-label">Videos</div></div>
         <div class="perf-stat"><div class="perf-stat-num" id="youtube-avg-views">—</div><div class="perf-stat-label">Avg Views</div></div>
@@ -1701,6 +1705,17 @@
             <input type="password" id="youtube-gemini-key" placeholder="AIza..." oninput="saveGeminiKey(this.value)"
               style="flex:1;padding:8px 12px;border-radius:8px;border:1.5px solid rgba(179,77,255,0.2);font-size:13px;background:#fff;font-family:monospace;color:var(--ink);outline:none;">
             <button onclick="toggleGeminiKey('youtube-gemini-key')" style="padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:#fff;font-size:12px;color:var(--mid);">보기</button>
+          </div>
+        </div>
+      </div>
+      <div class="settings-block" style="background:linear-gradient(135deg,#fff5f5 0%,#fde8e8 100%);border:1px solid rgba(255,0,0,0.08);">
+        <div class="settings-block-title" style="color:#c0392b;">▶ YouTube Data API 키 (Perf 자동 수집용)</div>
+        <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px;">
+          <span class="settings-row-label" style="font-size:11px;color:var(--mid);">BeautyWatch에서 쓰는 키 재사용 가능 · Google Cloud Console에서 이 사이트 주소(manycotton17.github.io/*)를 허용 목록에 추가 필요</span>
+          <div style="display:flex;gap:8px;width:100%;">
+            <input type="password" id="youtube-data-key" placeholder="AIza..." oninput="saveYoutubeKey(this.value)"
+              style="flex:1;padding:8px 12px;border-radius:8px;border:1.5px solid rgba(255,0,0,0.15);font-size:13px;background:#fff;font-family:monospace;color:var(--ink);outline:none;">
+            <button onclick="toggleGeminiKey('youtube-data-key')" style="padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:#fff;font-size:12px;color:var(--mid);">보기</button>
           </div>
         </div>
       </div>
@@ -1854,7 +1869,6 @@
         <button class="add-btn" onclick="openAIModal('instagram')" style="background:var(--purple);">✨ AI 생성</button>
         <button class="add-btn" onclick="openCoworkModal('instagram')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">📋 cowork에서 가져오기</button>
         <button class="add-btn" onclick="exportScriptsJSON('instagram')" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);">⬇ JSON 내보내기</button>
-        <label class="add-btn" style="background:var(--soft-2);color:var(--ink);border:1px solid rgba(0,0,0,0.1);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">⬆ JSON 가져오기<input type="file" accept="application/json" style="display:none;" onchange="importScriptsJSON('instagram', this)"></label>
       </div>
     </div>
 
@@ -2084,12 +2098,26 @@
 <div class="modal-overlay" id="cowork-modal">
   <div class="modal">
     <div class="modal-title">📋 코웍 대본 가져오기</div>
-    <p style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.6;">Claude Cowork 세션에서 생성된 대본의 JSON 블록을 복사해서 붙여넣으세요.</p>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.6;">Claude Cowork에서 생성된 대본 JSON을 붙여넣으세요. 대본 1개, 여러 개(배열), JSON 내보내기 파일 모두 지원해요.</p>
     <div class="modal-label">JSON 붙여넣기</div>
-    <textarea class="modal-input" id="cowork-json" placeholder='{"title":"...","body":"...","channel":"youtube"}' style="height:180px;font-family:monospace;font-size:12px;"></textarea>
+    <textarea class="modal-input" id="cowork-json" placeholder='{"title":"...","body":"..."} 또는 [{...},{...}]' style="height:180px;font-family:monospace;font-size:12px;"></textarea>
+    <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--mid);margin-top:8px;border-bottom:1px solid var(--mid);padding-bottom:1px;">
+      ⬆ 또는 JSON 파일 선택<input type="file" accept="application/json,.json" style="display:none;" onchange="coworkFileToTextarea(this)">
+    </label>
     <div class="modal-btns">
       <button class="modal-cancel" onclick="closeCoworkModal()">취소</button>
       <button class="modal-save" onclick="importCoworkScript()">가져오기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 날짜 상세 모달 -->
+<div class="modal-overlay" id="cp-day-modal">
+  <div class="modal">
+    <div class="modal-title" id="cp-day-modal-title">📅</div>
+    <div id="cp-day-modal-list" style="max-height:400px;overflow-y:auto;"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeCpDayModal()">닫기</button>
     </div>
   </div>
 </div>
@@ -2980,7 +3008,6 @@ function deleteMemo(ch, id) {
 // ── CALENDAR ──
 // ── CALENDAR DISPATCH ──
 function renderCalendar(ch) {
-  if (ch === 'youtube') { renderCalendarLegacy(ch); return; }
   if (!state.calView) state.calView = {};
   if (!state.calOffset) state.calOffset = {};
   if (!state.calView[ch]) state.calView[ch] = 'date';
@@ -2994,65 +3021,21 @@ function renderCalendar(ch) {
   else renderCpDateView(ch);
 }
 
-function renderCalendarLegacy(ch) {
-  const grid = document.getElementById(ch + '-cal-grid');
-  const evEl = document.getElementById(ch + '-cal-events');
-  if (!grid) return;
-  const now = new Date();
-  const year = now.getFullYear(), month = now.getMonth();
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const today = now.getDate();
-  const statusIcon = { 'not-filmed':'○', 'filmed':'🎬', 'editing':'✂️', 'done':'✅', 'urgent':'⚡' };
-  const dateMap = {};
-  const calSeen = new Set();
-  (state.scripts[ch] || []).filter(s => s.date).forEach(s => {
-    if (calSeen.has(s.id)) return;
-    calSeen.add(s.id);
-    if (!dateMap[s.date]) dateMap[s.date] = [];
-    dateMap[s.date].push({ id: s.id, title: s.title, status: s.status, isScript: true });
-  });
-  state.events[ch].forEach(e => {
-    if (!dateMap[e.date]) dateMap[e.date] = [];
-    dateMap[e.date].push({ id: e.id, title: e.title, isScript: false });
-  });
-  let html = '';
-  for (let i = 0; i < firstDay; i++) html += '<div></div>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday = d === today;
-    const items = dateMap[dateStr] || [];
-    const cls = ['cal-day', isToday ? 'today-yt' : ''].filter(Boolean).join(' ');
-    let inner = `<div class="cal-day-num">${d}</div>`;
-    items.slice(0, 3).forEach(item => {
-      inner += item.isScript
-        ? `<div class="cal-day-chip cal-day-chip-script" onclick="event.stopPropagation();openScript(${item.id},'${ch}')">${statusIcon[item.status]||'○'} ${escHtml(item.title)}</div>`
-        : `<div class="cal-day-chip cal-day-chip-event">${escHtml(item.title)}</div>`;
-    });
-    if (items.length > 3) inner += `<div class="cal-day-more">+${items.length - 3}개 더</div>`;
-    html += `<div class="${cls}">${inner}</div>`;
-  }
-  grid.innerHTML = html;
-  const listSeen = new Set();
-  const scriptItems = (state.scripts[ch] || []).filter(s => {
-    if (!s.date || listSeen.has(s.id)) return false;
-    listSeen.add(s.id); return true;
-  }).map(s => ({ id: s.id, title: s.title, date: s.date, isScript: true, status: s.status }));
-  const allItems = [...scriptItems, ...state.events[ch].map(e => ({ ...e, isScript: false }))].sort((a,b) => a.date > b.date ? 1 : -1);
-  evEl.innerHTML = allItems.length ? allItems.map(e => `
-    <div class="cal-event">
-      <div class="cal-event-dot yt"></div>
-      <div class="cal-event-info">
-        <div class="cal-event-title">${e.isScript ? (statusIcon[e.status]||'○')+' ' : ''}${escHtml(e.title)}</div>
-        <div class="cal-event-date">${formatDate(e.date)}${e.isScript ? ' · 대본' : ''}</div>
-      </div>
-      ${e.isScript ? `<span class="memo-del" onclick="openScript(${e.id},'${ch}')">→</span>` : `<span class="memo-del" onclick="deleteEvent('${ch}',${e.id})">×</span>`}
-    </div>`).join('') : '<div class="empty">일정 없음</div>';
-}
-
 // ── CONTENT PLANNER HELPERS ──
 function cpDateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// 대본 ↔ Performance 매칭: 업로드일이 같은 영상 (여러 개면 제목으로 좁힘)
+function findPerfForScript(ch, s) {
+  const byDate = (state.perfs[ch] || []).filter(p => p.uploadDate && p.uploadDate === s.date);
+  if (!byDate.length) return null;
+  if (byDate.length === 1) return byDate[0];
+  const t = (s.title || '').toLowerCase();
+  return byDate.find(p => {
+    const pt = (p.title || '').toLowerCase();
+    return (t && pt.includes(t.slice(0, 15))) || (pt && t.includes(pt.slice(0, 15)));
+  }) || null;
 }
 
 function buildCpDateMap(ch) {
@@ -3066,13 +3049,23 @@ function buildCpDateMap(ch) {
     if (!map[e.date]) map[e.date] = [];
     map[e.date].push({ ...e, isScript: false });
   });
+  const cpStatusMap = { done:'posted', 'not-filmed':'draft', filmed:'filming', editing:'editing', urgent:'urgent' };
   const seen = new Set();
   (state.scripts[ch] || []).forEach(s => {
     if (!s.date || seen.has(s.id)) return;
     seen.add(s.id);
     if (!map[s.date]) map[s.date] = [];
-    const status = s.status === 'done' ? 'posted' : s.status === 'not-filmed' ? 'filming' : 'draft';
-    map[s.date].push({ id: s.id, title: s.title, date: s.date, status, isScript: true, image: null, category: s.category || '' });
+    const status = cpStatusMap[s.status] || 'draft';
+    const item = { id: s.id, title: s.title, date: s.date, status, isScript: true, image: null, category: s.category || '' };
+    // 업로드된 대본이면 Performance 최신 스탯을 카드에 표시
+    const perf = findPerfForScript(ch, s);
+    if (perf) {
+      const latest = getLatestStat(perf);
+      item.views = latest.views || 0;
+      item.likes = latest.likes || 0;
+      item.comments = latest.comments || 0;
+    }
+    map[s.date].push(item);
   });
   return map;
 }
@@ -3116,8 +3109,8 @@ function getCpCatStyle(ch, catName) {
 }
 
 function renderCpCard(item, ch) {
-  const statusMap = { posted:'cp-s-posted', draft:'cp-s-draft', filming:'cp-s-filming', 'needs-idea':'cp-s-needs-idea' };
-  const labelMap  = { posted:'Posted', draft:'Draft', filming:'Filming', 'needs-idea':'Needs Idea' };
+  const statusMap = { posted:'cp-s-posted', draft:'cp-s-draft', filming:'cp-s-filming', 'needs-idea':'cp-s-needs-idea', editing:'cp-s-editing', urgent:'cp-s-urgent' };
+  const labelMap  = { posted:'Posted', draft:'Draft', filming:'Filming', 'needs-idea':'Needs Idea', editing:'Editing', urgent:'Urgent' };
   const sCls = statusMap[item.status] || 'cp-s-draft';
   const sLbl = labelMap[item.status] || 'Draft';
   const catStyle = getCpCatStyle(ch, item.category);
@@ -3186,7 +3179,7 @@ function renderCpMonthView(ch) {
   const todayStr = cpDateStr(new Date());
   const dateMap = buildCpDateMap(ch);
   const dows = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  const statusColors = { posted:'#22c55e', filming:'#60a5fa', 'needs-idea':'#f472b6', draft:'#facc15', script:'#a78bfa' };
+  const statusColors = { posted:'#22c55e', filming:'#60a5fa', 'needs-idea':'#f472b6', draft:'#facc15', editing:'#fb923c', urgent:'#ef4444', script:'#a78bfa' };
 
   let html = renderCpFilterBar(ch) + '<div class="cp-month-header">' + dows.map(d => `<div class="cp-month-dow">${d}</div>`).join('') + '</div>';
   html += '<div class="cp-month-grid">';
@@ -3199,9 +3192,10 @@ function renderCpMonthView(ch) {
     const items = (dateMap[ds] || []).slice(0, 4);
     const gridCls = items.length >= 2 ? 'two' : '';
 
+    const hasItems = (dateMap[ds] || []).length > 0;
     html += `<div class="cp-month-cell ${todayCls}">
       <div class="cp-month-cell-top">
-        <span class="cp-month-cell-num">${d}</span>
+        <span class="cp-month-cell-num" ${hasItems ? `style="cursor:pointer;" onclick="openCpDayModal('${ch}','${ds}')"` : ''}>${d}</span>
         <span class="cp-month-cell-add" onclick="event.stopPropagation();openCpModal('${ch}','${ds}',null)">+</span>
       </div>`;
 
@@ -3228,7 +3222,7 @@ function renderCpMonthView(ch) {
       });
       html += '</div>';
       const total = (dateMap[ds] || []).length;
-      if (total > 4) html += `<div class="cp-month-more">+${total - 4} more</div>`;
+      if (total > 4) html += `<div class="cp-month-more" onclick="openCpDayModal('${ch}','${ds}')">+${total - 4} more</div>`;
     }
     html += '</div>';
   }
@@ -3242,6 +3236,33 @@ function handleCpMonthClick(ch, id, isScript) {
   if (!post) return;
   if (post.url) { window.open(post.url, '_blank'); return; }
   openCpModal(ch, post.date, id);
+}
+
+// ── 날짜 상세 모달 (월간 뷰에서 날짜/+N more 클릭) ──
+function openCpDayModal(ch, ds) {
+  const items = buildCpDateMap(ch)[ds] || [];
+  const labelMap = { posted:'Posted', draft:'Draft', filming:'Filming', 'needs-idea':'Needs Idea', editing:'Editing', urgent:'Urgent' };
+  const clsMap = { posted:'cp-s-posted', draft:'cp-s-draft', filming:'cp-s-filming', 'needs-idea':'cp-s-needs-idea', editing:'cp-s-editing', urgent:'cp-s-urgent' };
+  document.getElementById('cp-day-modal-title').textContent = '📅 ' + formatDate(ds) + ' — ' + items.length + '개';
+  document.getElementById('cp-day-modal-list').innerHTML = items.length ? items.map(item => {
+    const st = item.status || 'draft';
+    const stats = (item.views || item.likes)
+      ? `<span style="font-size:11px;color:var(--mid);flex-shrink:0;">👁 ${fmtNum(item.views||0)} · ♥ ${fmtNum(item.likes||0)}</span>` : '';
+    const clickFn = item.isScript
+      ? `closeCpDayModal();openScript(${item.id},'${ch}')`
+      : `closeCpDayModal();openCpModal('${ch}','${ds}',${item.id})`;
+    return `<div class="today-alert-item" onclick="${clickFn}" style="margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:8px;">
+      <span class="cp-status ${clsMap[st]||'cp-s-draft'}" style="flex-shrink:0;">${labelMap[st]||st}</span>
+      <span class="today-alert-title" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escHtml(item.title||'')}</span>
+      ${item.category ? `<span class="cp-cat-pill" style="${getCpCatStyle(ch, item.category)}flex-shrink:0;">${escHtml(item.category)}</span>` : ''}
+      ${stats}
+      <span class="today-alert-arrow">→</span>
+    </div>`;
+  }).join('') : '<div class="empty">일정 없음</div>';
+  document.getElementById('cp-day-modal').classList.add('open');
+}
+function closeCpDayModal() {
+  document.getElementById('cp-day-modal').classList.remove('open');
 }
 
 // ── CP NAVIGATION ──
@@ -3384,21 +3405,6 @@ function deleteCpPost(ch, id) {
   showToast('삭제됐어요');
 }
 
-function addEvent(ch) {
-  const title = document.getElementById(ch + '-event-title').value.trim();
-  const date = document.getElementById(ch + '-event-date').value;
-  if (!title || !date) { showToast('제목과 날짜를 입력해주세요'); return; }
-  state.events[ch].push({ id: Date.now(), title, date });
-  document.getElementById(ch + '-event-title').value = '';
-  document.getElementById(ch + '-event-date').value = '';
-  save(); renderCalendar(ch);
-  showToast('일정 추가됐어요 ✓');
-}
-
-function deleteEvent(ch, id) {
-  state.events[ch] = state.events[ch].filter(e => e.id !== id);
-  save(); renderCalendar(ch);
-}
 
 // ── PERFORMANCE ──
 function getLatestStat(p) {
@@ -3588,6 +3594,120 @@ function deletePerfStat(ch, id, idx) {
 function deletePerf(ch, id) {
   state.perfs[ch] = state.perfs[ch].filter(function(p){ return p.id !== id; });
   save(); renderPerf(ch);
+}
+
+// ── PERFORMANCE 자동 수집 ────────────────────────────────────────────
+// 틱톡: tikwm 공개 API (키 불필요) / 유튜브: Data API (Settings에서 키 입력)
+var TIKTOK_HANDLE = 'somarchive';
+var YOUTUBE_HANDLE = '@ssommos';
+
+function perfTodayStr() { return new Date().toISOString().split('T')[0]; }
+
+// 스냅샷 병합: url에 영상 고유 id가 있으면 오늘 스탯 추가/갱신, 없으면 새 카드 생성
+function mergePerfSnapshot(ch, key, info) {
+  if (!state.perfs[ch]) state.perfs[ch] = [];
+  var stat = { date: perfTodayStr(), views: info.views || 0, likes: info.likes || 0, comments: info.comments || 0 };
+  if (ch === 'youtube') stat.saves = info.extra || 0; else stat.shares = info.extra || 0;
+  var p = state.perfs[ch].find(function(x) { return (x.url || '').indexOf(key) !== -1; });
+  if (p) {
+    if (!p.stats) p.stats = [];
+    var ex = p.stats.find(function(s) { return s.date === stat.date; });
+    if (ex) Object.assign(ex, stat); else p.stats.push(stat);
+    p.stats.sort(function(a, b) { return a.date > b.date ? 1 : -1; });
+    return 'updated';
+  }
+  state.perfs[ch].push({
+    id: Date.now() + Math.floor(Math.random() * 10000),
+    title: info.title, url: info.url, uploadDate: info.uploadDate || perfTodayStr(),
+    stats: [stat]
+  });
+  return 'created';
+}
+
+async function autoFetchTiktokPerf() {
+  var btn = document.getElementById('tiktok-autofetch-btn');
+  btn.disabled = true; var orig = btn.textContent; btn.textContent = '⏳ 수집 중...';
+  try {
+    var r = await fetch('https://www.tikwm.com/api/user/posts?unique_id=' + TIKTOK_HANDLE + '&count=35');
+    var d = await r.json();
+    var vids = (d.data && d.data.videos) || [];
+    if (d.code !== 0 || !vids.length) throw new Error('empty');
+    var created = 0, updated = 0;
+    vids.forEach(function(v) {
+      var res = mergePerfSnapshot('tiktok', String(v.video_id), {
+        title: (v.title || '(제목 없음)').slice(0, 80),
+        url: 'https://www.tiktok.com/@' + TIKTOK_HANDLE + '/video/' + v.video_id,
+        uploadDate: v.create_time ? new Date(v.create_time * 1000).toISOString().split('T')[0] : '',
+        views: parseInt(v.play_count || 0),
+        likes: parseInt(v.digg_count || 0),
+        comments: parseInt(v.comment_count || 0),
+        extra: parseInt(v.share_count || 0)
+      });
+      if (res === 'created') created++; else updated++;
+    });
+    // 업로드일 최신순 정렬
+    state.perfs.tiktok.sort(function(a, b) { return (b.uploadDate || '') > (a.uploadDate || '') ? 1 : -1; });
+    save(); renderPerf('tiktok');
+    showToast('틱톡 ' + vids.length + '개 수집 완료 (새 영상 ' + created + ' · 스탯 갱신 ' + updated + ') ✓');
+  } catch (e) {
+    showToast('수집 실패 — 잠시 후 다시 시도해주세요');
+  }
+  btn.disabled = false; btn.textContent = orig;
+}
+
+async function autoFetchYoutubePerf() {
+  var key = localStorage.getItem('youtube_data_key') || '';
+  if (!key) { showToast('Settings에서 YouTube Data API 키를 먼저 입력해주세요'); return; }
+  var btn = document.getElementById('youtube-autofetch-btn');
+  btn.disabled = true; var orig = btn.textContent; btn.textContent = '⏳ 수집 중...';
+  try {
+    // 채널 ID와 업로드 재생목록은 한 번 조회 후 저장 (쿼터 절약)
+    var pl = localStorage.getItem('yt_uploads_pl') || '';
+    if (!pl) {
+      var cr = await fetch('https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=' + encodeURIComponent(YOUTUBE_HANDLE) + '&key=' + key);
+      var cd = await cr.json();
+      if (cd.error) throw new Error(cd.error.message);
+      if (!cd.items || !cd.items.length) throw new Error('채널(' + YOUTUBE_HANDLE + ')을 찾을 수 없어요');
+      pl = cd.items[0].contentDetails.relatedPlaylists.uploads;
+      localStorage.setItem('yt_uploads_pl', pl);
+    }
+    var pr = await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&playlistId=' + pl + '&maxResults=30&key=' + key);
+    var pd = await pr.json();
+    if (pd.error) throw new Error(pd.error.message);
+    var ids = (pd.items || []).map(function(i) { return i.contentDetails.videoId; });
+    if (!ids.length) throw new Error('영상이 없어요');
+    var vr = await fetch('https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=' + ids.join(',') + '&key=' + key);
+    var vd = await vr.json();
+    if (vd.error) throw new Error(vd.error.message);
+    var created = 0, updated = 0;
+    (vd.items || []).forEach(function(v) {
+      var res = mergePerfSnapshot('youtube', v.id, {
+        title: (v.snippet.title || '').slice(0, 80),
+        url: 'https://www.youtube.com/watch?v=' + v.id,
+        uploadDate: (v.snippet.publishedAt || '').split('T')[0],
+        views: parseInt(v.statistics.viewCount || 0),
+        likes: parseInt(v.statistics.likeCount || 0),
+        comments: parseInt(v.statistics.commentCount || 0),
+        extra: 0
+      });
+      if (res === 'created') created++; else updated++;
+    });
+    state.perfs.youtube.sort(function(a, b) { return (b.uploadDate || '') > (a.uploadDate || '') ? 1 : -1; });
+    save(); renderPerf('youtube');
+    showToast('유튜브 ' + (vd.items || []).length + '개 수집 완료 (새 영상 ' + created + ' · 스탯 갱신 ' + updated + ') ✓');
+  } catch (e) {
+    showToast('수집 실패: ' + (e.message || '다시 시도해주세요'));
+  }
+  btn.disabled = false; btn.textContent = orig;
+}
+
+function saveYoutubeKey(val) {
+  localStorage.setItem('youtube_data_key', val.trim());
+}
+function loadYoutubeKey() {
+  var k = localStorage.getItem('youtube_data_key') || '';
+  var el = document.getElementById('youtube-data-key');
+  if (el) el.value = k;
 }
 
 function importTikTokCSV(event) {
@@ -4182,66 +4302,48 @@ function exportScriptsJSON(ch) {
   showToast('JSON 내보내기 완료 ✓');
 }
 
-// ── Scripts JSON 파일 업로드 → 병합 (id 기준 중복 제거) ──────────────
-// exportScriptsJSON()으로 내보낸 배열 JSON, 스크립트 객체 1개짜리 JSON,
-// 또는 content/ref/scriptMemo 같은 대체 필드명을 쓰는 JSON도 허용.
-function importScriptsJSON(ch, input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      const list = Array.isArray(data) ? data : [data];
-      if (!state.scripts[ch]) state.scripts[ch] = [];
-      const existingIds = new Set(state.scripts[ch].map(s => s.id));
-      let imported = 0, skipped = 0;
+// ── Scripts 병합 공통 로직 (id 기준 중복 제거) ──────────────────────
+// exportScriptsJSON() 배열, 대본 1개짜리 객체, content/ref/scriptMemo 같은
+// 대체 필드명 모두 허용. cowork 가져오기가 이 함수를 사용한다.
+function mergeScriptsIntoChannel(ch, list) {
+  if (!state.scripts[ch]) state.scripts[ch] = [];
+  const existingIds = new Set(state.scripts[ch].map(s => s.id));
+  let imported = 0, skipped = 0, firstId = null;
 
-      list.forEach((item, i) => {
-        if (!item || !item.title) { skipped++; return; }
+  list.forEach((item, i) => {
+    if (!item || !item.title) { skipped++; return; }
 
-        let id = item.id;
-        if (id && existingIds.has(id)) { skipped++; return; } // 중복 id는 건너뜀 (id 기준 중복 제거)
-        if (!id) id = Date.now() + i;
+    let id = item.id;
+    if (id && existingIds.has(id)) { skipped++; return; } // 중복 id는 건너뜀
+    if (!id) id = Date.now() + i;
 
-        const newScript = {
-          id: id,
-          title: item.title || '',
-          date: item.date || '',
-          status: item.status || 'not-filmed',
-          category: item.category || '',
-          body: item.body || item.content || '',
-          notes: item.notes || '',
-          memo: item.memo || item.scriptMemo || '',
-          refUrl: item.refUrl || item.ref || '',
-          refImages: item.refImages || [],
-          editingGuide: item.editingGuide || '',
-          thumbnailGuide: item.thumbnailGuide || '',
-          captions: item.captions || '',
-          igCaption: item.igCaption || '',
-          coverNote: item.coverNote || '',
-          checks: Array.isArray(item.checks) && item.checks.length ? item.checks : [],
-          filmed: false,
-        };
-        state.scripts[ch].unshift(newScript);
-        existingIds.add(id);
-        imported++;
-      });
+    const newScript = {
+      id: id,
+      title: item.title || '',
+      date: item.date || '',
+      status: item.status || 'not-filmed',
+      category: item.category || '',
+      body: item.body || item.content || '',
+      notes: item.notes || '📋 cowork에서 가져오기',
+      memo: item.memo || item.scriptMemo || '',
+      refUrl: item.refUrl || item.ref || '',
+      refImages: item.refImages || [],
+      editingGuide: item.editingGuide || '',
+      thumbnailGuide: item.thumbnailGuide || '',
+      captions: item.captions || '',
+      igCaption: item.igCaption || '',
+      coverNote: item.coverNote || '',
+      checks: Array.isArray(item.checks) && item.checks.length ? item.checks
+        : (ch === 'instagram' ? DEFAULT_CHECKS_IG : DEFAULT_CHECKS).map(c => ({ ...c })),
+      filmed: false,
+    };
+    state.scripts[ch].unshift(newScript);
+    existingIds.add(id);
+    if (firstId === null) firstId = id;
+    imported++;
+  });
 
-      if (imported > 0) {
-        save();
-        renderScripts(ch);
-        refreshCalendarIfActive(ch);
-        showToast(`${imported}개 가져왔어요` + (skipped ? ` (중복/누락 ${skipped}개 스킵)` : '') + ' ✓');
-      } else {
-        showToast('가져올 항목이 없어요 (중복이거나 title 없음)');
-      }
-    } catch (err) {
-      showToast('파싱 오류: ' + err.message);
-    }
-    input.value = '';
-  };
-  reader.readAsText(file);
+  return { imported, skipped, firstId };
 }
 
 function importTikTokEvents(ch, input) {
@@ -4326,144 +4428,42 @@ function closeCoworkModal() {
   document.getElementById('cowork-modal').classList.remove('open');
 }
 
+// 파일을 선택하면 텍스트영역에 내용을 채워 한 흐름으로 가져오기
+function coworkFileToTextarea(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('cowork-json').value = e.target.result;
+    showToast('파일을 불러왔어요 — "가져오기"를 누르세요');
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
 function importCoworkScript() {
   var raw = document.getElementById('cowork-json').value.trim();
   var defaultCh = document.getElementById('cowork-modal').getAttribute('data-ch') || 'youtube';
   try {
-    var jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('JSON 블록을 찾을 수 없어요');
-    var data = JSON.parse(jsonMatch[0]);
-    if (!data.title) throw new Error('title 필드가 없어요');
-    if (!data.body) throw new Error('body 필드가 없어요');
+    if (!raw) throw new Error('내용이 비어 있어요');
 
-    var ch = data.channel || defaultCh;
-    if (!state.scripts[ch]) ch = defaultCh;
-
-    var newScript = {
-      id: Date.now(),
-      title: data.title,
-      body: data.body,
-      notes: data.notes || '📋 cowork에서 가져오기',
-      date: data.date || '',
-      status: 'not-filmed',
-      checks: DEFAULT_CHECKS.map(function(c) { return Object.assign({}, c); }),
-      memo: '',
-      refUrl: '',
-      refImages: [],
-      filmed: false
-    };
-
-    state.scripts[ch].unshift(newScript);
-    if (data.date) {
-      state.events[ch].push({ id: Date.now() + 1, title: data.title, date: data.date });
+    // 마크다운 코드펜스/설명 텍스트 사이에서 JSON 추출: 배열 우선, 그다음 객체
+    var data;
+    try {
+      data = JSON.parse(raw);
+    } catch(e0) {
+      var arrMatch = raw.match(/\[[\s\S]*\]/);
+      var objMatch = raw.match(/\{[\s\S]*\}/);
+      var block = arrMatch ? arrMatch[0] : (objMatch ? objMatch[0] : null);
+      if (!block) throw new Error('JSON 블록을 찾을 수 없어요');
+      data = JSON.parse(block);
     }
-    save();
-    renderScripts(ch);
-    closeCoworkModal();
-    showToast('코웍 대본을 가져왔어요!');
+    var list = Array.isArray(data) ? data : [data];
 
-    var scriptTabBtn = document.querySelector('#tabs-' + ch + ' .tab');
-    if (scriptTabBtn) scriptTabBtn.click();
-    setTimeout(function() {
-      var b = document.getElementById('body-' + newScript.id);
-      var c = document.getElementById('chev-' + newScript.id);
-      if (b) b.classList.add('open');
-      if (c) c.classList.add('open');
-      var card = b ? b.closest('.script-card') : null;
-      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
+    // channel 필드가 있으면 항목별로 해당 채널에, 없으면 현재 채널에
+    var byCh = {};
+    list.forEach(function(item) {
+      var ch = (item && item.channel && state.scripts[item.channel]) ? item.channel : defaultCh;
+      (byCh[ch] = byCh[ch] || []).push(item);
+    });
 
-  } catch(e) {
-    showToast('가져오기 실패: ' + e.message);
-  }
-}
-
-// ── TikTok → Instagram 가져오기 ───────────────────────────────────────
-function openImportFromTiktokModal() {
-  const list = document.getElementById('import-tiktok-list');
-  const scripts = state.scripts.tiktok || [];
-  if (!scripts.length) {
-    list.innerHTML = '<div class="empty">TikTok 대본이 없어요.<br>먼저 TikTok 탭에서 대본을 추가해주세요.</div>';
-  } else {
-    list.innerHTML = scripts.map(s => `
-      <div class="today-alert-item" onclick="importFromTiktokScript(${s.id})" style="margin-bottom:6px;">
-        <span class="today-alert-title">${escHtml(s.title)}</span>
-        <span style="font-size:11px;color:var(--mid);flex-shrink:0;margin-left:8px;">${s.date ? formatDate(s.date) : ''}</span>
-        <span class="today-alert-arrow" style="color:#e1306c;">→</span>
-      </div>`).join('');
-  }
-  document.getElementById('import-tiktok-modal').classList.add('open');
-}
-
-function closeImportFromTiktokModal() {
-  document.getElementById('import-tiktok-modal').classList.remove('open');
-}
-
-function importFromTiktokScript(id) {
-  const src = state.scripts.tiktok.find(s => s.id === id);
-  if (!src) return;
-  const newScript = {
-    id: Date.now(),
-    title: src.title,
-    body: src.body || '',
-    notes: src.notes || '',
-    date: '',
-    status: 'not-filmed',
-    checks: DEFAULT_CHECKS_IG.map(c => ({...c})),
-    memo: '',
-    refUrl: '',
-    refImages: [],
-    filmed: false,
-    igCaption: '',
-    coverNote: '',
-  };
-  state.scripts.instagram.unshift(newScript);
-  save();
-  renderScripts('instagram');
-  closeImportFromTiktokModal();
-  showToast('TikTok 대본을 Instagram에 복사했어요 ✓');
-  if (state.currentChannel !== 'instagram') {
-    state.currentChannel = 'instagram';
-    document.querySelectorAll('.channel-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('panel-instagram').classList.add('active');
-    document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active-tiktok','active-youtube','active-instagram'));
-    const igBtn = document.querySelector('.ch-btn[onclick*="instagram"]');
-    if (igBtn) igBtn.classList.add('active-instagram');
-    triggerHeroAnim('instagram');
-  }
-  setTimeout(function() {
-    var ws = document.getElementById('workspace-instagram');
-    if (ws) ws.classList.add('visible');
-    var tabBtn = document.querySelector('#tabs-instagram .tab');
-    if (tabBtn) tabBtn.click();
-    setTimeout(function() {
-      var b = document.getElementById('body-' + newScript.id);
-      var c = document.getElementById('chev-' + newScript.id);
-      if (b) b.classList.add('open');
-      if (c) c.classList.add('open');
-      var card = b ? b.closest('.script-card') : null;
-      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 200);
-  }, 100);
-}
-
-// ── Gemini 키 설정 ────────────────────────────────────────────────────
-function saveGeminiKey(val) {
-  localStorage.setItem('gemini_api_key', val.trim());
-}
-function toggleGeminiKey(inputId) {
-  var el = document.getElementById(inputId);
-  if (!el) return;
-  el.type = el.type === 'password' ? 'text' : 'password';
-}
-function loadGeminiKey() {
-  var key = localStorage.getItem('gemini_api_key') || '';
-  var el = document.getElementById('youtube-gemini-key');
-  if (el) el.value = key;
-}
-
-init();
-loadGeminiKey();
-</script>
-</body>
-</html>
