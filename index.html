@@ -1139,7 +1139,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDjneUcloIKFYLwlnqvIxhd0-4ThrMBBAM",
@@ -1154,7 +1154,8 @@
   const db = getFirestore(app);
   const auth = getAuth(app);
   // 로그인 상태를 브라우저에 유지 (한 번 로그인하면 계속 유지)
-  setPersistence(auth, browserLocalPersistence).catch(() => {});
+  // 세션 지속: 브라우저(탭)를 완전히 닫으면 로그아웃 — 자동 로그인 방지
+  setPersistence(auth, browserSessionPersistence).catch(() => {});
 
   // 전역에서 쓸 수 있게 window에 등록
   window.__firebaseDb = db;
@@ -1203,6 +1204,8 @@
       <button class="ch-btn" onclick="switchChannel('youtube')">솜솜</button>
       <button class="ch-btn" onclick="switchChannel('instagram')">Instagram</button>
     </div>
+    <span class="nav-sep">|</span>
+    <button class="nav-tab" onclick="doLogout()" title="로그아웃" style="flex-shrink:0;">Logout</button>
   </div>
 </nav>
 
@@ -2112,7 +2115,10 @@
 <div class="modal-overlay" id="cowork-modal">
   <div class="modal">
     <div class="modal-title">📋 코웍 대본 가져오기</div>
-    <p style="font-size:12px;color:var(--mid);margin-bottom:12px;line-height:1.6;">Claude Cowork에서 생성된 대본 JSON을 붙여넣으세요. 대본 1개, 여러 개(배열), JSON 내보내기 파일 모두 지원해요.</p>
+    <p style="font-size:12px;color:var(--mid);margin-bottom:8px;line-height:1.6;">Claude Cowork에서 생성된 대본 JSON을 붙여넣으세요. 대본 1개, 여러 개(배열), JSON 내보내기 파일 모두 지원해요.</p>
+    <div style="font-size:11px;color:var(--mid);background:var(--soft);padding:8px 10px;margin-bottom:12px;line-height:1.7;">
+      필드: <b>title·body</b>(필수) / channel(tiktok·youtube·instagram) / date(YYYY-MM-DD) / category / notes / memo / refUrl / editingGuide / soundEffect / thumbnailGuide / captions / igCaption / coverNote
+    </div>
     <div class="modal-label">JSON 붙여넣기</div>
     <textarea class="modal-input" id="cowork-json" placeholder='{"title":"...","body":"..."} 또는 [{...},{...}]' style="height:180px;font-family:monospace;font-size:12px;"></textarea>
     <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--mid);margin-top:8px;border-bottom:1px solid var(--mid);padding-bottom:1px;">
@@ -2233,6 +2239,10 @@ function wireAuth() {
       setTimeout(() => { var e = document.getElementById("lock-email"); if (e) e.focus(); }, 100);
     }
   });
+}
+
+function doLogout() {
+  if (window.__fbSignOut) window.__fbSignOut().then(function() { location.reload(); }).catch(function() { location.reload(); });
 }
 
 async function checkPassword() {
@@ -3634,7 +3644,7 @@ function renderPerf(ch) {
   var sorted = posts.slice();
   if (sortBy === 'views') sorted.sort(function(a,b){ return (getLatestStat(b).views||0) - (getLatestStat(a).views||0); });
   else if (sortBy === 'eng') sorted.sort(function(a,b){ return engRate(getLatestStat(b)) - engRate(getLatestStat(a)); });
-  else sorted.sort(function(a,b){ return (b.uploadDate||'') > (a.uploadDate||'') ? 1 : -1; });
+  else sorted.sort(function(a,b){ return (b.uploadDate||'').localeCompare(a.uploadDate||'') || (b.id - a.id); });
 
   var controls = '<div style="display:flex;justify-content:flex-end;align-items:center;margin-bottom:14px;">'
     + '<select onchange="setPerfSort(\'' + ch + '\',this.value)" style="background:none;border:1px solid var(--border);padding:6px 10px;font-size:12px;color:var(--ink);">'
@@ -3874,7 +3884,7 @@ async function autoFetchTiktokPerf() {
       if (res === 'created') created++; else updated++;
     });
     // 업로드일 최신순 정렬
-    state.perfs.tiktok.sort(function(a, b) { return (b.uploadDate || '') > (a.uploadDate || '') ? 1 : -1; });
+    state.perfs.tiktok.sort(function(a, b) { return (b.uploadDate || '').localeCompare(a.uploadDate || '') || (b.id - a.id); });
     save(); renderPerf('tiktok');
     showToast('틱톡 ' + vids.length + '개 수집 완료 (새 영상 ' + created + ' · 스탯 갱신 ' + updated + ') ✓');
   } catch (e) {
@@ -3921,7 +3931,7 @@ async function autoFetchYoutubePerf() {
       });
       if (res === 'created') created++; else updated++;
     });
-    state.perfs.youtube.sort(function(a, b) { return (b.uploadDate || '') > (a.uploadDate || '') ? 1 : -1; });
+    state.perfs.youtube.sort(function(a, b) { return (b.uploadDate || '').localeCompare(a.uploadDate || '') || (b.id - a.id); });
     save(); renderPerf('youtube');
     showToast('유튜브 ' + (vd.items || []).length + '개 수집 완료 (새 영상 ' + created + ' · 스탯 갱신 ' + updated + ') ✓');
   } catch (e) {
