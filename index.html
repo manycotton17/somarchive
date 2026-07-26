@@ -3756,9 +3756,8 @@ function renderPerfDetailContent() {
 }
 
 
-function addPerf(ch) {
+async function addPerf(ch) {
   var title = document.getElementById(ch + '-perf-title').value.trim();
-  if (!title) { showToast('제목을 입력해주세요'); return; }
   var date = document.getElementById(ch + '-perf-date').value || new Date().toISOString().split('T')[0];
   var url = document.getElementById(ch + '-perf-url').value.trim();
   var views = parseInt(document.getElementById(ch + '-perf-views').value) || 0;
@@ -3767,9 +3766,30 @@ function addPerf(ch) {
   var savesEl = document.getElementById(ch + '-perf-saves');
   var sharesEl = document.getElementById(ch + '-perf-shares');
   var extra = savesEl ? (parseInt(savesEl.value)||0) : (sharesEl ? (parseInt(sharesEl.value)||0) : 0);
-  var stat = { date: date, views: views, likes: likes, comments: comments };
+  var thumb = '';
+
+  // 틱톡 링크가 있으면 단건 API로 제목/썸네일/스탯/업로드일 자동 채우기
+  if (ch === 'tiktok' && url.indexOf('tiktok.com') !== -1 && !views) {
+    showToast('영상 정보를 가져오는 중...');
+    try {
+      var r = await fetch('https://www.tikwm.com/api/?url=' + encodeURIComponent(url));
+      var d = await r.json();
+      if (d.code === 0 && d.data) {
+        if (!title) title = (d.data.title || '').slice(0, 80);
+        thumb = d.data.cover || d.data.origin_cover || '';
+        views = parseInt(d.data.play_count || 0);
+        likes = parseInt(d.data.digg_count || 0);
+        comments = parseInt(d.data.comment_count || 0);
+        extra = parseInt(d.data.share_count || 0);
+        if (d.data.create_time) date = new Date(d.data.create_time * 1000).toISOString().split('T')[0];
+      }
+    } catch (e) {}
+  }
+
+  if (!title) { showToast('제목을 입력해주세요 (틱톡 링크만 넣으면 자동으로 채워져요)'); return; }
+  var stat = { date: new Date().toISOString().split('T')[0], views: views, likes: likes, comments: comments };
   if (ch === 'youtube') stat.saves = extra; else stat.shares = extra;
-  state.perfs[ch].unshift({ id: Date.now(), title: title, url: url, uploadDate: date, stats: [stat] });
+  state.perfs[ch].unshift({ id: Date.now(), title: title, url: url, uploadDate: date, thumb: thumb, stats: [stat] });
   ['title','url','views','likes','comments','saves','shares'].forEach(function(f) {
     var el = document.getElementById(ch + '-perf-' + f);
     if (el) el.value = '';
@@ -3865,30 +3885,67 @@ async function autoFetchTiktokPerf() {
   var btn = document.getElementById('tiktok-autofetch-btn');
   btn.disabled = true; var orig = btn.textContent; btn.textContent = '⏳ 수집 중...';
   try {
-    var r = await fetch('https://www.tikwm.com/api/user/posts?unique_id=' + TIKTOK_HANDLE + '&count=35');
-    var d = await r.json();
-    var vids = (d.data && d.data.videos) || [];
-    if (d.code !== 0 || !vids.length) throw new Error('empty');
-    var created = 0, updated = 0;
-    vids.forEach(function(v) {
-      var res = mergePerfSnapshot('tiktok', String(v.video_id), {
-        title: (v.title || '(제목 없음)').slice(0, 80),
-        url: 'https://www.tiktok.com/@' + TIKTOK_HANDLE + '/video/' + v.video_id,
-        uploadDate: v.create_time ? new Date(v.create_time * 1000).toISOString().split('T')[0] : '',
-        thumb: v.cover || v.origin_cover || '',
-        views: parseInt(v.play_count || 0),
-        likes: parseInt(v.digg_count || 0),
-        comments: parseInt(v.comment_count || 0),
-        extra: parseInt(v.share_count || 0)
+    // ① 계정 전체 목록 API 시도
+    var vids = null;
+    try {
+      var r = await fetch('https://www.tikwm.com/api/user/posts?unique_id=' + TIKTOK_HANDLE + '&count=35');
+      var d = JSON.parse(await r.text()); // Cloudflare 챌린지면 HTML이 와서 여기서 실패
+      if (d.code === 0 && d.data && d.data.videos && d.data.videos.length) vids = d.data.videos;
+    } catch (e1) {}
+
+    if (vids) {
+      var created = 0, updated = 0;
+      vids.forEach(function(v) {
+        var res = mergePerfSnapshot('tiktok', String(v.video_id), {
+          title: (v.title || '(제목 없음)').slice(0, 80),
+          url: 'https://www.tiktok.com/@' + TIKTOK_HANDLE + '/video/' + v.video_id,
+          uploadDate: v.create_time ? new Date(v.create_time * 1000).toISOString().split('T')[0] : '',
+          thumb: v.cover || v.origin_cover || '',
+          views: parseInt(v.play_count || 0),
+          likes: parseInt(v.digg_count || 0),
+          comments: parseInt(v.comment_count || 0),
+          extra: parseInt(v.share_count || 0)
+        });
+        if (res === 'created') created++; else updated++;
       });
-      if (res === 'created') created++; else updated++;
-    });
-    // 업로드일 최신순 정렬
-    state.perfs.tiktok.sort(function(a, b) { return (b.uploadDate || '').localeCompare(a.uploadDate || '') || (b.id - a.id); });
-    save(); renderPerf('tiktok');
-    showToast('틱톡 ' + vids.length + '개 수집 완료 (새 영상 ' + created + ' · 스탯 갱신 ' + updated + ') ✓');
+      state.perfs.tiktok.sort(function(a, b) { return (b.uploadDate || '').localeCompare(a.uploadDate || '') || (b.id - a.id); });
+      save(); renderPerf('tiktok');
+      showToast('틱톡 ' + vids.length + '개 수집 완료 (새 영상 ' + created + ' · 스탯 갱신 ' + updated + ') ✓');
+    } else {
+      // ② 폴백: 목록 API가 막혀 있으면 저장된 영상을 단건 API로 하나씩 갱신 (최신 15개)
+      var targets = (state.perfs.tiktok || [])
+        .filter(function(p) { return (p.url || '').indexOf('tiktok.com') !== -1; })
+        .sort(function(a, b) { return (b.uploadDate || '').localeCompare(a.uploadDate || ''); })
+        .slice(0, 15);
+      if (!targets.length) throw new Error('no-targets');
+      var ok = 0;
+      for (var i = 0; i < targets.length; i++) {
+        if (i > 0) await new Promise(function(res) { setTimeout(res, 1300); }); // 초당 1회 제한
+        btn.textContent = '⏳ 개별 갱신 ' + (i + 1) + '/' + targets.length;
+        try {
+          var r2 = await fetch('https://www.tikwm.com/api/?url=' + encodeURIComponent(targets[i].url));
+          var d2 = await r2.json();
+          if (d2.code === 0 && d2.data) {
+            mergePerfSnapshot('tiktok', String(d2.data.id), {
+              title: (d2.data.title || targets[i].title || '').slice(0, 80),
+              url: targets[i].url,
+              uploadDate: targets[i].uploadDate || '',
+              thumb: d2.data.cover || d2.data.origin_cover || '',
+              views: parseInt(d2.data.play_count || 0),
+              likes: parseInt(d2.data.digg_count || 0),
+              comments: parseInt(d2.data.comment_count || 0),
+              extra: parseInt(d2.data.share_count || 0)
+            });
+            ok++;
+          }
+        } catch (e2) {}
+      }
+      if (!ok) throw new Error('all-failed');
+      save(); renderPerf('tiktok');
+      showToast('계정 목록 API가 일시 차단돼 저장된 영상 ' + ok + '개만 갱신했어요 ✓ (새 영상은 아래 폼에 링크 입력)');
+    }
   } catch (e) {
-    showToast('수집 실패 — 잠시 후 다시 시도해주세요');
+    showToast('수집 실패 — tikwm 서비스가 일시 차단 상태예요. 잠시 후 다시 시도해주세요');
   }
   btn.disabled = false; btn.textContent = orig;
 }
